@@ -1,10 +1,21 @@
+
+# GENERAL
 .DS_Store
 .merlin
 .bsb.lock
 npm-debug.log
-/lib/bs/
+*.bs.js
 
-node_modules
+# FRONTEND
+node_modules/
 build
 yarn.lock
 yarn-error.log
+frontend/lib/bs/
+
+_build
+_esy
+_release
+*.byte
+*.native
+*.install

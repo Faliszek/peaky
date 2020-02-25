@@ -1,0 +1,9 @@
+{
+  "files.exclude": {
+    "**/.bs.js": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true
+  }
+}
