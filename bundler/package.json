@@ -9,9 +9,9 @@
     "install": "esy-installer #{self.target_dir / 'default' /  'bundler.install'}",
     "NOTE": "Optional release Section. Customizes result of `esy release`",
     "release": {
-      "bin": [
-        "Hello"
-      ]
+      "bin": {
+        "peaky": "Hello"
+      }
     },
     "buildEnv": {
       "ODOC_SYNTAX": "re"

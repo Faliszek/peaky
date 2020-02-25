@@ -8,7 +8,6 @@
   "license": "MIT",
   "private": true,
   "workspaces": [
-    "bundler",
     "frontend"
   ]
 }
