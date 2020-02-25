@@ -1,0 +1,14 @@
+{
+  "name": "peaky",
+  "version": "0.0.0",
+  "description": "Another web-app, mono-repo written in ReasonMl",
+  "main": "index.js",
+  "repository": "git@github.com:Faliszek/peaky.git",
+  "author": "Paweł Falisz <pawlic7@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}
