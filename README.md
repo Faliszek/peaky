@@ -13,7 +13,7 @@ It will be the most overenginerred webapp written in ReasonML.
 
 I will try write frontend part without most of the external dependencies which i usually use in my daily work.
 
-    But they are "must have" dependencies for me, that i don't feel like implementing again 😅:
+But they are "must have" dependencies for me, that i don't feel like implementing again 😅:
 
          - graphql_ppx_re
          - bs-platform
