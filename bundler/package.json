@@ -1,0 +1,38 @@
+{
+  "name": "@peaky/bundler",
+  "version": "0.0.1",
+  "description": "Peaky bundler - minimalistic bundler written in ReasonML",
+  "license": "MIT",
+  "esy": {
+    "build": "dune build -p bundler",
+    "buildDev": "refmterr dune build --root . --only-package bundler",
+    "install": "esy-installer #{self.target_dir / 'default' /  'bundler.install'}",
+    "NOTE": "Optional release Section. Customizes result of `esy release`",
+    "release": {
+      "bin": [
+        "Hello"
+      ]
+    },
+    "buildEnv": {
+      "ODOC_SYNTAX": "re"
+    }
+  },
+  "scripts": {
+    "test": "esy x Hello",
+    "doc": "esy dune build @doc"
+  },
+  "dependencies": {
+    "@opam/dune": "*",
+    "@reason-native/console": "*",
+    "@reason-native/pastel": "*",
+    "@esy-ocaml/reason": ">= 3.4.0 < 3.6.0",
+    "ocaml": "~4.8.1000"
+  },
+  "devDependencies": {
+    "@opam/merlin": "*",
+    "@reason-native/rely": "*",
+    "refmterr": "*",
+    "ocaml": "~4.8.1000",
+    "@opam/odoc": "*"
+  }
+}
