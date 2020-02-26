@@ -6,8 +6,5 @@
   "repository": "git@github.com:Faliszek/peaky.git",
   "author": "Paweł Falisz <pawlic7@gmail.com>",
   "license": "MIT",
-  "private": true,
-  "workspaces": [
-    "frontend"
-  ]
+  "private": true
 }

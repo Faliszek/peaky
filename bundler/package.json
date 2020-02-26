@@ -22,6 +22,7 @@
     "doc": "esy dune build @doc"
   },
   "dependencies": {
+    "@opam/lwt": "5.1.1",
     "@opam/dune": "*",
     "@reason-native/console": "*",
     "@reason-native/pastel": "*",
