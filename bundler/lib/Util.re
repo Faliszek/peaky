@@ -2,11 +2,12 @@ open App;
 open Messages;
 
 let tryParse = (~path, ~fileName) => {
-  fileName
-  |> Lwt_io.lines_of_file
-  |> Lwt_stream.map(s => Html.parse(s))
-  |> Lwt_stream.iter(ignore)
-  |> Lwt_main.run;
+  // |> Lwt_stream.map(line => Html.parse( line))
+  // |> Lwt_stream.iter(ignore)
+  Lwt_io.with_file(~mode=Lwt_io.Input, fileName, Lwt_io.read)
+  |> Lwt_main.run
+  |> Html.parse(~path=path ++ fileName)
+  |> ignore;
 };
 
 let parseArgs = () =>

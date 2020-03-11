@@ -6,27 +6,21 @@
   "esy": {
     "build": "dune build -p bundler",
     "buildDev": "refmterr dune build --root . --only-package bundler",
-    "install": "esy-installer #{self.target_dir / 'default' /  'bundler.install'}",
+    "install":
+      "esy-installer #{self.target_dir / 'default' /  'bundler.install'}",
     "NOTE": "Optional release Section. Customizes result of `esy release`",
-    "release": {
-      "bin": {
-        "peaky": "Hello"
-      }
-    },
-    "buildEnv": {
-      "ODOC_SYNTAX": "re"
-    }
+    "release": { "bin": { "peaky": "Hello" } },
+    "buildEnv": { "ODOC_SYNTAX": "re" }
   },
-  "scripts": {
-    "test": "esy x Hello",
-    "doc": "esy dune build @doc"
-  },
+  "scripts": { "test": "esy x Hello", "doc": "esy dune build @doc" },
   "dependencies": {
-    "@opam/lwt": "5.1.1",
-    "@opam/dune": "*",
-    "@reason-native/console": "*",
-    "@reason-native/pastel": "*",
     "@esy-ocaml/reason": ">= 3.4.0 < 3.6.0",
+    "@opam/dune": "*",
+    "@opam/lwt": "5.1.1",
+    "@opam/menhir": "20200211",
+    "@reason-native/console": "*",
+    "@reason-native/file-context-printer": "^0.0.3",
+    "@reason-native/pastel": "*",
     "ocaml": "~4.8.1000"
   },
   "devDependencies": {
