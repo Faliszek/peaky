@@ -2,4 +2,16 @@
   (name lib)
   (flags (-w -40 -w +26))
   (public_name backend)
-  (libraries  pastel.lib))
+  (libraries 
+    pastel.lib 
+    morph 
+    morph_base 
+    morph_server_http 
+    morph_graphql_server 
+    uri 
+    graphql-lwt 
+    mtime 
+    mtime.clock.os
+    logs.fmt
+    fmt.tty
+    ))
