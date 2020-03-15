@@ -15,11 +15,14 @@ type token =
   | Dash
   | ExclamationMark
   | ClosingSlash
-  | Attribute(attr);
+  | Attribute(attr)
+  | Char(string);
 
 type el =
   | Node(array(attr))
   | Comment(string);
+
+// type parser = String -> (Tree, String) //Unconsumed string
 
 let parse = (~path, file) => {
   let splitEveryChar = Str.regexp("");
@@ -29,9 +32,17 @@ let parse = (~path, file) => {
   chars
   |> List.fold_left(
        (acc, char) => {
+         let (acc, _) = acc;
+
+         let tree =
+           switch (char) {
+           | "<" => AngleBracketOpen
+           | ">" => AngleBracketClose
+           | char => Char(char)
+           };
          print_string(char);
-         acc;
+         (acc @ [char], Some(tree));
        },
-       [],
+       ([], None),
      );
 };
