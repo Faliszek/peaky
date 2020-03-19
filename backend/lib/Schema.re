@@ -34,22 +34,22 @@ let user =
 let schema: Schema.schema(Hmap.t) =
   Schema.(
     schema(
-      ~mutations=[
-        field(
-          "addUser",
-          ~typ=non_null(user),
-          ~args=
-            Arg.[
-              arg("name", non_null(string)),
-              arg("email", non_null(string)),
-            ],
-          ~resolve=(_info, (), name, email) => {
-            let new_user = {id: List.length(users^) + 1, name, email};
-            users := [new_user, ...users^];
-            new_user;
-          },
-        ),
-      ],
+      ~mutations=
+        []// field(
+          //   "addUser",
+          //   ~typ=non_null(user),
+          //   ~args=
+          //     Arg.[
+          //       arg("name", non_null(string)),
+          //       arg("email", non_null(string)),
+          //     ],
+          //   ~resolve=(_info, (), name, email) => {
+          //     let new_user = {id: List.length(users^) + 1, name, email};
+          //     users := [new_user, ...users^];
+          //     new_user;
+          //   },
+          ,
+          // ),
       [
         field(
           "users",
@@ -57,14 +57,7 @@ let schema: Schema.schema(Hmap.t) =
           ~args=Arg.[],
           ~resolve=(_info, ()) =>
           users^
-        ),
-        field(
-          "userById",
-          ~typ=user,
-          ~args=Arg.[arg("id", non_null(int))],
-          ~resolve=(_info, (), id) =>
-          List.find_opt(u => u.id == id, users^)
-        ),
+        )
       ],
     )
   );

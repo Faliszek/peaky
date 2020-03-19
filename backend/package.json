@@ -17,7 +17,7 @@
     }
   },
   "scripts": {
-    "test": "esy x Hello",
+    "test": "esy x Server",
     "doc": "esy dune build @doc"
   },
   "dependencies": {
@@ -33,6 +33,7 @@
     "@opam/mtime": "*",
     "@opam/fmt": "*",
     "@opam/logs": "*",
+    "@opam/postgresql": "*",
     "ocaml": "~4.8.1000"
   },
   "devDependencies": {

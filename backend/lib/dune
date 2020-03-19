@@ -3,7 +3,8 @@
   (flags (-w -40 -w +26))
   (public_name backend)
   (libraries 
-    pastel.lib 
+    pastel.lib
+    postgresql
     morph 
     morph_base 
     morph_server_http 
@@ -14,4 +15,5 @@
     mtime.clock.os
     logs.fmt
     fmt.tty
+    console.lib
     ))
