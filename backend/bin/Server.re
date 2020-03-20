@@ -1,5 +1,5 @@
 open Lib;
 
 Console.log(<Pastel bold=true> "Starting server ...\n" </Pastel>);
-Db.run();
+Db.init();
 Server.run();
