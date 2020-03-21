@@ -1,9 +1,28 @@
-open Printf;
 open Postgresql;
 
-let intToFileDescriptor = Obj.magic;
+Fmt_tty.setup_std_outputs();
+Logs.set_level(Some(Logs.Info));
+Logs.set_reporter(Logs_fmt.reporter());
 
-let failwith_f = fmt => ksprintf(failwith, fmt);
+module Error = {
+  let connectionErr =
+    <Pastel>
+      <Pastel color=Pastel.RedBright> "Error: " </Pastel>
+      "While trying to connect with "
+      <Pastel bold=true> "PostgreSQL" </Pastel>
+      ", are you sure database is installed and running?\n"
+    </Pastel>;
+
+  let printAndAbort = exn => {
+    Logs.err(m => m("Connection failure \n"));
+
+    Console.error(connectionErr);
+    Console.error(exn);
+    exit(1);
+  };
+};
+
+let intToFileDescriptor = Obj.magic;
 
 let wait_for_result = c => {
   c#consume_input;
@@ -29,16 +48,17 @@ let fetch_single_result = c =>
 /* See http://www.postgresql.org/docs/devel/static/libpq-connect.html */
 let rec finishConnection = (~socket, ~connectPoll, ~connectPolState) =>
   switch (connectPolState) {
-  | Polling_failed => printf("f\n%!")
+  | Polling_failed =>
+    Logs.err(m => m("Error while connection database: Pooling failed!"))
   | Polling_reading =>
-    printf("reading,%!");
+    Logs.debug(m => m("Reading!"));
     Unix.select([socket], [], [], -1.0) |> ignore;
     finishConnection(~socket, ~connectPoll, ~connectPolState=connectPoll());
   | Polling_writing =>
-    printf("writing,%!");
+    Logs.debug(m => m("Writing!"));
     Unix.select([], [socket], [], -1.0) |> ignore;
     finishConnection(~socket, ~connectPoll, ~connectPolState=connectPoll());
-  | Polling_ok => printf("c\n%!")
+  | Polling_ok => Logs.debug(m => m("Pooling ok!"))
   };
 
 let test = (c: connection) => {
@@ -82,19 +102,22 @@ let test = (c: connection) => {
 let run = () => {
   /* Async connect and test. */
   let c = (new connection)(~startonly=true, ());
+  let socket = c#socket |> intToFileDescriptor;
+
   c#set_nonblocking(true);
 
   switch (c#status) {
-  | Bad => failwith_f("Connection failed: %s", c#error_message)
-  | Ok => Console.log("Ok")
-  | Connection_started => Console.log("Connection started")
-  | Connection_made => Console.log("Connection made")
-  | Connection_awaiting_response => Console.log("Awaiting")
-  | Connection_auth_ok => Console.log("Auth ok")
-  | Connection_setenv => Console.log(" Set env")
-  | Connection_ssl_startup => Console.log("Ssl")
+  | Ok => Logs.info(m => m("Connection succeed"))
+  | Connection_started => Logs.info(m => m("Connection started"))
+  | Connection_made => Logs.info(m => m("Connection made, database is ready"))
+  | Connection_awaiting_response => Logs.info(m => m("Connection awaiting"))
+  | Connection_auth_ok =>
+    Logs.info(m => m("Authentication with postgres succeed"))
+  | Connection_setenv => Logs.info(m => m("Setting required envs"))
+  | Connection_ssl_startup =>
+    Logs.info(m => m("Setting up secure connection with postgress"))
+  | Bad => Error.printAndAbort(c#error_message)
   };
-  let socket = c#socket |> intToFileDescriptor;
 
   finishConnection(socket, () => c#connect_poll, Polling_writing);
 
@@ -112,7 +135,12 @@ let run = () => {
   // test(c);
 };
 
-let init = () =>
+let init = () => {
+  Logs.info(m => m("Connecting to database"));
+
   try(run()) {
-  | Postgresql.Error(e) => e |> Postgresql.string_of_error |> Console.error
+  | Postgresql.Error(exn) =>
+    exn |> Postgresql.string_of_error |> Error.printAndAbort
+  | exn => exn |> Printexc.to_string |> Error.printAndAbort
   };
+};
