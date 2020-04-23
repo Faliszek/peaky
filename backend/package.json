@@ -18,7 +18,9 @@
   },
   "scripts": {
     "test": "esy x Server",
-    "doc": "esy dune build @doc"
+    "doc": "esy dune build @doc",
+    "setup:database": "psql -U pawelfalisz -d pawelfalisz -f init.sql",
+    "clean:database": "psql -U pawelfalisz -d pawelfalisz -f clean.sql"
   },
   "dependencies": {
     "@opam/dune": "*",
@@ -33,7 +35,8 @@
     "@opam/mtime": "*",
     "@opam/fmt": "*",
     "@opam/logs": "*",
-    "@opam/postgresql": "*",
+    "@opam/core": "*",
+    "@opam/pgx_lwt": "0.1",
     "ocaml": "~4.8.1000"
   },
   "devDependencies": {

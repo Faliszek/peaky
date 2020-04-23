@@ -1,3 +1,4 @@
 open Lib;
 
-Db.init() /* Server.run()*/;
+// Db.init();
+Server.run();

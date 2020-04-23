@@ -4,7 +4,6 @@
   (public_name backend)
   (libraries 
     pastel.lib
-    postgresql
     morph 
     morph_base 
     morph_server_http 
@@ -16,4 +15,6 @@
     logs.fmt
     fmt.tty
     console.lib
+    pgx
+    pgx_lwt
     ))

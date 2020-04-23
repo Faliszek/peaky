@@ -25,7 +25,7 @@ let handler = (request: Morph.Request.t('a)) => {
   };
 };
 
-let http_server = Morph_server_http.make();
+let http_server = Morph_server_http.make(~port=1235, ());
 
 let run = () =>
   Morph.start(
