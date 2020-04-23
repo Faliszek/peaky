@@ -1,5 +1,5 @@
 open Graphql_lwt;
-open Db_Schema.User;
+open User;
 
 let user =
   Schema.(

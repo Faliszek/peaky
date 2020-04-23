@@ -37,6 +37,7 @@
     "@opam/logs": "*",
     "@opam/core": "*",
     "@opam/pgx_lwt": "0.1",
+    "@opam/jwto": "*",
     "ocaml": "~4.8.1000"
   },
   "devDependencies": {
