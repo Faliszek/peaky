@@ -16,8 +16,8 @@ let handler = (request: Morph.Request.t('a)) => {
 
   switch (request.meth, path_parts) {
   | (_, []) => Morph.Response.text("Hello world!", Response.empty)
-  | (_, ["greet", name]) =>
-    Morph.Response.text("Hello " ++ name ++ "!", Response.empty)
+  // | (_, ["greet", name]) =>
+  // Morph.Response.text("Hello " ++ name ++ "!", Response.empty)
   | (`GET, ["graphql"]) =>
     Morph.Response.text(GraphiQL.html, Morph.Response.empty)
   | (_, ["graphql"]) => graphql_handler(request)

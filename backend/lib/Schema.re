@@ -1,5 +1,5 @@
-open Graphql_lwt;
 open User;
+open Graphql_lwt;
 
 let user =
   Schema.(
@@ -34,13 +34,20 @@ let schema: Schema.schema(Hmap.t) =
       //   },
       // ),
       [
-        field(
+        io_field(
+          "documents",
+          ~typ=non_null(list(non_null(user))),
+          ~args=Arg.[],
+          ~resolve=(_info, ()) => {
+          Lwt.return([]) |> Lwt_result.ok
+        }),
+        io_field(
           "users",
           ~typ=non_null(list(non_null(user))),
           ~args=Arg.[],
-          ~resolve=(_info, ()) =>
-          Db_Users.getAll() |> Lwt_main.run
-        ),
+          ~resolve=(_info, ()) => {
+          Db_Users.getAll() |> Lwt_result.ok
+        }),
       ],
     )
   );
