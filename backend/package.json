@@ -20,7 +20,8 @@
     "test": "esy x Server",
     "doc": "esy dune build @doc",
     "setup:database": "psql -U pawelfalisz -d pawelfalisz -f init.sql",
-    "clean:database": "psql -U pawelfalisz -d pawelfalisz -f clean.sql"
+    "clean:database": "psql -U pawelfalisz -d pawelfalisz -f clean.sql",
+    "restart:database": "psql -U pawelfalisz -d pawelfalisz -f clean.sql && psql -U pawelfalisz -d pawelfalisz -f init.sql"
   },
   "dependencies": {
     "@opam/dune": "*",

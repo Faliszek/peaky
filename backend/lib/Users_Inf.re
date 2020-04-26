@@ -1,11 +1,10 @@
 let table = {j|p_users|j};
 
 let getAll = () => {
-  Db.query("select * from p_users")
-  |> Lwt.map(users => users |> List.map(User.toApi) |> F.List.collect);
+  Db.query("select * from p_users");
 };
 
-let get = (~id) =>
+let getOne = (~id) =>
   switch (int_of_string(id)) {
   | exception e => Lwt.return(None)
   | id =>
@@ -13,10 +12,7 @@ let get = (~id) =>
       ~params=[Pgx_value.of_int(id)],
       "select * from p_users where id=$1",
     )
-    |> Lwt.map(users => users |> List.map(User.toApi))
-    |> Lwt.map(users =>
-         users |> F.List.headOption |> Option.value(~default=None)
-       )
+    |> Lwt.map(users => users |> F.List.headOption)
   };
 
 let create = (~email, ~password) =>

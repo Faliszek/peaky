@@ -1,5 +1,15 @@
 let table = "p_users";
 
+module DTO = {
+  type t = {
+    id: string,
+    email: string,
+    password: string,
+    createdAt: string,
+    updatedAt: string,
+  };
+};
+
 module Domain = {
   type t = {
     id: string,
@@ -14,22 +24,3 @@ module Api = {
     email: string,
   };
 };
-
-let toApi: 't => option(Api.t) =
-  user => {
-    open Api;
-    let user =
-      switch (user) {
-      | [id, email, _] =>
-        Some(Pgx_value.(to_string(id), to_string(email)))
-      | _ => None
-      };
-
-    user
-    |> Option.bind(_, ((id, email)) =>
-         switch (id, email) {
-         | (Some(id), Some(email)) => Some({id, email})
-         | _ => None
-         }
-       );
-  };

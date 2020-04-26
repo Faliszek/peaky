@@ -1,7 +1,3 @@
-Fmt_tty.setup_std_outputs();
-Logs.set_level(Some(Logs.Info));
-Logs.set_reporter(Logs_fmt.reporter());
-
 let graphql_handler = Morph_graphql_server.make(Schema.schema);
 
 let handler = (request: Morph.Request.t('a)) => {
@@ -16,8 +12,6 @@ let handler = (request: Morph.Request.t('a)) => {
 
   switch (request.meth, path_parts) {
   | (_, []) => Morph.Response.text("Hello world!", Response.empty)
-  // | (_, ["greet", name]) =>
-  // Morph.Response.text("Hello " ++ name ++ "!", Response.empty)
   | (`GET, ["graphql"]) =>
     Morph.Response.text(GraphiQL.html, Morph.Response.empty)
   | (_, ["graphql"]) => graphql_handler(request)
@@ -28,7 +22,8 @@ let handler = (request: Morph.Request.t('a)) => {
 let http_server = Morph_server_http.make(~port=2020, ());
 
 let run = () => {
-  Db.connect() |> ignore;
+  Db.connect()
+  |> Lwt.on_failure(_, e => print_endline(Printexc.to_string(e)));
 
   Morph.start(~servers=[http_server], ~middlewares=[Middleware.logger], req =>
     handler(req)

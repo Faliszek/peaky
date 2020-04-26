@@ -29,7 +29,7 @@ let schema: Schema.schema(Hmap.t) =
               arg("password", non_null(string)),
             ],
           ~resolve=(_info, (), email, password) => {
-          Db_Users.create(~email, ~password) |> Lwt_result.ok
+          Users_Api.create(~email, ~password) |> Lwt_result.ok
         }),
       ],
       [
@@ -45,14 +45,14 @@ let schema: Schema.schema(Hmap.t) =
           ~typ=non_null(list(non_null(user))),
           ~args=[],
           ~resolve=(_info, ()) => {
-          Db_Users.getAll() |> Lwt_result.ok
+          Users_Api.getAll() |> Lwt_result.ok
         }),
         io_field(
           "user",
           ~typ=user,
           ~args=Arg.[arg("id", non_null(string))],
           ~resolve=(_, _, id) => {
-          Db_Users.get(~id) |> Lwt_result.ok
+          Users_Api.getOne(~id) |> Lwt_result.ok
         }),
       ],
     )
