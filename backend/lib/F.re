@@ -1,5 +1,5 @@
 module Array = {
-  let flatten = arr =>
+  let collect = arr =>
     arr
     |> Array.fold_left(
          (acc, a) =>
@@ -12,7 +12,7 @@ module Array = {
 };
 
 module List = {
-  let flatten = list =>
+  let collect = list =>
     list
     |> List.fold_left(
          (acc, a) =>

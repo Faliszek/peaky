@@ -13,5 +13,23 @@ let pool: Lwt_pool.t(Pgx_lwt.t) = {
 
 let withPool = connectFunc => Lwt_pool.use(pool, connectFunc);
 
-let query = (~params=?, query: string) =>
-  withPool(connection => Pgx_lwt.execute(~params?, connection, query));
+let query = (~params=?, query: string) => {
+  // let result =
+  withPool(connection
+    => Pgx_lwt.execute(~params?, connection, query));
+    // switch (result) {
+    // | exception e => Result.Error("Database error: " ++ Printexc.to_string(e))
+    // | data => Result.Ok(data)
+    // };
+};
+
+let queryMany = (~params, ~queries: list(string)) => {
+  let query =
+    queries |> List.fold_left((acc, query) => acc ++ query ++ ";", "");
+  // let result =
+  withPool(connection => Pgx_lwt.execute_many(~params, ~query, connection));
+  // switch (result) {
+  // | exception e => Result.Error("Database error: " ++ Printexc.to_string(e))
+  // | data => Result.Ok(data)
+  // };
+};

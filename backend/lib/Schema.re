@@ -1,4 +1,4 @@
-open User;
+open User.Api;
 open Graphql_lwt;
 
 let user =
@@ -28,8 +28,8 @@ let schema: Schema.schema(Hmap.t) =
               arg("email", non_null(string)),
               arg("password", non_null(string)),
             ],
-          ~resolve=(_info, (), name, email) => {
-          None |> Lwt.return |> Lwt_result.ok
+          ~resolve=(_info, (), email, password) => {
+          Db_Users.create(~email, ~password) |> Lwt_result.ok
         }),
       ],
       [

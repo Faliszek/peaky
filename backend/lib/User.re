@@ -1,20 +1,23 @@
 let table = "p_users";
 
-type t = {
-  id: string,
-  email: string,
-};
-
-let create = (~email) => ();
-
-module Db = {
+module Domain = {
   type t = {
     id: string,
     email: string,
     password: string,
   };
+};
 
-  let toApi = user => {
+module Api = {
+  type t = {
+    id: string,
+    email: string,
+  };
+};
+
+let toApi: 't => option(Api.t) =
+  user => {
+    open Api;
     let user =
       switch (user) {
       | [id, email, _] =>
@@ -30,4 +33,3 @@ module Db = {
          }
        );
   };
-};
