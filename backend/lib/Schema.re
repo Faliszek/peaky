@@ -19,20 +19,19 @@ let user =
 let schema: Schema.schema(Hmap.t) =
   Schema.(
     schema(
-      ~mutations=[], // field(
-      //   "addUser",
-      //   ~typ=non_null(user),
-      //   ~args=
-      //     Arg.[
-      //       arg("name", non_null(string)),
-      //       arg("email", non_null(string)),
-      //     ],
-      //   ~resolve=(_info, (), name, email) => {
-      //     let new_user = {id: List.length(users^) + 1, name, email};
-      //     users := [new_user, ...users^];
-      //     new_user;
-      //   },
-      // ),
+      ~mutations=[
+        io_field(
+          "register",
+          ~typ=user,
+          ~args=
+            Arg.[
+              arg("email", non_null(string)),
+              arg("password", non_null(string)),
+            ],
+          ~resolve=(_info, (), name, email) => {
+          None |> Lwt.return |> Lwt_result.ok
+        }),
+      ],
       [
         io_field(
           "documents",
@@ -53,12 +52,8 @@ let schema: Schema.schema(Hmap.t) =
           ~typ=user,
           ~args=Arg.[arg("id", non_null(string))],
           ~resolve=(_, _, id) => {
-            print_endline(id);
-            Db_Users.get(~id) |> Lwt_result.ok;
-          },
-        ),
+          Db_Users.get(~id) |> Lwt_result.ok
+        }),
       ],
     )
   );
-
-Graphql_lwt.Schema.Arg.arg;
