@@ -39,15 +39,26 @@ let schema: Schema.schema(Hmap.t) =
           ~typ=non_null(list(non_null(user))),
           ~args=Arg.[],
           ~resolve=(_info, ()) => {
-          Lwt.return([]) |> Lwt_result.ok
+          [] |> Lwt.return |> Lwt_result.ok
         }),
         io_field(
           "users",
           ~typ=non_null(list(non_null(user))),
-          ~args=Arg.[],
+          ~args=[],
           ~resolve=(_info, ()) => {
           Db_Users.getAll() |> Lwt_result.ok
         }),
+        io_field(
+          "user",
+          ~typ=user,
+          ~args=Arg.[arg("id", non_null(string))],
+          ~resolve=(_, _, id) => {
+            print_endline(id);
+            Db_Users.get(~id) |> Lwt_result.ok;
+          },
+        ),
       ],
     )
   );
+
+Graphql_lwt.Schema.Arg.arg;

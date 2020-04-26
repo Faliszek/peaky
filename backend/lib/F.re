@@ -22,4 +22,8 @@ module List = {
            },
          [],
        );
+
+  let headOption = list => List.nth_opt(list, 0);
 };
+
+module Option = {};

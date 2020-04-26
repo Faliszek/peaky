@@ -25,12 +25,10 @@ let handler = (request: Morph.Request.t('a)) => {
   };
 };
 
-let http_server = Morph_server_http.make(~port=1235, ());
+let http_server = Morph_server_http.make(~port=2020, ());
 
 let run = () =>
-  Morph.start(
-    ~servers=[http_server],
-    ~middlewares=[Middleware.logger],
-    handler,
+  Morph.start(~servers=[http_server], ~middlewares=[Middleware.logger], req =>
+    handler(req)
   )
   |> Lwt_main.run;
