@@ -5,6 +5,7 @@ module DTO = {
     id: string,
     email: string,
     password: string,
+    archived: bool,
     createdAt: string,
     updatedAt: string,
   };
@@ -15,6 +16,7 @@ module Domain = {
     id: string,
     email: string,
     password: string,
+    archived: bool,
   };
 };
 
@@ -22,5 +24,6 @@ module Api = {
   type t = {
     id: string,
     email: string,
+    archived: bool,
   };
 };

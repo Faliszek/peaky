@@ -1,4 +1,5 @@
-let toApi = (u: User.DTO.t) => User.Api.{id: u.id, email: u.email};
+let toApi = (u: User.DTO.t) =>
+  User.Api.{id: u.id, email: u.email, archived: u.archived};
 
 let getOne = (~id) => {
   let user = Users_DTO.getOne(~id);
@@ -13,5 +14,15 @@ let getAll = () => {
 };
 
 let create = (~email, ~password) => {
-  Users_Inf.create(~email, ~password);
+  Users_DTO.create(~email, ~password, ());
+};
+
+let archive = (~id) => {
+  Users_DTO.setArchived(~id, ~value=true)
+  |> Lwt.map(u => u |> Option.map(toApi));
+};
+
+let restore = (~id) => {
+  Users_DTO.setArchived(~id, ~value=false)
+  |> Lwt.map(u => u |> Option.map(toApi));
 };
