@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS p_users  (
     email varchar(255) not  null, 
     password text not null,
     archived boolean not null,
+    patients
     created_at timestamp not null,
     updated_at timestamp not null
 );

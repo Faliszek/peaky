@@ -5,8 +5,6 @@
   (libraries 
     pastel.lib
     morph 
-    morph_base 
-    morph_server_http 
     morph_graphql_server 
     uri 
     graphql-lwt 
@@ -15,6 +13,5 @@
     logs.fmt
     fmt.tty
     console.lib
-    pgx
-    pgx_lwt
+    pgx_lwt_unix
     ))

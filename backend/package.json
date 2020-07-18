@@ -24,28 +24,26 @@
     "restart:database": "psql -U pawelfalisz -d pawelfalisz -f clean.sql && psql -U pawelfalisz -d pawelfalisz -f init.sql"
   },
   "dependencies": {
+    "@esy-ocaml/reason": "*",
     "@opam/dune": "*",
     "@reason-native/console": "*",
     "@reason-native/pastel": "*",
-    "@reason-native-web/morph": "^0.3.0",
-    "@reason-native-web/morph_base": "^0.3.0",
-    "@reason-native-web/morph_server_http": "^0.3.0",
-    "@reason-native-web/morph_graphql_server": "*",
-    "@esy-ocaml/reason": ">= 3.4.0 < 3.6.0",
+    "@reason-native-web/morph": "^0.6.1",
+    "@reason-native-web/morph_graphql_server": "^0.6.1",
     "@opam/uri": "*",
     "@opam/mtime": "*",
     "@opam/fmt": "*",
     "@opam/logs": "*",
     "@opam/core": "*",
-    "@opam/pgx_lwt": "0.1",
+    "@opam/pgx_lwt_unix": "1.0",
     "@opam/jwto": "*",
-    "ocaml": "~4.8.1000"
+    "ocaml": "~4.10.0"
   },
   "devDependencies": {
     "@opam/merlin": "*",
     "@reason-native/rely": "*",
     "refmterr": "*",
-    "ocaml": "~4.8.1000",
+    "ocaml": "~4.10.0",
     "@opam/odoc": "*"
   },
   "resolutions": {
