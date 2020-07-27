@@ -3,10 +3,18 @@ CREATE TABLE IF NOT EXISTS p_users  (
     email varchar(255) not  null, 
     password text not null,
     archived boolean not null,
-    patients
     created_at timestamp not null,
     updated_at timestamp not null
 );
+
+CREATE TABLE IF NOT EXISTS p_conservations  (
+    id SERIAL PRIMARY KEY, 
+    users text[]
+    messages text[]
+    created_at timestamp not null,
+    updated_at timestamp not null
+);
+
 
 
 INSERT INTO p_users (email, password, archived, created_at, updated_at)

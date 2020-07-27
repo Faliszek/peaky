@@ -25,26 +25,26 @@
   },
   "dependencies": {
     "@esy-ocaml/reason": "*",
+    "@opam/core": "*",
     "@opam/dune": "*",
-    "@reason-native/console": "*",
-    "@reason-native/pastel": "*",
+    "@opam/fmt": "*",
+    "@opam/jwto": "*",
+    "@opam/logs": "*",
+    "@opam/mtime": "*",
+    "@opam/pgx_lwt_unix": "1.0",
+    "@opam/uri": "*",
     "@reason-native-web/morph": "^0.6.1",
     "@reason-native-web/morph_graphql_server": "^0.6.1",
-    "@opam/uri": "*",
-    "@opam/mtime": "*",
-    "@opam/fmt": "*",
-    "@opam/logs": "*",
-    "@opam/core": "*",
-    "@opam/pgx_lwt_unix": "1.0",
-    "@opam/jwto": "*",
+    "@reason-native/console": "*",
+    "@reason-native/pastel": "*",
     "ocaml": "~4.10.0"
   },
   "devDependencies": {
     "@opam/merlin": "*",
+    "@opam/odoc": "*",
     "@reason-native/rely": "*",
-    "refmterr": "*",
     "ocaml": "~4.10.0",
-    "@opam/odoc": "*"
+    "refmterr": "*"
   },
   "resolutions": {
     "@opam/httpaf-lwt-unix": "anmonteiro/httpaf:httpaf-lwt-unix.opam#76b461bed081c64908fb1fdfa076ab2c936ca622",

@@ -3,15 +3,15 @@
   (flags (-w -40 -w +26))
   (public_name backend)
   (libraries 
-    pastel.lib
+    console.lib
+    fmt.tty
+    graphql-lwt 
+    logs.fmt
     morph 
     morph_graphql_server 
-    uri 
-    graphql-lwt 
     mtime 
     mtime.clock.os
-    logs.fmt
-    fmt.tty
-    console.lib
+    pastel.lib
     pgx_lwt_unix
+    uri
     ))

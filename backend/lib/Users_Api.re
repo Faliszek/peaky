@@ -4,7 +4,7 @@ let toApi = (u: User.DTO.t) =>
 let getOne = (~id) => {
   let user = Users_DTO.getOne(~id);
 
-  user |> Lwt.map(u => u |> Option.map(toApi));
+  user |> Lwt.map(Option.map(toApi));
 };
 
 let getAll = () => {
@@ -18,11 +18,9 @@ let create = (~email, ~password) => {
 };
 
 let archive = (~id) => {
-  Users_DTO.setArchived(~id, ~value=true)
-  |> Lwt.map(u => u |> Option.map(toApi));
+  Users_DTO.setArchived(~id, ~value=true) |> Lwt.map(Option.map(toApi));
 };
 
 let restore = (~id) => {
-  Users_DTO.setArchived(~id, ~value=false)
-  |> Lwt.map(u => u |> Option.map(toApi));
+  Users_DTO.setArchived(~id, ~value=false) |> Lwt.map(Option.map(toApi));
 };

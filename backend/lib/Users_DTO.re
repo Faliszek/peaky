@@ -52,10 +52,6 @@ let create = (~email, ~password) => {
   Users_Inf.create(~email, ~password);
 };
 
-// let setArchived = (~id) => {
-//   Users_Inf.setArchived(~id, ~value=true);
-// };
-
 let setArchived = (~id, ~value) => {
   Users_Inf.setArchived(~id, ~value)
   |> Lwt.map(u => u |> Option.bind(_, fromRow) |> Option.bind(_, toDTO));
