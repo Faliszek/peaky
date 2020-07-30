@@ -28,6 +28,7 @@
     "@opam/core": "*",
     "@opam/dune": "*",
     "@opam/fmt": "*",
+    "@opam/irmin-unix": "2.2.0",
     "@opam/jwto": "*",
     "@opam/logs": "*",
     "@opam/mtime": "*",
@@ -50,6 +51,14 @@
     "@opam/httpaf-lwt-unix": "anmonteiro/httpaf:httpaf-lwt-unix.opam#76b461bed081c64908fb1fdfa076ab2c936ca622",
     "@opam/httpaf-lwt": "anmonteiro/httpaf:httpaf-lwt.opam#76b461bed081c64908fb1fdfa076ab2c936ca622",
     "@opam/httpaf": "anmonteiro/httpaf:httpaf.opam#76b461bed081c64908fb1fdfa076ab2c936ca622",
-    "@opam/opium_core": "rgrinberg/opium:opium_core.opam#287b83f85bcf6c75d503b1edab77c7ec524f9090"
+    "@opam/opium_core": "rgrinberg/opium:opium_core.opam#287b83f85bcf6c75d503b1edab77c7ec524f9090",
+    "@opam/checkseum": {
+      "source": "mirage/checkseum:checkseum.opam#14b524e255cc38583c7749924b848b4215343641",
+      "override": {
+        "dependencies": {
+          "@opam/ocamlfind": "*"
+        }
+      }
+    }
   }
 }
