@@ -7,6 +7,7 @@
     fmt.tty
     graphql-lwt 
     logs.fmt
+    jwto
     irmin-unix
     morph 
     morph_graphql_server 
