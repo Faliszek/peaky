@@ -1,6 +1,7 @@
 open User.Api;
 open Graphql_lwt;
 
+
 let user =
   Schema.(
     obj("user", ~doc="A user in the system", ~fields=_ =>
@@ -19,6 +20,7 @@ let user =
       ]
     )
   );
+
 
 
 let schema: Schema.schema(Hmap.t) =

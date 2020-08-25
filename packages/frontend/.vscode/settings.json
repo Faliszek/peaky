@@ -7,7 +7,7 @@
     "**/.DS_Store": true
   },
   "ocaml.sandbox": {
-    "root": "/Users/pawelfalisz/Documents/Reason/peaky/frontend",
+    "root": "/Users/pawelfalisz/Documents/Reason/peaky/packages/frontend",
     "kind": "esy"
   }
 }
