@@ -1,1 +1,0 @@
-{ "dirs" : [ "src" ] , "pkgs" : [ [ "bs-platform" , "/Users/pawelfalisz/Documents/Reason/peaky/packages/frontend/node_modules/bs-platform" ] , [ "reason-react" , "/Users/pawelfalisz/Documents/Reason/peaky/packages/frontend/node_modules/reason-react" ] ] , "generated" : [] }
