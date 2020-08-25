@@ -5,7 +5,7 @@ Logs.set_reporter(Logs_fmt.reporter());
 let schema: Graphql_lwt.Schema.schema(Hmap.t) =
   Graphql_lwt.Schema.(
     schema(
-      ~mutations=[] @ Users_Schema.mutations @ Auth_Api.mutations,
+      ~mutations=[] @ Users_Schema.mutations @ Auth_Schema.mutations,
       Users_Schema.query,
     )
   );
