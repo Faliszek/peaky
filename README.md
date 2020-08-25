@@ -1,6 +1,6 @@
-# ⛑peaky
+# ⛑ peaky
 
-## 🚧WIP
+#### 🚧 WIP
 
 This project will be monorepo of web app. Both backend and frontend will be written in Reason.
 
