@@ -11,7 +11,7 @@ node_modules/
 build
 yarn.lock
 yarn-error.log
-frontend/lib/bs/
+packages/frontend/lib/bs/
 
 _build
 _esy
