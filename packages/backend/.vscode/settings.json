@@ -1,5 +1,6 @@
 {
   "errorLens.addAnnotationTextPrefixes": true,
+  "editor.formatOnSave": true,
   "ocaml.sandbox": {
     "root": "/Users/pawelfalisz/Documents/Reason/peaky/packages/backend",
     "kind": "esy"

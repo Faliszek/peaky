@@ -15,6 +15,17 @@ let getOne = (~id) =>
     |> Lwt.map(users => users |> F.List.headOption)
   };
 
+let getByEmail = (~email) =>
+  switch (email) {
+  | exception e => Lwt.return(None)
+  | email =>
+    Db.query(
+      ~params=[Pgx_value.of_string(email)],
+      "select * from p_users where email=$1",
+    )
+    |> Lwt.map(users => users |> F.List.headOption)
+  };
+
 let setArchived = (~id, ~value) => {
   switch (int_of_string(id)) {
   | exception e => Lwt.return(None)

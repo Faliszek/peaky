@@ -31,14 +31,16 @@
     "@opam/jose": "0.5.1",
     "@opam/logs": "*",
     "@opam/pgx_lwt_unix": "1.0",
+    "@opam/mirage-crypto-rng": "0.8.4",
+    "@opam/safepass": "3.0",
     "@opam/uri": "*",
+    "@opam/yojson": "1.7.0",
     "@reason-native-web/morph": "^0.6.1",
     "@reason-native-web/morph_graphql_server": "^0.6.1",
     "@reason-native/console": "*",
     "@reason-native/pastel": "*",
     "ocaml": "~4.10.0"
   },
-  
   "devDependencies": {
     "@opam/merlin": "*",
     "@opam/odoc": "*",

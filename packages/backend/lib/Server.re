@@ -2,7 +2,15 @@ Fmt_tty.setup_std_outputs();
 Logs.set_level(Some(Logs.Info));
 Logs.set_reporter(Logs_fmt.reporter());
 
-let graphql_handler = Morph_graphql_server.make(Schema.schema);
+let schema: Graphql_lwt.Schema.schema(Hmap.t) =
+  Graphql_lwt.Schema.(
+    schema(
+      ~mutations=[] @ Users_Schema.mutations @ Auth_Api.mutations,
+      Users_Schema.query,
+    )
+  );
+
+let graphql_handler = Morph_graphql_server.make(schema);
 
 let graphiql_handler = _ => Morph.Response.html(GraphiQL.html) |> Lwt.return;
 
@@ -23,7 +31,9 @@ let port =
 let http_server =
   Morph.Server.make(~port, ~address=Unix.inet_addr_loopback, ());
 
-let run = () =>
+let run = () => {
+  Mirage_crypto_rng_lwt.initialize();
+
   Morph.start(
     ~servers=[http_server],
     ~middlewares=[
@@ -32,3 +42,4 @@ let run = () =>
     Morph.Router.make(~get=getRoutes, ~post=postRoutes, ()),
   )
   |> Lwt_main.run;
+};

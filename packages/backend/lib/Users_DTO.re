@@ -48,6 +48,12 @@ let getOne = (~id) => {
   user |> Lwt.map(u => u |> Option.bind(_, fromRow) |> Option.bind(_, toDTO));
 };
 
+let getByEmail = (~email) => {
+  let user = Users_Inf.getByEmail(~email);
+
+  user |> Lwt.map(u => u |> Option.bind(_, fromRow) |> Option.bind(_, toDTO));
+};
+
 let create = (~email, ~password) => {
   Users_Inf.create(~email, ~password);
 };
