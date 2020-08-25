@@ -1,4 +1,8 @@
 {
   "errorLens.addAnnotationTextPrefixes": true,
-  "reason_language_server.opens_codelens": true
+  "reason_language_server.opens_codelens": true,
+  "ocaml.sandbox": {
+    "root": "/Users/pawelfalisz/Documents/Reason/peaky/backend",
+    "kind": "esy"
+  }
 }

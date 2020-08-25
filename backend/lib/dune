@@ -7,12 +7,9 @@
     fmt.tty
     graphql-lwt 
     logs.fmt
-    jwto
-    irmin-unix
     morph 
-    morph_graphql_server 
-    mtime 
-    mtime.clock.os
+    morph_graphql_server
+    jose
     pastel.lib
     pgx_lwt_unix
     uri

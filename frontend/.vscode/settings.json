@@ -5,5 +5,9 @@
     "**/.hg": true,
     "**/CVS": true,
     "**/.DS_Store": true
+  },
+  "ocaml.sandbox": {
+    "root": "/Users/pawelfalisz/Documents/Reason/peaky/frontend",
+    "kind": "esy"
   }
 }

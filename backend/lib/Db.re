@@ -24,6 +24,9 @@ let query = (~params=?, query: string) => {
         }; */
 };
 
+
+
+
 let queryMany = (~params, ~queries: list(string)) => {
   let query =
     queries |> List.fold_left((acc, query) => acc ++ query ++ ";", "");

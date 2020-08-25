@@ -28,10 +28,8 @@
     "@opam/core": "*",
     "@opam/dune": "*",
     "@opam/fmt": "*",
-    "@opam/irmin-unix": "2.2.0",
-    "@opam/jwto": "*",
+    "@opam/jose": "0.5.1",
     "@opam/logs": "*",
-    "@opam/mtime": "*",
     "@opam/pgx_lwt_unix": "1.0",
     "@opam/uri": "*",
     "@reason-native-web/morph": "^0.6.1",
@@ -40,9 +38,11 @@
     "@reason-native/pastel": "*",
     "ocaml": "~4.10.0"
   },
+  
   "devDependencies": {
     "@opam/merlin": "*",
     "@opam/odoc": "*",
+    "@opam/ocaml-lsp-server": "ocaml/ocaml-lsp:ocaml-lsp-server.opam",
     "@reason-native/rely": "*",
     "ocaml": "~4.10.0",
     "refmterr": "*"
