@@ -4,9 +4,15 @@ module.exports = {
     public: "/",
     src: "/_dist_",
   },
-  plugins: ["@snowpack/plugin-react-refresh"],
+  plugins: [
+    "@snowpack/plugin-react-refresh",
+    [
+      "@snowpack/plugin-build-script",
+      { cmd: "postcss", input: [".css"], output: [".css"] },
+    ],
+  ],
   scripts: {
-    /* ... */
+    "build:css": "postcss",
   },
   install: [
     /* ... */

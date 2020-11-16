@@ -6,6 +6,7 @@
     "**/CVS": true,
     "**/.DS_Store": true
   },
+  "css.lint.unknownAtRules": "ignore",
   "ocaml.sandbox": {
     "root": "/Users/pawelfalisz/Documents/Reason/peaky/packages/frontend",
     "kind": "esy"
