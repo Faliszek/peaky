@@ -1,0 +1,16 @@
+{
+  "name": "backend",
+  "version": "0.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "bs-express": "^1.0.2",
+    "bs-platform": "^8.3.3",
+    "express": "^4.17.1",
+    "express-graphql": "^0.11.0",
+    "graphql": "^15.4.0"
+  },
+  "scripts": {
+    "compile": "bsb -make-world -w"
+  }
+}
