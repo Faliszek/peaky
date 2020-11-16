@@ -8,13 +8,26 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
+    "@reasonml-community/graphql-ppx": "1.0.2-ca56c96.0",
+    "antd": "^4.8.4",
     "bs-platform": "^8.2.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "reason-react": "^0.9.1"
   },
   "scripts": {
     "compile": "bsb -make-world -w",
-    "start": "peaky index.html"
+    "start": "snowpack dev",
+    "get-schema": "npx get-graphql-schema http://localhost:4000/graphql  > schema.graphql && npx get-graphql-schema http://localhost:4000/graphql -j > graphql_schema.json",
+    "build:production": "./build.sh"
+  },
+  "devDependencies": {
+    "@snowpack/plugin-react-refresh": "^2.3.7",
+    "snowpack": "^2.17.1",
+    "rollup": "^2.33.1",
+    "rollup-plugin-brotli": "^3.0.1",
+    "rollup-plugin-bundle-size": "^1.0.3",
+    "rollup-plugin-gzip": "^2.5.0",
+    "rollup-plugin-terser": "^7.0.2"
   }
 }

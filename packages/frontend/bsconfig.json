@@ -9,8 +9,10 @@
     "module": "es6",
     "in-source": true
   },
+
   "suffix": ".bs.js",
-  "bs-dependencies": ["reason-react"],
+  "bs-dependencies": ["@reasonml-community/graphql-ppx", "reason-react"],
+  "ppx-flags": ["@reasonml-community/graphql-ppx/ppx"],
   "warnings": {
     "error": "+101"
   },
