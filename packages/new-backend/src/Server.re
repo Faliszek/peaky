@@ -13,6 +13,7 @@ module Graphql = {
     quoteOfTheDay: unit => string,
     random: unit => float,
     hello: unit => string,
+    signIn: Auth.payload => string,
   };
 
   type args = {
@@ -33,8 +34,10 @@ module Path = {
 let root: Graphql.root = {
   quoteOfTheDay: () =>
     Js.Math.random() < 0.5 ? "Take it easy" : "Salvation lies within",
+
   random: () => Js.Math.random(),
   hello: () => "Morning!",
+  signIn: Auth.signIn,
 };
 
 let schemaPath = Path.resolve() ++ "/src/schema.graphql";

@@ -1,6 +1,6 @@
 {
-  "name": "frontend-2",
-  "version": "0.1.0",
+  "name": "frontend",
+  "version": "0.0.1",
   "sources": {
     "dir": "src",
     "subdirs": true
@@ -11,14 +11,27 @@
   },
 
   "suffix": ".bs.js",
-  "bs-dependencies": ["@reasonml-community/graphql-ppx", "reason-react"],
-  "ppx-flags": ["@reasonml-community/graphql-ppx/ppx"],
+  "bs-dependencies": [
+    "@reasonml-community/graphql-ppx",
+    "reason-react",
+    "reason-apollo-client",
+    "re-formality"
+  ],
+  "ppx-flags": ["@reasonml-community/graphql-ppx/ppx", "re-formality/ppx"],
   "warnings": {
     "error": "+101"
   },
   "graphql": {
     "schema": "graphql_schema.json",
-    "extendQuery": "Bring_Query"
+
+    "apolloMode": true,
+    "extendMutation": "ApolloClient.GraphQL_PPX.ExtendMutation",
+    "extendQuery": "ApolloClient.GraphQL_PPX.ExtendQuery",
+    "extendSubscription": "ApolloClient.GraphQL_PPX.ExtendSubscription",
+    "templateTagReturnType": "ApolloClient.GraphQL_PPX.templateTagReturnType",
+    "templateTagImport": "gql",
+    "templateTagLocation": "@apollo/client",
+    "templateTagIsFunction": true
   },
   "namespace": true,
   "reason": { "react-jsx": 3 },

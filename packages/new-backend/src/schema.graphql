@@ -3,3 +3,7 @@ type Query {
   random: Float!
   hello: String
 }
+
+type Mutation {
+  signIn(email: String!, password: String!): String
+}

@@ -12,6 +12,10 @@
     "graphql": "^15.4.0"
   },
   "scripts": {
+    "start": "nodemon src/Server.bs.js",
     "compile": "bsb -make-world -w"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
   }
 }
