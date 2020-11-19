@@ -7,6 +7,16 @@ module.exports = {
   plugins: [
     "@snowpack/plugin-react-refresh",
     [
+      "snowpack-plugin-less",
+      {
+        javascriptEnabled: true,
+        modifyVars: {
+          "primary-color": "rgb(147, 197, 253)",
+          "border-radius-base": "1rem",
+        },
+      },
+    ],
+    [
       "@snowpack/plugin-build-script",
       { cmd: "postcss", input: [".css"], output: [".css"] },
     ],

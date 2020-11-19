@@ -5,6 +5,10 @@ directive @specifiedBy(
 ) on SCALAR
 
 type Query {
+  quoteOfTheDay: String
+  random: Float!
+  rollThreeDice: [Int]
   hello: String
+  goodMorning(arg: String!): String!
 }
 

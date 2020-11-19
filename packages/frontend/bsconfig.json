@@ -16,6 +16,10 @@
   "warnings": {
     "error": "+101"
   },
+  "graphql": {
+    "schema": "graphql_schema.json",
+    "extendQuery": "Bring_Query"
+  },
   "namespace": true,
   "reason": { "react-jsx": 3 },
   "refmt": 3

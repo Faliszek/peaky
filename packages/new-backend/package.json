@@ -6,6 +6,7 @@
   "dependencies": {
     "bs-express": "^1.0.2",
     "bs-platform": "^8.3.3",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-graphql": "^0.11.0",
     "graphql": "^15.4.0"

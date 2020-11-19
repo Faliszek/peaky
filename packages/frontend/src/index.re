@@ -1,5 +1,5 @@
 %bs.raw
-{|import 'antd/dist/antd.css'|};
+{|import './components.less'; // Import Ant Design styles by less entry|};
 %bs.raw
 {|import './index.css'|};
 

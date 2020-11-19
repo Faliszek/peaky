@@ -1,13 +1,68 @@
-// module Hello = [%graphql {|
-//   query Hello {
-//     hello
-//   }
-// |}];
+module Hello = [%graphql {|
+  query Hello {
+    hello
+  }
+|}];
+
+module Morning = [%graphql
+  {|
+  query Morning($arg: String!) {
+    goodMorning(arg: $arg)
+  }
+|}
+];
+
+type args;
+
+let toArgs: Js.t('a) => args = data => Obj.magic(data);
+
+let toJSON: Js.t('a) => Js.Json.t = a => a->Obj.magic;
+let toBody = data => Js.Json.stringify(data);
+
+let headers = {"Accept": "*/*", "Content-Type": "application/json"};
+
+[@bs.val] external fetch: (string, args) => unit = "fetch";
 
 [@react.component]
 let make = () => {
   let (email, setEmail) = React.useState(() => "");
   let (password, setPassword) = React.useState(() => "");
+  
+
+  
+  React.useEffect0(() => {
+    fetch(
+      "http://localhost:4000/graphql",
+      toArgs({
+        "_method": "POST",
+        "headers": headers,
+        "body":
+          {"query": Hello.query, "variables": Js.Nullable.null}
+          ->toJSON
+          ->toBody,
+      }),
+    );
+    None;
+  });
+
+  React.useEffect0(() => {
+    fetch(
+      "http://localhost:4000/graphql",
+      toArgs({
+        "_method": "POST",
+        "headers": headers,
+        "body":
+          {
+            "query": Morning.query,
+            "variables": Morning.makeVariables(~arg="Dupa", ()),
+          }
+          ->toJSON
+          ->toBody,
+      }),
+    );
+    None;
+  });
+
   <div className="w-full min-h-screen bg-blue-300">
     <div className="py-32 w-1/3 m-auto">
       <h1 className="text-4xl mb-8 text-center text-gray-100">

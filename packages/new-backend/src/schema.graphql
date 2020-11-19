@@ -1,0 +1,5 @@
+type Query {
+  quoteOfTheDay: String
+  random: Float!
+  hello: String
+}
