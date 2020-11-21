@@ -25,8 +25,12 @@ let make = () => {
     LoginForm.useForm(
       ~initialInput=initialState,
       ~onSubmit=({email, password}, actions) => {
-        // Js.log2(output, cb);
-        signIn({email, password}) |> ignore;
+        signIn({email, password})
+        ->Request.onFinish(
+            ~onOk=({signIn}) => Auth.signIn(~token=signIn),
+            ~onError=_ => (),
+          );
+
         actions.notifyOnFailure();
       },
     );

@@ -1,0 +1,23 @@
+<component name="libraryTable">
+  <library name="Bucklescript" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/node_modules/@reasonml-community/graphql-ppx" />
+        <item url="file://$PROJECT_DIR$/node_modules/re-debouncer" />
+        <item url="file://$PROJECT_DIR$/node_modules/re-formality" />
+        <item url="file://$PROJECT_DIR$/node_modules/reason-apollo-client" />
+        <item url="file://$PROJECT_DIR$/node_modules/reason-promise" />
+        <item url="file://$PROJECT_DIR$/node_modules/reason-react" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/node_modules/@reasonml-community/graphql-ppx" />
+      <root url="file://$PROJECT_DIR$/node_modules/re-debouncer" />
+      <root url="file://$PROJECT_DIR$/node_modules/re-formality" />
+      <root url="file://$PROJECT_DIR$/node_modules/reason-apollo-client" />
+      <root url="file://$PROJECT_DIR$/node_modules/reason-promise" />
+      <root url="file://$PROJECT_DIR$/node_modules/reason-react" />
+    </CLASSES>
+    <SOURCES />
+  </library>
+</component>
