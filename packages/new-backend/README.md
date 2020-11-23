@@ -1,6 +1,5 @@
-
-
 # Build
+
 ```
 npm run build
 ```
@@ -11,6 +10,15 @@ npm run build
 npm run watch
 ```
 
+# Firebase
 
-# Editor
-If you use `vscode`, Press `Windows + Shift + B` it will build automatically
+// SINGLE GET
+return firebase
+        .database()
+        .ref("/test/")
+        .once("value")
+        .then((snapshot) => {
+        console.log(snapshot.val());
+        return snapshot.val();
+        // ...
+        });

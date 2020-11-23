@@ -24,3 +24,5 @@ lib/bs
 .vscode
 .merlin
 .bsb.lock
+
+src/Config.re

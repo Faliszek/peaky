@@ -9,11 +9,14 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-graphql": "^0.11.0",
+    "firebase": "^8.1.1",
+    "firebase-admin": "^9.4.1",
     "graphql": "^15.4.0"
   },
   "scripts": {
     "start": "nodemon src/Server.bs.js",
-    "compile": "bsb -make-world -w"
+    "compile": "bsb -make-world -w",
+    "compile:clean": "bsb -clean-world"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"
