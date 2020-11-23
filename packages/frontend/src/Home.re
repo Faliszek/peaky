@@ -94,9 +94,9 @@ let moveY = 0.;
 
 let oneMeterInPx = 20.598756;
 
-let homeH = 18.5 *. oneMeterInPx;
+let homeH = 21.62 *. oneMeterInPx;
 
-let homeW = 26.6 *. oneMeterInPx;
+let homeW = 26.66 *. oneMeterInPx;
 
 let inM = v => v *. oneMeterInPx;
 

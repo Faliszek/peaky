@@ -9,11 +9,3 @@ type config = {
 };
 
 [@bs.module "firebase"] external make: config => unit = "initializeApp";
-
-module Database = {
-  type ref('a) = {set: Js.t('a)};
-
-  type t;
-  [@bs.module "firebase"] external make: unit => t = "database";
-  //   [@bs.module "firebase"] external make: unit => unit = "database";
-};

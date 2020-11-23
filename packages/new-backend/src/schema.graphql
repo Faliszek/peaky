@@ -1,7 +1,14 @@
+type User {
+  email: String!
+  firstName: String!
+  lastName: String!
+}
+
 type Query {
   quoteOfTheDay: String
   random: Float!
   hello: String
+  me: User
 }
 
 type Mutation {

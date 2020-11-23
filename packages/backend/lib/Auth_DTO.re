@@ -29,9 +29,9 @@ let createSignedToken = (~id) => {
   | Ok(result) =>
     let rsa = Jose.Jwk.make_priv_rsa(result);
     switch (rsa) {
-    | p =>
-      let header = Header.make_header(p);
-      let token = Jwt.sign(~header, ~payload, p);
+    | rsa =>
+      let header = Header.make_header(rsa);
+      let token = Jwt.sign(~header, ~payload, rsa);
       switch (token) {
       | Ok(token) => Some(token)
       | Error(msg) => None

@@ -14,7 +14,9 @@ let schemaPath = Path.resolve() ++ "/src/schema.graphql";
 let schema = schemaPath->File.read("utf8")->Graphql.build;
 
 Firebase.make(Config.default);
-Firebase.Database.make();
+
+Database.make();
+let auth = Auth.make();
 
 Express.(
   {
@@ -23,7 +25,16 @@ Express.(
     app->App.use(Cors.make());
     app->App.useOnPath(
       ~path="/graphql",
-      Graphql.(make({schema, graphiql: true, rootValue: root})),
+      Graphql.(
+        make({
+          schema,
+          graphiql: true,
+          rootValue: root,
+          context: {
+            auth: auth,
+          },
+        })
+      ),
     );
 
     app->App.listen(~port=4000, ()) |> ignore;

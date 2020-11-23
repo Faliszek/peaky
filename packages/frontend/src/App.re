@@ -72,7 +72,6 @@ let instance =
   );
 
 [@react.component]
-let make = () =>
-  <ApolloClient.React.ApolloProvider client=instance>
+let make = () =>  <ApolloClient.React.ApolloProvider client=instance>
     <div> <SignIn_View /> </div>
   </ApolloClient.React.ApolloProvider>;
