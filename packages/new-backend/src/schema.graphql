@@ -1,7 +1,6 @@
 type User {
   email: String!
-  firstName: String!
-  lastName: String!
+  uid: String!
 }
 
 type Query {
@@ -13,4 +12,5 @@ type Query {
 
 type Mutation {
   signIn(email: String!, password: String!): String
+  signUp(email: String!, password: String!): User
 }

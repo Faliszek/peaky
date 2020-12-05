@@ -9,20 +9,20 @@ let httpLink =
     (),
   );
 
-let wsLink =
-  ApolloClient.Link.WebSocketLink.(
-    make(
-      ~uri="ws://" ++ graphqlEndpoint,
-      ~options=
-        ClientOptions.make(
-          ~connectionParams=
-            ConnectionParams(Obj.magic({"headers": headers})),
-          ~reconnect=true,
-          (),
-        ),
-      (),
-    )
-  );
+// let wsLink =
+//   ApolloClient.Link.WebSocketLink.(
+//     make(
+//       ~uri="ws://" ++ graphqlEndpoint,
+//       ~options=
+//         ClientOptions.make(
+//           ~connectionParams=
+//             ConnectionParams(Obj.magic({"headers": headers})),
+//           ~reconnect=true,
+//           (),
+//         ),
+//       (),
+//     )
+//   );
 
 let terminatingLink =
   ApolloClient.Link.split(
@@ -72,6 +72,28 @@ let instance =
   );
 
 [@react.component]
-let make = () =>  <ApolloClient.React.ApolloProvider client=instance>
-    <div> <SignIn_View /> </div>
+let make = () => {
+  let token = Auth.getToken();
+  let url = ReasonReactRouter.useUrl();
+
+  Js.log(token);
+
+  <ApolloClient.React.ApolloProvider client=instance>
+    <div>
+      {switch (token) {
+       | None => <SignIn_View />
+       | Some(_) =>
+         <Layout>
+           {switch (url.path) {
+            | ["patients"] => <Patients />
+            | ["visits"] => <Visits />
+            | ["friends"] => <Friends />
+            | [] => <Calendar />
+
+            | _ => React.null
+            }}
+         </Layout>
+       }}
+    </div>
   </ApolloClient.React.ApolloProvider>;
+};

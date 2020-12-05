@@ -1,21 +1,5 @@
 type schema;
 
-// module User = {
-//   type t = {
-//     email: string,
-//     firstName: string,
-//     lastName: string,
-//   };
-
-//   let resolve = (payload, request, _, _) => {
-//     {
-//       email: "pawlic7@gmail.com",
-//       firstName: {j|Paweł|j},
-//       lastName: {j|Falisz|j},
-//     };
-//   };
-// };
-
 type payload;
 
 type info;
@@ -25,14 +9,16 @@ type request = {
 
 type context = Graphql_Context.t;
 
+type res('a) = Promise.rejectable('a, Js.Promise.error);
+
 type root = {
   quoteOfTheDay: unit => string,
   random: unit => float,
   hello: unit => string,
-  signIn:
-    (Auth.payload, Graphql_Context.t, request, info) =>
-    Promise.rejectable(option(string), Promise.never),
-  // me: (payload, request, context, info) => User.t,
+  signIn: (Graphql_Auth.payload, Graphql_Context.t) => res(option(string)),
+  signUp:
+    (Graphql_Auth.payload, Graphql_Context.t) =>
+    res(option(Firebase.Auth.User.t)),
 };
 
 type graphQlConfig = {
@@ -54,5 +40,6 @@ let root: root = {
   random: () => Js.Math.random(),
   hello: () => "Morning!",
   signIn: Graphql_Auth.signIn,
+  signUp: Graphql_Auth.signUp,
   // me: User.resolve,
 };

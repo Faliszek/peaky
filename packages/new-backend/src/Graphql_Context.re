@@ -1,1 +1,4 @@
-type t = {auth: Auth.t};
+type t = {
+  auth: Firebase.Auth.t,
+  db: Firebase.Database.t,
+};

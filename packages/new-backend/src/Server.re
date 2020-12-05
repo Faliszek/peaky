@@ -1,22 +1,11 @@
-%raw
-{|
-// Set the configuration for your app
-  // TODO: Replace with your project's config object
-
-|};
-
-module Path = {
-  [@bs.module "path"] external resolve: unit => string = "resolve";
-};
-
 let schemaPath = Path.resolve() ++ "/src/schema.graphql";
 
 let schema = schemaPath->File.read("utf8")->Graphql.build;
 
-Firebase.make(Config.default);
+let app = Firebase.initializeApp(~options=Config.default);
 
-Database.make();
-let auth = Auth.make();
+let auth = app->Firebase.auth;
+let database = app->Firebase.database;
 
 Express.(
   {
@@ -31,7 +20,8 @@ Express.(
           graphiql: true,
           rootValue: root,
           context: {
-            auth: auth,
+            auth,
+            db: database,
           },
         })
       ),

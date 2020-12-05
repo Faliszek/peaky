@@ -12,11 +12,13 @@
     "firebase": "^8.1.1",
     "firebase-admin": "^9.4.1",
     "graphql": "^15.4.0",
-    "reason-promise": "^1.1.2"
+    "node-uuid": "^1.4.8",
+    "reason-promise": "^1.1.2",
+    "ws": "^7.4.0"
   },
   "scripts": {
     "start": "nodemon src/Server.bs.js",
-    "compile": "bsb -make-world -w",
+    "compile": "bsb -make-world -w -ws 0.0.0.0:5000",
     "compile:clean": "bsb -clean-world"
   },
   "devDependencies": {
