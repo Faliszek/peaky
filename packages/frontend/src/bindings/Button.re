@@ -7,12 +7,43 @@ let make = (~children, ~icon=?, ~onClick=?) =>
     {icon->Option.getWithDefault(React.null)}
   </button>;
 
+module SmallRound = {
+  [@react.component]
+  let make = (~icon, ~onClick=?) => {
+    <button
+      ?onClick
+      className="rounded-full bg-green-500 w-12 h-12 flex items-center justify-center shadow-md text-white cursor-pointer transition-colors hover:bg-green-400 focus:outline-none">
+      icon
+    </button>;
+  };
+};
+
 module CTA = {
   [@react.component]
-  let make = (~htmlType=?, ~loading=false, ~children) => {
+  let make =
+      (
+        ~htmlType=?,
+        ~loading=false,
+        ~children,
+        ~className=?,
+        ~icon=?,
+        ~type_=`primary,
+        ~onClick=?,
+      ) => {
+    let colors =
+      switch (type_) {
+      | `primary => "border border-green-400 bg-green-400  text-white hover:bg-green-300 hover:border-green-300"
+      | `ghost => "border border-green-400 bg-white  text-green-400 hover:text-green-300 hover:border-green-300"
+      };
+
     <button
+      ?onClick
       type_=?htmlType
-      className="relative px-8 h-12  shadow-lg flex items-center justify-center bg-green-400  text-white text-xl rounded-3xl focus:outline-none transition-colors hover:bg-green-300 overflow-hidden">
+      className=Cn.(
+        "relative px-8 h-12  shadow-lg flex items-center justify-center text-xl rounded-3xl focus:outline-none transition-colors  overflow-hidden"
+        + colors
+      )>
+      {icon->Option.getWithDefault(React.null)}
       children
       <span
         className=Cn.(

@@ -22,7 +22,7 @@ module Menu = {
   [@react.component]
   let make = () => {
     let url = ReasonReactRouter.useUrl();
-
+    Js.log(url.path);
     <nav
       className="w-40  h-screen  bg-white border-r-2 border-gray-100 z-10 pr-1 flex flex-col justify-between">
       <div>
@@ -47,17 +47,24 @@ module Menu = {
             icon={<Icons.User className="mr-3" size="14" />}
             text={j|Pacjenci|j}
             view=Router.Patients
-            active={Router.Patients == url.path->Router.toView}
+            active={
+              switch (url.path) {
+              | ["patients", _, _] => true
+              | ["patients", _] => true
+              | ["patients"] => true
+              | _ => false
+              }
+            }
           />
           <Item
             icon={<Icons.List className="mr-3" size="14" />}
-            text={j|Wizyty|j}
+            text={j|Historia|j}
             view=Router.Visits
             active={Router.Visits == url.path->Router.toView}
           />
           <Item
             icon={<Icons.Share className="mr-3" size="14" />}
-            text={j|Znajomi|j}
+            text={j|Konsultacje|j}
             view=Router.Friends
             active={Router.Friends == url.path->Router.toView}
           />

@@ -1,5 +1,7 @@
 type view =
   | Calendar
+  | PatientChat(string)
+  | Patient(string)
   | Patients
   | Friends
   | Visits
@@ -9,6 +11,8 @@ let toUrl = view =>
   switch (view) {
   | Calendar => "/"
   | Patients => "/patients"
+  | PatientChat(id) => {j|/patients/$id/chat|j}
+  | Patient(id) => {j|/patients/$id|j}
   | Friends => "/friends"
   | Visits => "/visits"
   | SignIn => "/sign-in"
@@ -16,6 +20,8 @@ let toUrl = view =>
 
 let toView = url =>
   switch (url) {
+  | ["patients", id, "chat"] => PatientChat(id)
+  | ["patients", id] => Patient(id)
   | ["friends"] => Friends
   | ["visits"] => Visits
   | ["patients"] => Patients
@@ -24,6 +30,7 @@ let toView = url =>
 
 let push = view => view->toUrl->ReasonReactRouter.push;
 
+[@bs.scope "history"] [@bs.val] external goBack: unit => unit = "back";
 // [@bs.send] external back: (Dom.window, unit) => unit = "back";
 
 // let goBack = () => [%bs.raw {|window.history.back()|}];
