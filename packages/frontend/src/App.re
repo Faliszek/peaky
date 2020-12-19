@@ -85,7 +85,8 @@ let make = () => {
        | Some(_) =>
          <Layout>
            {switch (url.path) {
-            | ["patients", id, "chat"] => <Patient_Chat_View id />
+            | ["patients", id, "video"] => <Patient_Video_Chat_View id />
+            | ["patients", id, "chat"] => <Patient_Chat_View _id=id />
             | ["patients", id] => <Patient_Details_View id />
             | ["patients"] => <Patient_List_View />
             | ["visits"] => <Visits />

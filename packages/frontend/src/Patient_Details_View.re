@@ -34,14 +34,15 @@ let make = (~id) => {
         </div>
         <div className="ml-16 flex  flex-1 flex-col items-start justify-start">
           <Button.CTA
-            className="w-48"
             onClick={_ => Router.(push(PatientChat(id)))}
             icon={<Icons.Message className="mr-4" />}
             type_=`ghost>
             <Text> {j|Rozpocznij chat|j} </Text>
           </Button.CTA>
           <div className="h-4" />
-          <Button.CTA className="w-48" icon={<Icons.Video className="mr-4" />}>
+          <Button.CTA
+            icon={<Icons.Video className="mr-4" />}
+            onClick={_ => Router.(push(PatientVideoChat(id)))}>
             <Text> {j|Rozpocznij videorozmowe|j} </Text>
           </Button.CTA>
         </div>

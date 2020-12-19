@@ -12,7 +12,7 @@
     "@reasonml-community/graphql-ppx": "1.0.2-ca56c96.0",
     "antd": "^4.8.4",
     "autoprefixer": "^9",
-    "bs-platform": "^8.2.0",
+    "bs-platform": "^8.4.2",
     "graphql": "^15.4.0",
     "postcss": "^7",
     "re-classnames": "^5.0.1",

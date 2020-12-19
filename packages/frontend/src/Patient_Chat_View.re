@@ -42,7 +42,7 @@ module Message = {
   };
 };
 [@react.component]
-let make = (~id) => {
+let make = (~_id) => {
   let {avatar, lastName, firstName} = patient;
 
   let name = firstName ++ " " ++ lastName;

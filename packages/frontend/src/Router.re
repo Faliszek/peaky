@@ -1,5 +1,6 @@
 type view =
   | Calendar
+  | PatientVideoChat(string)
   | PatientChat(string)
   | Patient(string)
   | Patients
@@ -11,6 +12,7 @@ let toUrl = view =>
   switch (view) {
   | Calendar => "/"
   | Patients => "/patients"
+  | PatientVideoChat(id) => {j|/patients/$id/video|j}
   | PatientChat(id) => {j|/patients/$id/chat|j}
   | Patient(id) => {j|/patients/$id|j}
   | Friends => "/friends"
@@ -21,6 +23,7 @@ let toUrl = view =>
 let toView = url =>
   switch (url) {
   | ["patients", id, "chat"] => PatientChat(id)
+  | ["patients", id, "video"] => PatientVideoChat(id)
   | ["patients", id] => Patient(id)
   | ["friends"] => Friends
   | ["visits"] => Visits

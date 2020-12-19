@@ -11,7 +11,7 @@ module.exports = {
       {
         javascriptEnabled: true,
         modifyVars: {
-          "primary-color": "#4fd1c5",
+          "primary-color": "#13b981",
           "border-radius-base": "1rem",
         },
       },

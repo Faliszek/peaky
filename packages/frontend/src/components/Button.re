@@ -2,7 +2,7 @@
 let make = (~children, ~icon=?, ~onClick=?) =>
   <button
     ?onClick
-    className=" px-4 py-2 border-green-500 text-green-500 font-medium rounded-lg transition-colors hover:text-white hover hover:bg-green-500 flex items-center">
+    className=" px-4 py-2 border-green-500 text-green-500 font-medium rounded-md transition-colors hover:text-white hover hover:bg-green-500 flex items-center">
     <span className=Cn.(icon->mapSome(_ => "mr-2"))> children </span>
     {icon->Option.getWithDefault(React.null)}
   </button>;
@@ -40,8 +40,9 @@ module CTA = {
       ?onClick
       type_=?htmlType
       className=Cn.(
-        "relative px-8 h-12  shadow-lg flex items-center justify-center text-xl rounded-3xl focus:outline-none transition-colors  overflow-hidden"
+        "relative px-8 h-12  shadow-lg flex items-center justify-center text-lg rounded-3xl focus:outline-none transition-colors  overflow-hidden"
         + colors
+        + Cn.mapSome(className, x => x)
       )>
       {icon->Option.getWithDefault(React.null)}
       children
