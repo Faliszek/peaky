@@ -5,6 +5,13 @@ module Activity = {
     "Activity";
 };
 
+module Clock = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "Clock";
+};
+
 module Calendar = {
   [@bs.module "react-feather"] [@react.component]
   external make:
@@ -94,4 +101,53 @@ module Mic = {
   external make:
     (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
     "Mic";
+};
+
+module ChevronLeft = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "ChevronLeft";
+};
+
+module ChevronRight = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "ChevronRight";
+};
+
+module Settings = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "Settings";
+};
+
+module Phone = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "Phone";
+};
+
+module Thermometer = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "Thermometer";
+};
+
+module Tag = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "Tag";
+};
+
+module Search = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "Search";
 };

@@ -22,9 +22,8 @@ module Menu = {
   [@react.component]
   let make = () => {
     let url = ReasonReactRouter.useUrl();
-    Js.log(url.path);
     <nav
-      className="w-40  h-screen  bg-white border-r-2 border-gray-100 z-10 pr-1 flex flex-col justify-between">
+      className="w-40  h-screen  bg-white border-r-2 border-gray-100 z-10 pr-1 flex flex-col justify-between fixed left-0 top-0">
       <div>
         <div className="flex justify-start ml-4">
           <div className="h-24 flex items-center justify-center mb-4">
@@ -68,6 +67,12 @@ module Menu = {
             view=Router.Friends
             active={Router.Friends == url.path->Router.toView}
           />
+          <Item
+            icon={<Icons.Settings className="mr-3" size="14" />}
+            text={j|Ustawienia|j}
+            view=Router.Settings
+            active={Router.Settings == url.path->Router.toView}
+          />
         </ul>
       </div>
       <div className="flex px-2 py-4 items-center justify-center">
@@ -84,6 +89,6 @@ module Menu = {
 let make = (~children) => {
   <div className="flex">
     <Menu />
-    <div className="bg-white flex-1"> children </div>
+    <div className="bg-white flex-1 pl-40"> children </div>
   </div>;
 };

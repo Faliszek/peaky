@@ -6,7 +6,8 @@ type view =
   | Patients
   | Friends
   | Visits
-  | SignIn;
+  | SignIn
+  | Settings;
 
 let toUrl = view =>
   switch (view) {
@@ -18,6 +19,7 @@ let toUrl = view =>
   | Friends => "/friends"
   | Visits => "/visits"
   | SignIn => "/sign-in"
+  | Settings => "/settings"
   };
 
 let toView = url =>
@@ -28,6 +30,7 @@ let toView = url =>
   | ["friends"] => Friends
   | ["visits"] => Visits
   | ["patients"] => Patients
+  | ["settings"] => Settings
   | _ => Calendar
   };
 

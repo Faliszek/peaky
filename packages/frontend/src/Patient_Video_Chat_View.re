@@ -52,8 +52,8 @@ let setVideo = [%raw
 ];
 
 [@react.component]
-let make = (~id) => {
-  let {avatar, lastName, firstName} = patient;
+let make = (~id as _id) => {
+  // let {avatar, lastName, firstName} = patient;
 
   //   let name = firstName ++ " " ++ lastName;
 

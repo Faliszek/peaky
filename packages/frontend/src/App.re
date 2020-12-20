@@ -91,6 +91,7 @@ let make = () => {
             | ["patients"] => <Patient_List_View />
             | ["visits"] => <Visits />
             | ["friends"] => <Friends />
+            | ["settings"] => <Settings />
             | [] => <Calendar />
 
             | _ => React.null

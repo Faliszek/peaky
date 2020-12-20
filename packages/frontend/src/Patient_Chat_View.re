@@ -94,10 +94,9 @@ let make = (~_id) => {
       </div>
       <div
         className="p-4 absolute bottom-0 h-36 border-top border flex items-center justify-center w-full">
-        <textarea
-          ref={ReactDOM.Ref.domRef(textarea)}
+        <Input.Textarea
+          ref_={ReactDOM.Ref.domRef(textarea)}
           placeholder={j|Napisz wiadomość|j}
-          className=" p-4 resize-none w-full rounded-lg border text-lg text-gray-700 outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 mr-4"
         />
         <Button.SmallRound icon={<Icons.Send />} onClick={_ => ()} />
       </div>

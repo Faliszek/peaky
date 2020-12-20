@@ -6,18 +6,23 @@ module Block = {
 };
 
 [@react.component]
-let make = (~title, ~children, ~hasBackButton=false) => {
+let make = (~title, ~children, ~hasBackButton=false, ~actions=?) => {
+  let actionsStyle = actions->Option.isSome ? "flex justify-between" : "";
   <div className="px-8 py-8  min-h-full">
-    <div className="p-4 bg-white rounded-lg ">
-      <div className="flex items-center text-2xl text-gray-700 mb-4">
-        {hasBackButton
-           ? <div
-               onClick={_ => Router.goBack()}
-               className="mr-4 p-2 cursor-pointer rounded-lg bg-white transition-colors hover:bg-gray-100">
-               <Icons.ArrowLeft />
-             </div>
-           : React.null}
-        title->React.string
+    <div className="px-4 pb-4  bg-white rounded-lg">
+      <div className=actionsStyle>
+        <div className="flex items-center text-2xl text-gray-700 mb-8">
+          {hasBackButton
+             ? <Button.Nav onClick={_ => Router.goBack()} className="mr-4">
+                 <Icons.ArrowLeft />
+               </Button.Nav>
+             : React.null}
+          title->React.string
+        </div>
+        {switch (actions) {
+         | Some(actions) => <div> actions </div>
+         | None => React.null
+         }}
       </div>
       <div className="text-gray-600"> children </div>
     </div>

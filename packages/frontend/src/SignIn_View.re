@@ -71,7 +71,6 @@ let make = () => {
                       email,
                     )
                   }
-                  className="border border-gray-300 rounded-lg px-4 py-2 text-lg"
                 />
               </div>
               <div className="pb-8">
@@ -84,8 +83,7 @@ let make = () => {
                       password,
                     )
                   }
-                  className="border border-gray-300 rounded-lg px-4 py-2 text-lg"
-                  _type="password"
+                  type_="password"
                 />
               </div>
               <div className="flex justify-center">

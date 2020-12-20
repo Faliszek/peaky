@@ -1,17 +1,3 @@
-module ASwitch = {
-  [@bs.module "antd"] [@react.component]
-  external make:
-    (
-      ~checked: bool,
-      ~onChange: bool => unit,
-      ~defaultChecked: bool=?,
-      ~loading: bool=?,
-      ~disabled: bool=?
-    ) =>
-    React.element =
-    "Switch";
-};
-
 [@react.component]
 let make = (~checked, ~onChange, ~loading=false) => {
   let bg = checked ? "bg-green-400" : "bg-gray-200";

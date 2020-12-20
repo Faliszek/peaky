@@ -7,6 +7,12 @@ let make = (~children, ~icon=?, ~onClick=?) =>
     {icon->Option.getWithDefault(React.null)}
   </button>;
 
+module Row = {
+  [@react.component]
+  let make = (~children) => {
+    <div className="flex justify-center "> children </div>;
+  };
+};
 module SmallRound = {
   [@react.component]
   let make = (~icon, ~onClick=?) => {
@@ -16,6 +22,19 @@ module SmallRound = {
       icon
     </button>;
   };
+};
+
+module Nav = {
+  [@react.component]
+  let make = (~onClick, ~children, ~className=?) =>
+    <div
+      onClick
+      className=Cn.(
+        "p-2 cursor-pointer rounded-lg bg-white transition-colors hover:bg-gray-100"
+        + mapSome(className, x => x)
+      )>
+      children
+    </div>;
 };
 
 module CTA = {
@@ -48,7 +67,7 @@ module CTA = {
       children
       <span
         className=Cn.(
-          "w-full h-full flex items-center justify-center  transition-opacity absolute top-0 left-0 bg-green-50  rounded-3xl"
+          "w-full h-full flex items-center justify-center  transition-opacity absolute top-0 left-0 bg-green-50  rounded-3xl ring-green-800 focus:ring-2"
           + (loading ? "opacity-100" : "opacity-0")
         )>
         <Icons.Spinner className="animate-spin-fast text-green-400" />
