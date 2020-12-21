@@ -7,6 +7,7 @@
     "**/.DS_Store": true
   },
   "css.lint.unknownAtRules": "ignore",
+  "javascript.validate.enable": true,
   "ocaml.sandbox": {
     "root": "/Users/pawelfalisz/Documents/Reason/peaky/packages/frontend",
     "kind": "esy"

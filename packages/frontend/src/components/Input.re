@@ -51,6 +51,7 @@ let make =
     };
   let input = (~cn=?, ()) =>
     <input
+      spellCheck=false
       value
       onChange={e => onChange(e->ReactEvent.Form.target##value)}
       onFocus={_ => {
@@ -64,7 +65,7 @@ let make =
       }}
       placeholder
       className=Cn.(
-        "border  text-gray-700  border-gray-300 rounded-lg px-4 py-2 text-lg w-full h-12"
+        "shadow-md  text-gray-700  border border-gray-100 rounded-lg px-4 py-2 text-lg w-full h-12"
         + mapSome(cn, x => x)
         + focusCn
       )

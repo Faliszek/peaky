@@ -42,6 +42,7 @@ let make = () => {
   let {email, password}: LoginForm.input = form.input;
 
   <div className="relative w-full min-h-screen flex">
+    <Loader loading={result.loading} />
     <div
       className="bg-white absolute  w-full h-full rounded-bl-full flex justify-center items-center shadow-xl overflow-hidden z-10 opacity-90 "
       style={ReactDOMStyle.make(~top="-20%", ~right="-20%", ())}>

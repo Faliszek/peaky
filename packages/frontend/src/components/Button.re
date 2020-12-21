@@ -70,7 +70,7 @@ module CTA = {
           "w-full h-full flex items-center justify-center  transition-opacity absolute top-0 left-0 bg-green-50  rounded-3xl ring-green-800 focus:ring-2"
           + (loading ? "opacity-100" : "opacity-0")
         )>
-        <Icons.Spinner className="animate-spin-fast text-green-400" />
+        <Icons.Spinner className="animate-spin text-green-400" />
       </span>
     </button>;
   };

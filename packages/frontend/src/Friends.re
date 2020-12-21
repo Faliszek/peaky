@@ -9,7 +9,17 @@ let make = () => {
 
   let (firstName, setFirstName) = React.useState(_ => "");
   let (lastName, setLastName) = React.useState(_ => "");
-  <Page title="Znajomi">
+
+  <Page title="Konsultacje">
+    <div
+      className="text-lg p-4 flex items-center border-2 border-blue-100 rounded-lg mb-12 bg-blue-50 text-blue-300">
+      <Icons.Info />
+      <span className="ml-4 ">
+        <Text>
+          {j|Tutaj możesz znaleźć specjalistów z różnych dziedzin którzy mogą pomóc ci w diagnozie twoich pacjentów|j}
+        </Text>
+      </span>
+    </div>
     <div className="flex justify-items-start">
       <SearchComponent>
         <Select

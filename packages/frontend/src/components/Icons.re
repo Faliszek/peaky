@@ -151,3 +151,10 @@ module Search = {
     (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
     "Search";
 };
+
+module Info = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "Info";
+};
