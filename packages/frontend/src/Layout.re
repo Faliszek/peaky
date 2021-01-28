@@ -22,6 +22,8 @@ module Menu = {
   [@react.component]
   let make = () => {
     let url = ReasonReactRouter.useUrl();
+    let [@r] asd = "";
+
     <nav
       className="w-40  h-screen  bg-white border-r-2 border-gray-100 z-10 pr-1 flex flex-col justify-between fixed left-0 top-0">
       <div>
@@ -31,7 +33,7 @@ module Menu = {
               <Icons.Activity size="18" color="white" />
             </span>
             <span className="text-green-500 uppercase font-bold text-md">
-              <Text> {j|Peaky|j} </Text>
+              <Text> {j|Peaky $asd|j} </Text>
             </span>
           </div>
         </div>

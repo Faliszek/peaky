@@ -10,20 +10,23 @@ let database = app->Firebase.database;
 Express.(
   {
     let app = express();
-
+    // req.headers.authorization
     app->App.use(Cors.make());
     app->App.useOnPath(
       ~path="/graphql",
       Graphql.(
-        make({
-          schema,
-          graphiql: true,
-          rootValue: root,
-          context: {
-            auth,
-            db: database,
-          },
-        })
+        make(req =>
+          {
+            schema,
+            graphiql: true,
+            rootValue: root,
+            context: {
+              auth,
+              db: database,
+              token: req.headers.authorization,
+            },
+          }
+        )
       ),
     );
 

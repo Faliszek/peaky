@@ -3,23 +3,37 @@ type schema;
 type payload;
 
 type info;
-type request = {
-  headers: option(Js.t({. "Authorization": option(string)})),
-};
 
 type context = Graphql_Context.t;
 
-type res('a) = Promise.rejectable('a, Js.Promise.error);
+type res('a, 'b) = Promise.rejectable('a, 'b);
 
 type root = {
-  quoteOfTheDay: unit => string,
-  random: unit => float,
-  hello: unit => string,
-  signIn: (Graphql_Auth.payload, Graphql_Context.t) => res(option(string)),
+  signIn:
+    (Graphql_Auth.payload, Graphql_Context.t) =>
+    res(option(string), Js.Promise.error),
   signUp:
     (Graphql_Auth.payload, Graphql_Context.t) =>
-    res(option(Firebase.Auth.User.t)),
+    res(option(Firebase.Auth.User.t), Promise.never),
+  createVisit:
+    (Api_Visit.createVisitPayload, Graphql_Context.t) =>
+    res(option(Domain.Visit.t), Promise.never),
+  removeVisit:
+    (Api_Visit.removeVisitResponse, Graphql_Context.t) =>
+    res(option(Api_Visit.removeVisitResponse), Promise.never),
+  createPatient:
+    (Api_Patient.createPatientPayload, Graphql_Context.t) =>
+    res(option(Domain.Patient.t), Promise.never),
+  removePatient:
+    (Api_Patient.removePatientResponse, Graphql_Context.t) =>
+    res(option(Api_Patient.removePatientResponse), Promise.never),
+  me:
+    (Api_User.meQueryPayload, Graphql_Context.t) =>
+    res(Domain.User.t, Promise.never),
 };
+
+type headers = {authorization: option(string)};
+type request = {headers};
 
 type graphQlConfig = {
   graphiql: bool,
@@ -28,18 +42,21 @@ type graphQlConfig = {
   context: Graphql_Context.t,
 };
 
-[@bs.module "express-graphql"]
-external make: graphQlConfig => Express.Middleware.t = "graphqlHTTP";
-
-[@bs.module "graphql"] external build: string => schema = "buildSchema";
-
 let root: root = {
-  quoteOfTheDay: () =>
-    Js.Math.random() < 0.5 ? "Take it easy" : "Salvation lies within",
-
-  random: () => Js.Math.random(),
-  hello: () => "Morning!",
   signIn: Graphql_Auth.signIn,
   signUp: Graphql_Auth.signUp,
-  // me: User.resolve,
+  createVisit: Api_Visit.createVisit,
+  removeVisit: Api_Visit.remove,
+  createPatient: Api_Patient.createPatient,
+  removePatient: Api_Patient.removePatient,
+  // searchSpecialist: User.resolve,
+  me: Api_User.me,
+  //calls: Calls.resolve
 };
+
+[@bs.module "express-graphql"]
+external make:
+  ([@bs.uncurry] (request => graphQlConfig)) => Express.Middleware.t =
+  "graphqlHTTP";
+
+[@bs.module "graphql"] external build: string => schema = "buildSchema";

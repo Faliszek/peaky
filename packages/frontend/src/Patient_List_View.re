@@ -13,35 +13,45 @@ let patients: array(t) = [|
   },
   {
     id: 2,
-    firstName: {j|John|j},
-    lastName: {j|Malković|j},
-    disease: {j|Nerwica natręctw|j},
+    firstName: {j|Seyyid|j},
+    lastName: {j|Llew|j},
+    disease: {j|Zaburzenia snu|j},
     condition: {j|Dobry|j},
-    phoneNumber: {j|+48 570 300 232|j},
-    avatar: None,
+    phoneNumber: {j|+48 570 822 212|j},
+
+    avatar: Some({j|https://www.thispersondoesnotexist.com/image|j}),
+
     lastVisit: Some({j|22.11.2020 15:30|j}),
   },
   {
     id: 3,
-    firstName: {j|John|j},
-    lastName: {j|Malković|j},
-    disease: {j|Nerwica natręctw|j},
+    firstName: {j|Dunja|j},
+    lastName: {j|Tonya|j},
+    disease: {j|Alkoholizm|j},
     condition: {j|Dobry|j},
-    phoneNumber: {j|+48 570 300 232|j},
-    avatar: None,
+    phoneNumber: {j|+48 633 193 733|j},
+    avatar: Some({j|https://www.thispersondoesnotexist.com/image|j}),
     lastVisit: Some({j|22.11.2020 15:30|j}),
   },
   {
     id: 5,
-    firstName: {j|John|j},
-    lastName: {j|Malković|j},
-    disease: {j|Nerwica natręctw|j},
+    firstName: {j|Niam|j},
+    lastName: {j|Tapani|j},
+    disease: {j|Zespół lęku napadowego|j},
     condition: {j|Dobry|j},
-    phoneNumber: {j|+48 570 300 232|j},
-    avatar: None,
+    phoneNumber: {j|+48 890 300 345|j},
+    avatar: Some({j|https://www.thispersondoesnotexist.com/image|j}),
     lastVisit: Some({j|22.11.2020 15:30|j}),
   },
 |];
+
+module Query = [%graphql {|
+  query Me {
+    me {
+        id
+    }
+  }
+|}];
 
 [@react.component]
 let make = () => {
@@ -50,7 +60,9 @@ let make = () => {
   let (lastName, setLastName) = React.useState(_ => "");
   let (phoneNumber, setPhoneNumber) = React.useState(_ => "");
 
-  let disease = Select.use();
+  let (disease, setDisease) = React.useState(_ => "");
+
+  let me = Query.use();
 
   <Page
     title="Pacjenci"
@@ -65,7 +77,11 @@ let make = () => {
       <div className="flex flex-wrap justify-between items-stretch">
         {patients
          ->Array.map(patient =>
-             <Patient_Block patient className=" w-1/3 flex-auto mb-8 mr-12" />
+             <Patient_Block
+               key={patient.id->Js.Int.toString}
+               patient
+               className=" w-1/3 flex-auto mb-8 mr-12"
+             />
            )
          ->React.array}
       </div>
@@ -97,16 +113,11 @@ let make = () => {
         />
       </Input.Wrap>
       <Input.Wrap>
-        <Select
-          value={disease.value}
-          onChange={disease.setValue}
-          search={disease.search}
-          onSearchChange={disease.setSearch}
-          visible={disease.visible}
-          onVisibleChange={disease.setVisible}
+        <Input
+          value=disease
+          onChange={v => setDisease(_ => v)}
           placeholder={j|Przypadłość|j}
           icon={<Icons.Thermometer />}
-          options=[|{value: "1", label: {j|Nadciśnienie tętnicze|j}}|]
         />
       </Input.Wrap>
     </SideNav>

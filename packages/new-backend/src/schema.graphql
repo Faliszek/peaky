@@ -1,16 +1,88 @@
+type Sympmtom {
+  id: String!
+  name: String!
+}
+
+type PatientEvent {
+  symptomps: [Sympmtom!]
+  feeling: Float!
+  timestamp: Float!
+}
+
+type Patient {
+  id: String!
+  firstName: String!
+  lastName: String!
+  phoneNumber: String!
+  disease: String!
+  lastVisit: String
+
+  treatment: [PatientEvent!]!
+}
+
 type User {
   email: String!
-  uid: String!
+  id: String!
+  specialization: String!
+  firstName: String!
+  lastName: String!
+  patients: [Patient!]!
+}
+
+type Visit {
+  from_: String!
+  to_: String!
+  id: String!
+  notes: String
+  patientId: String!
+}
+
+type RemovedVisit {
+  id: String!
+}
+
+type RemovedPatient {
+  id: String!
+}
+
+type Call {
+  id: String!
+  duration: Float!
+  timestamp: String!
+  answered: Boolean!
+  from: User!
+  to: User!
 }
 
 type Query {
-  quoteOfTheDay: String
-  random: Float!
-  hello: String
-  me: User
+  me: User!
+  calls: [Call!]!
+  searchSpecialist(
+    specialization: String!
+    firstName: String!
+    lastName: String!
+  ): [User!]!
 }
 
 type Mutation {
   signIn(email: String!, password: String!): String
   signUp(email: String!, password: String!): User
+  createVisit(
+    patientId: String!
+    from_: String!
+    to_: String!
+    notes: String
+  ): Visit
+
+  removeVisit(id: String!): RemovedVisit!
+
+  createPatient(
+    firstName: String!
+    lastName: String!
+    phoneNumber: String!
+    disease: String!
+    lastVisit: String
+  ): Patient!
+
+  removePatient(id: String!): RemovedPatient!
 }

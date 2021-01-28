@@ -1,0 +1,76 @@
+"""Exposes a URL that specifies the behaviour of this scalar."""
+directive @specifiedBy(
+  """The URL that specifies the behaviour of this scalar."""
+  url: String!
+) on SCALAR
+
+type Call {
+  id: String!
+  duration: Float!
+  timestamp: String!
+  answered: Boolean!
+  from: User!
+  to: User!
+}
+
+type Mutation {
+  signIn(email: String!, password: String!): String
+  signUp(email: String!, password: String!): User
+  createVisit(patientId: String!, from_: String!, to_: String!, notes: String): Visit
+  removeVisit(id: String!): RemovedVisit!
+  createPatient(firstName: String!, lastName: String!, phoneNumber: String!, disease: String!, lastVisit: String): Patient!
+  removePatient(id: String!): RemovedPatient!
+}
+
+type Patient {
+  id: String!
+  firstName: String!
+  lastName: String!
+  phoneNumber: String!
+  disease: String!
+  lastVisit: String
+  treatment: [PatientEvent!]!
+}
+
+type PatientEvent {
+  symptomps: [Sympmtom!]
+  feeling: Float!
+  timestamp: Float!
+}
+
+type Query {
+  me: User!
+  calls: [Call!]!
+  searchSpecialist(specialization: String!, firstName: String!, lastName: String!): [User!]!
+}
+
+type RemovedPatient {
+  id: String!
+}
+
+type RemovedVisit {
+  id: String!
+}
+
+type Sympmtom {
+  id: String!
+  name: String!
+}
+
+type User {
+  email: String!
+  id: String!
+  specialization: String!
+  firstName: String!
+  lastName: String!
+  patients: [Patient!]!
+}
+
+type Visit {
+  from_: String!
+  to_: String!
+  id: String!
+  notes: String
+  patientId: String!
+}
+

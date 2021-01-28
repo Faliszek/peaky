@@ -24,6 +24,23 @@ let httpLink =
 //     )
 //   );
 
+let authPayload = token => {
+  "headers": {
+    "Authorization": token,
+  },
+};
+
+let authLink =
+  ApolloClient.Bindings.Client.Link.Context.setContext(
+    (~operation as _, ~prevContext as _) => {
+    let token = Auth.getToken();
+
+    switch (token) {
+    | Some(token) => authPayload(token)->Obj.magic
+    | None => Js.Obj.empty()->Obj.magic
+    };
+  });
+
 let terminatingLink =
   ApolloClient.Link.split(
     ~test=
@@ -66,7 +83,7 @@ let instance =
             ),
           (),
         ),
-      ~link=httpLink,
+      ~link=ApolloClient.Link.concat(authLink, httpLink),
       (),
     )
   );

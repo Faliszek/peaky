@@ -11,5 +11,6 @@
   },
   "bsc-flags": ["-bs-super-errors", "-bs-no-version-header", "-open Belt"],
   "suffix": ".bs.js",
-  "bs-dependencies": ["bs-express", "reason-promise"]
+  "bs-dependencies": ["bs-express", "reason-promise", "decco"],
+  "ppx-flags": ["decco/ppx"]
 }
