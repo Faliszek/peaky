@@ -4,7 +4,7 @@ type Sympmtom {
 }
 
 type PatientEvent {
-  symptomps: [Sympmtom!]
+  symptomps: [Sympmtom!]!
   feeling: Float!
   timestamp: Float!
 }
@@ -16,8 +16,8 @@ type Patient {
   phoneNumber: String!
   disease: String!
   lastVisit: String
-
   treatment: [PatientEvent!]!
+  color: String!
 }
 
 type User {
@@ -26,7 +26,6 @@ type User {
   specialization: String!
   firstName: String!
   lastName: String!
-  patients: [Patient!]!
 }
 
 type Visit {
@@ -62,6 +61,10 @@ type Query {
     firstName: String!
     lastName: String!
   ): [User!]!
+
+  patients: [Patient!]!
+  patient(id: String!): Patient!
+  visits: [Visit!]!
 }
 
 type Mutation {

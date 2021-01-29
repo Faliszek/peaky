@@ -1,9 +1,5 @@
 type meQueryPayload;
 
-type payload = {user_id: string};
-
-[@module "jwt-decode"] external decode: option(string) => payload = "default";
-
 [@decco]
 type userData = {
   email: string,
@@ -19,8 +15,8 @@ let toRecord = (~id: string, payload: userData): Domain.User.t => {
 };
 
 let me = (_payload: meQueryPayload, context: Graphql_Context.t) => {
-  let {user_id} = decode(context.token);
-  Js.log3("USER", user_id, context.token);
+  Js.log2("USER", context.token);
+  let {user_id} = Auth.decode(context.token);
   Firebase.(
     Domain.(
       context.db

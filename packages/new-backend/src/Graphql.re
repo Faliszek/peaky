@@ -30,6 +30,12 @@ type root = {
   me:
     (Api_User.meQueryPayload, Graphql_Context.t) =>
     res(Domain.User.t, Promise.never),
+  patients:
+    (Api_Patient.listPayload, Graphql_Context.t) =>
+    res(array(Domain.Patient.t), Promise.never),
+  visits:
+    (Api_Visit.listPayload, Graphql_Context.t) =>
+    res(array(Domain.Patient.t), Promise.never),
 };
 
 type headers = {authorization: option(string)};
@@ -51,6 +57,8 @@ let root: root = {
   removePatient: Api_Patient.removePatient,
   // searchSpecialist: User.resolve,
   me: Api_User.me,
+  patients: Api_Patient.list,
+  visits: Api_Visit.list,
   //calls: Calls.resolve
 };
 

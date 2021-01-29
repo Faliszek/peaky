@@ -19,6 +19,8 @@ module Patient = {
     disease: string,
     treatment: list(event),
   };
+  [@decco]
+  type list = array(t);
 };
 
 module User = {
@@ -31,6 +33,7 @@ module User = {
     lastName: string,
     patients: option(array(Patient.t)),
   };
+  [@decco];
 };
 
 module Visit = {

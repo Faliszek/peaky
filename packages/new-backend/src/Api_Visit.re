@@ -6,6 +6,14 @@ type createVisitPayload = {
   notes: string,
 };
 
+type connectedPayload = {
+  patientId: string,
+  from_: string,
+  to_: string,
+  notes: string,
+  doctorId: string,
+};
+
 type removeVisitResponse = {id: string};
 
 let toRecord = (payload: createVisitPayload, ~id: string): Domain.Visit.t => {
@@ -14,10 +22,20 @@ let toRecord = (payload: createVisitPayload, ~id: string): Domain.Visit.t => {
 };
 
 let createVisit = (payload: createVisitPayload, context: Graphql_Context.t) => {
+  let {user_id} = Auth.decode(context.token);
   let createdRecordId =
     context.db
     ->Firebase.Database.ref(~path="/visits", ())
-    ->Firebase.Database.Reference.push(~value=payload, ())
+    ->Firebase.Database.Reference.push(
+        ~value={
+          patientId: payload.patientId,
+          from_: payload.from_,
+          to_: payload.to_,
+          notes: payload.notes,
+          doctorId: user_id,
+        },
+        (),
+      )
     ->Firebase.Database.Reference.key
     ->Js.Nullable.toOption;
 
@@ -55,6 +73,24 @@ let remove = (payload: removeVisitResponse, context: Graphql_Context.t) => {
       | Ok(_) => Some({id: payload.id})
 
       | Error(_) => None
+      }
+    });
+};
+
+type listPayload;
+
+let list = (_payload: listPayload, context: Graphql_Context.t) => {
+  let r = context.db->Firebase.Database.ref(~path="/visits", ());
+  r
+  ->Firebase.Database.Reference.once(~eventType="value", ())
+  ->Promise.Js.toResult
+  ->Promise.Js.map(res => {
+      switch (res) {
+      | Ok(res) =>
+        let {user_id} = Auth.decode(context.token);
+        res->Json.toList(user_id);
+
+      | Error(err) => Json.fromObject(err)
       }
     });
 };
