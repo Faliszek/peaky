@@ -38,44 +38,45 @@ module Menu = {
           </div>
         </div>
         <ul className="bg-white">
-          <Item
-            icon={<Icons.Calendar className="mr-3" size="14" />}
-            text={j|Kalendarz|j}
-            view=Router.Calendar
-            active={Router.Calendar == url.path->Router.toView}
-          />
-          <Item
-            icon={<Icons.User className="mr-3" size="14" />}
-            text={j|Pacjenci|j}
-            view=Router.Patients
-            active={
-              switch (url.path) {
-              | ["patients", _, _] => true
-              | ["patients", _] => true
-              | ["patients"] => true
-              | _ => false
+
+            <Item
+              icon={<Icons.Calendar className="mr-3" size="14" />}
+              text={j|Kalendarz|j}
+              view=Router.Calendar
+              active={Router.Calendar == url.path->Router.toView}
+            />
+            <Item
+              icon={<Icons.User className="mr-3" size="14" />}
+              text={j|Pacjenci|j}
+              view=Router.Patients
+              active={
+                switch (url.path) {
+                | ["patients", _, _] => true
+                | ["patients", _] => true
+                | ["patients"] => true
+                | _ => false
+                }
               }
-            }
-          />
-          <Item
-            icon={<Icons.List className="mr-3" size="14" />}
-            text={j|Historia|j}
-            view=Router.Visits
-            active={Router.Visits == url.path->Router.toView}
-          />
-          <Item
-            icon={<Icons.Share className="mr-3" size="14" />}
-            text={j|Konsultacje|j}
-            view=Router.Friends
-            active={Router.Friends == url.path->Router.toView}
-          />
-          <Item
-            icon={<Icons.Settings className="mr-3" size="14" />}
-            text={j|Ustawienia|j}
-            view=Router.Settings
-            active={Router.Settings == url.path->Router.toView}
-          />
-        </ul>
+            />
+            <Item
+              icon={<Icons.List className="mr-3" size="14" />}
+              text={j|Historia|j}
+              view=Router.Visits
+              active={Router.Visits == url.path->Router.toView}
+            />
+            <Item
+              icon={<Icons.Share className="mr-3" size="14" />}
+              text={j|Konsultacje|j}
+              view=Router.Friends
+              active={Router.Friends == url.path->Router.toView}
+            />
+          </ul>
+          // <Item
+          //   icon={<Icons.Settings className="mr-3" size="14" />}
+          //   text={j|Ustawienia|j}
+          //   view=Router.Settings
+          //   active={Router.Settings == url.path->Router.toView}
+          // />
       </div>
       <div className="flex px-2 py-4 items-center justify-center">
         <Button

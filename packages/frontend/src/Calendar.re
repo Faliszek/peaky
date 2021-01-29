@@ -22,6 +22,16 @@ let isToday = date => {
   today->getTime == date->getTime;
 };
 
+module Query = [%graphql
+  {|
+  query Visits {
+    visits {
+      id
+    }
+  }
+|}
+];
+
 [@react.component]
 let make = () => {
   let (now, setNow) = React.useState(_ => now()->startOfDay);
@@ -29,6 +39,8 @@ let make = () => {
 
   let days = makeDays(~now);
   let hours = makeHours();
+
+  let visits = Query.use();
 
   <Page title="Kalendarz">
     <div className="flex items-center justify-center pb-8 text-xl pl-24 ">
@@ -52,7 +64,7 @@ let make = () => {
         <Icons.ChevronRight size="32" />
       </Button.Nav>
     </div>
-    <div className="flex border flex-wrap rounded-lg ">
+    <div className="flex border flex-wrap rounded-lg relative ">
       <div className="flex w-full bg-gray-50">
         <div className="w-24" />
         {days
@@ -101,6 +113,10 @@ let make = () => {
            </div>
          )
        ->React.array}
+      <div
+        className="absolute w-full h-full flex pt-48 justify-center bg-white opacity-80">
+        <Spinner tip={|Trwa wczytywanie |} />
+      </div>
     </div>
     <Calendar_AddVisit onClose={_ => setVisible(_ => false)} visible />
   </Page>;

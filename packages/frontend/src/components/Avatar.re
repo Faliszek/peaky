@@ -1,5 +1,10 @@
 [@react.component]
-let make = (~avatar, ~firstName=?, ~lastName=?, ~size=`default) => {
+let make = (~avatar=?, ~firstName=?, ~lastName=?, ~size=`default) => {
+  let fontSize =
+    switch (size) {
+    | `default => "text-3xl"
+    | `big => "text-6xl"
+    };
   let size =
     switch (size) {
     | `default => "w-24 h-24 "
@@ -19,7 +24,7 @@ let make = (~avatar, ~firstName=?, ~lastName=?, ~size=`default) => {
         "rounded-full shadow-md border-border-gray flex items-center justify-center bg-green-300"
         + size
       )>
-      <span className="text-3xl text-white ">
+      <span className=Cn.("text-white" + fontSize)>
         {(firstName->Js.String.get(0) ++ lastName->Js.String.get(0))
          ->React.string}
       </span>

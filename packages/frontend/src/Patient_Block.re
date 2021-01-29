@@ -1,6 +1,6 @@
 module Info = {
   [@react.component]
-  let make = (~name, ~phoneNumber, ~disease, ~condition, ~lastVisit) => {
+  let make = (~name, ~phoneNumber, ~disease, ~lastVisit) => {
     <div className="py-2 px-4">
       <div className="text-xl font-medium text-gray-700">
         <Text> name </Text>
@@ -13,10 +13,6 @@ module Info = {
           <Text> {j|Przypadłość: |j} </Text>
         </span>
         <span className="text-gray-500"> <Text> disease </Text> </span>
-      </div>
-      <div className="text-lg ">
-        <span className="text-gray-400"> <Text> {j|Stan: |j} </Text> </span>
-        <span className="text-gray-500"> <Text> condition </Text> </span>
       </div>
       <div className="text-lg ">
         <span className="text-gray-400">
@@ -41,28 +37,18 @@ module Link = {
 };
 
 [@react.component]
-let make = (~patient: Patient.t, ~className=?) => {
-  let {
-    id,
-    firstName,
-    lastName,
-    avatar,
-    phoneNumber,
-    disease,
-    condition,
-    lastVisit,
-  }: Patient.t = patient;
+let make = (~patient, ~className=?) => {
+  let {id, firstName, lastName, phoneNumber, disease, lastVisit}: Patient_List_Query.Query.t_patients = patient;
   let name = firstName ++ " " ++ lastName;
-  let id = id->Js.Int.toString;
-
+  // let id = id->Js.Int.toString;
   <div
     onClick={_ => Router.(push(Patient(id)))}
     className=Cn.(className->mapSome(x => x))>
     <div
       className="m-4 px-4 py-6 flex flex-col w-full h-full shadow-lg rounded-lg cursor-pointer transition-all transform-gpu hover:shadow-lg hover:bg-gray-50">
       <div className="flex flex-1">
-        <Avatar avatar firstName lastName />
-        <Info name phoneNumber disease condition lastVisit />
+        <Avatar firstName lastName />
+        <Info name phoneNumber disease lastVisit />
       </div>
       <div className="flex justify-end"> <Link /> </div>
       <div className="absolute top-0 right-0 p-4">

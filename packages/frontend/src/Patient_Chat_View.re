@@ -43,7 +43,7 @@ module Message = {
 };
 [@react.component]
 let make = (~_id) => {
-  let {avatar, lastName, firstName} = patient;
+  let {lastName, firstName} = patient;
 
   let name = firstName ++ " " ++ lastName;
   let textarea = React.useRef(Js.Nullable.null);
@@ -66,7 +66,7 @@ let make = (~_id) => {
     <div
       className="w-full shadow-lg px-4 flex flex-row items-center absolute top-0 h-28 justify-between">
       <div className="flex justify-center items-center">
-        <Avatar avatar lastName firstName />
+        <Avatar lastName firstName />
         <h1 className="ml-8 text-3xl"> <Text> name </Text> </h1>
         <Status status=`online className="ml-4" />
       </div>

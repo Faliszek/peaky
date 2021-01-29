@@ -14,23 +14,15 @@ let patient = {
 
 [@react.component]
 let make = (~id) => {
-  let {
-    firstName,
-    lastName,
-    avatar,
-    phoneNumber,
-    disease,
-    condition,
-    lastVisit,
-  }: Patient.t = patient;
+  let {firstName, lastName, phoneNumber, disease, lastVisit}: Patient.t = patient;
   let name = firstName ++ " " ++ lastName;
 
   <Page title={j|Detale: $name|j} hasBackButton=true>
     <Page.Block>
       <div className="flex items-center">
         <div className="flex flex-1 items-center ml-4">
-          <Avatar avatar firstName lastName size=`big />
-          <Patient_Block.Info name condition lastVisit disease phoneNumber />
+          <Avatar firstName lastName size=`big />
+          <Patient_Block.Info name lastVisit disease phoneNumber />
         </div>
         <div className="ml-16 flex  flex-1 flex-col items-start justify-start">
           <Button.CTA
