@@ -1,4 +1,5 @@
 open Time;
+
 let daysInCalendar = 5;
 let hours = {"start": 8, "end_": 16};
 
@@ -22,15 +23,124 @@ let isToday = date => {
   today->getTime == date->getTime;
 };
 
-module Query = [%graphql
-  {|
-  query Visits {
-    visits {
-      id
-    }
-  }
-|}
-];
+let rowHeight = 60;
+let hourWidth = 96;
+
+[@bs.get] external offsetWidth: Dom.element => float = "offsetWidth";
+
+module Visit = {
+  [@react.component]
+  let make =
+      (
+        ~from_,
+        ~to_,
+        ~patientId,
+        ~patients: array(Calendar_Query.Query.t_patients),
+        ~days,
+      ) => {
+    let from_ = from_->float_of_string;
+    let to_ = to_->float_of_string;
+    let fromDate = from_->Js.Date.fromFloat;
+    let toDate = to_->Js.Date.fromFloat;
+
+    let absoluteTop =
+      (fromDate->Time.getHours * 60 + fromDate->Time.getMinutes) * 2;
+    let topFrom8 = 480 * 2;
+
+    let top = absoluteTop - topFrom8 + rowHeight;
+
+    let leftCellWidth = hourWidth->Js.Int.toString ++ "px";
+    let durationAsHeight = Time.differenceInMinutes(to_, from_) * 2;
+
+    let patient = patients->Array.keep(p => p.id == patientId)->Array.get(0);
+
+    let color =
+      patient->Option.map(p => p.color)->Option.getWithDefault("blue");
+
+    let first = days->Array.get(0)->Option.map(Js.Date.valueOf);
+    let last =
+      days
+      ->Array.get(4)
+      ->Option.map(Time.endOfDay)
+      ->Option.map(Js.Date.valueOf);
+
+    let (width, setWidth) = React.useState(() => None);
+
+    let index =
+      days
+      ->Js.Array2.findIndex(d =>
+          d->Time.startOfDay->Js.Date.valueOf
+          == fromDate->Time.startOfDay->Js.Date.valueOf
+        )
+      ->Js.Int.toFloat;
+
+    let visible = width->Option.isSome ? "opacity-100" : "opacity-0";
+
+    let left =
+      switch (width) {
+      | Some(width) => hourWidth->Js.Int.toFloat +. width *. index
+      | None => hourWidth->Js.Int.toFloat
+      };
+
+    switch (first, last) {
+    | (Some(first), Some(last)) when from_ > first && from_ < last =>
+      <div
+        ref={ReactDOM.Ref.callbackDomRef(el =>
+          el
+          ->Js.Nullable.toOption
+          ->Option.map(el => {
+              Js.log(el);
+              setWidth(_ => Some(el->offsetWidth));
+            })
+          ->ignore
+        )}
+        className=Cn.(
+          "absolute rounded-lg shadow-md bg-white cursor-pointer border-blue-400 border flex flex-col"
+          + visible
+        )
+        style={ReactDOM.Style.make(
+          ~top=top->Js.Int.toString ++ "px",
+          ~left=left->Js.Float.toString ++ "px",
+          ~width={j|calc( (100% - $leftCellWidth) / 5)|j},
+          ~height=durationAsHeight->Js.Int.toString ++ "px",
+          ~borderColor=color,
+          (),
+        )}>
+        <div
+          className="bg-blue-400 w-full h-8 rounded-t-md flex items-center p-2"
+          style={ReactDOM.Style.make(~backgroundColor=color, ())}>
+          <span className="text-white font-bold">
+            {fromDate->Time.format("HH:mm")->React.string}
+            {j| - |j}->React.string
+            {toDate->Time.format("HH:mm")->React.string}
+          </span>
+        </div>
+        <div className="flex h-full">
+          <div className="flex-2 p-2  h-full">
+            {switch (patient) {
+             | Some({firstName, lastName, disease, color}) =>
+               let name = firstName ++ " " ++ lastName;
+               <div className="flex items-center">
+                 <Avatar firstName lastName size=`small color />
+                 <div className="ml-2 flex flex-col">
+                   <span className="text-md"> name->React.string </span>
+                   <span className="text-sm text-gray-400">
+                     disease->React.string
+                   </span>
+                 </div>
+               </div>;
+             | None => React.null
+             }}
+          </div>
+          <div className="flex flex-1 p-2  items-end justify-end h-full">
+            <Button.SmallRound icon={<Icons.Phone />} />
+          </div>
+        </div>
+      </div>
+    | _ => React.null
+    };
+  };
+};
 
 [@react.component]
 let make = () => {
@@ -40,7 +150,7 @@ let make = () => {
   let days = makeDays(~now);
   let hours = makeHours();
 
-  let visits = Query.use();
+  let query = Calendar_Query.Query.use();
 
   <Page title="Kalendarz">
     <div className="flex items-center justify-center pb-8 text-xl pl-24 ">
@@ -65,7 +175,12 @@ let make = () => {
       </Button.Nav>
     </div>
     <div className="flex border flex-wrap rounded-lg relative ">
-      <div className="flex w-full bg-gray-50">
+      <div
+        className="flex w-full bg-gray-50"
+        style={ReactDOM.Style.make(
+          ~height=rowHeight->Js.Int.toString ++ "px",
+          (),
+        )}>
         <div className="w-24" />
         {days
          ->Array.map(d =>
@@ -86,10 +201,19 @@ let make = () => {
       {hours
        ->Array.map(h =>
            <div className="flex w-full">
-             <div className="w-24 border-t">
+             <div
+               className="w-24 border-t"
+               style={ReactDOM.Style.make(
+                 ~width=hourWidth->Js.Int.toString ++ "px",
+                 (),
+               )}>
                <div
                  key={h->Js.Int.toString}
-                 className="text-center h-32 flex justify-center text-lg">
+                 className="text-center h-32 flex justify-center text-lg"
+                 style={ReactDOM.Style.make(
+                   ~height=(rowHeight * 2)->Js.Int.toString ++ "px",
+                   (),
+                 )}>
                  <span className="mt-2">
                    {now->addHours(h)->format("HH:mm")->React.string}
                  </span>
@@ -113,11 +237,37 @@ let make = () => {
            </div>
          )
        ->React.array}
-      <div
-        className="absolute w-full h-full flex pt-48 justify-center bg-white opacity-80">
-        <Spinner tip={|Trwa wczytywanie |} />
-      </div>
+      {switch (query) {
+       | {loading: true} =>
+         <div
+           className="absolute w-full h-full flex pt-48 justify-center bg-white opacity-80">
+           <Spinner tip={|Trwa wczytywanie |} />
+         </div>
+       | {data: Some(data)} =>
+         <div>
+           {data.visits
+            ->Array.map(v =>
+                <Visit
+                  from_={v.from_}
+                  to_={v.to_}
+                  patients={data.patients}
+                  patientId={v.patientId}
+                  days
+                />
+              )
+            ->React.array}
+         </div>
+       | _ => React.null
+       }}
     </div>
-    <Calendar_AddVisit onClose={_ => setVisible(_ => false)} visible />
+    {switch (query) {
+     | {data: Some(data)} =>
+       <Calendar_AddVisit
+         onClose={_ => setVisible(_ => false)}
+         visible
+         patients={data.patients}
+       />
+     | _ => React.null
+     }}
   </Page>;
 };

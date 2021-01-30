@@ -158,3 +158,10 @@ module Info = {
     (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
     "Info";
 };
+
+module ExternalLink = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "ExternalLink";
+};
