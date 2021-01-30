@@ -84,6 +84,7 @@ type Mutation {
     lastName: String!
     phoneNumber: String!
     disease: String!
+    color: String!
     lastVisit: String
   ): Patient!
 

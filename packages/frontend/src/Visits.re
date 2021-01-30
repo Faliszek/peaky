@@ -1,4 +1,6 @@
+open Visit;
+
 [@react.component]
 let make = () => {
-  <Page title="Wizyty"> {j|Some content|j}->React.string </Page>;
+  <Page title="Wizyty"> <Visits_History calls /> </Page>;
 };

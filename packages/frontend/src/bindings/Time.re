@@ -7,6 +7,9 @@ external addDays: (Js.Date.t, int) => Js.Date.t = "addDays";
 external addHours: (Js.Date.t, int) => Js.Date.t = "addHours";
 
 [@bs.module "date-fns"]
+external addMinutes: (Js.Date.t, int) => Js.Date.t = "addMinutes";
+
+[@bs.module "date-fns"]
 external subDays: (Js.Date.t, int) => Js.Date.t = "subDays";
 
 [@bs.module "date-fns"]
@@ -27,3 +30,5 @@ external differenceInMinutes: (float, float) => int = "differenceInMinutes";
 
 [@bs.module "date-fns"] external getMinutes: Js.Date.t => int = "getMinutes";
 [@bs.module "date-fns"] external getHours: Js.Date.t => int = "getHours";
+
+let nowMs = () => Js.Date.make()->getTime;

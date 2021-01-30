@@ -18,6 +18,7 @@ module Patient = {
     phoneNumber: string,
     disease: string,
     treatment: list(event),
+    color: string,
   };
   [@decco]
   type list = array(t);

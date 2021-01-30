@@ -33,6 +33,9 @@ type root = {
   patients:
     (Api_Patient.listPayload, Graphql_Context.t) =>
     res(array(Domain.Patient.t), Promise.never),
+  patient:
+    (Api_Patient.singlePayload, Graphql_Context.t) =>
+    res(array(Domain.Patient.t), Promise.never),
   visits:
     (Api_Visit.listPayload, Graphql_Context.t) =>
     res(array(Domain.Patient.t), Promise.never),
@@ -58,6 +61,8 @@ let root: root = {
   // searchSpecialist: User.resolve,
   me: Api_User.me,
   patients: Api_Patient.list,
+
+  patient: Api_Patient.single,
   visits: Api_Visit.list,
   //calls: Calls.resolve
 };

@@ -54,7 +54,7 @@ module CTA = {
       | `primary => "border border-green-400 bg-green-400  text-white hover:bg-green-300 hover:border-green-300"
       | `ghost => "border border-green-400 bg-white  text-green-400 hover:text-green-300 hover:border-green-300"
       };
-
+    Js.log(loading);
     <button
       ?onClick
       type_=?htmlType

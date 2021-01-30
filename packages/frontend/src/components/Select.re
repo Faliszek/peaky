@@ -145,18 +145,23 @@ let make =
          </div>
        | (_, _) =>
          filterOptions
-         ->Array.map(o =>
+         ->Array.map(o => {
+             let active =
+               Some(o) == value ? "bg-green-500 text-white" : "bg-white";
              <div
                key={o.value}
-               className="text-lg py-2 px-16 cursor-pointer bg-white hover:bg-gray-100 "
+               className=Cn.(
+                 "text-lg py-2 px-16 cursor-pointer bg-white hover:bg-gray-100 "
+                 + active
+               )
                onClick={_ => {
                  onChange(Some(o));
                  onSearchChange(o.label);
                  onVisibleChange(false);
                }}>
                <Text> {o.label} </Text>
-             </div>
-           )
+             </div>;
+           })
          ->React.array
        }}
     </div>

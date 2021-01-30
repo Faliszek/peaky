@@ -16,10 +16,12 @@ let focusCn = "outline-none focus:ring-2 focus:ring-green-400 focus:border-green
 
 module Textarea = {
   [@react.component]
-  let make = (~placeholder, ~ref_=?) => {
+  let make = (~placeholder, ~ref_=?, ~value, ~onChange) => {
     <textarea
       ref=?ref_
       placeholder
+      value
+      onChange={e => onChange(e->ReactEvent.Form.target##value)}
       className=Cn.(
         "p-4  w-full rounded-lg border text-lg text-gray-700  mr-4" + focusCn
       )

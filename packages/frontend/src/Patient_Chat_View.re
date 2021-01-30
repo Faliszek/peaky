@@ -48,6 +48,7 @@ let make = (~_id) => {
   let name = firstName ++ " " ++ lastName;
   let textarea = React.useRef(Js.Nullable.null);
 
+  let (message, setMessage) = React.useState(_ => "");
   React.useEffect1(
     () => {
       Js.log(textarea.current);
@@ -95,6 +96,8 @@ let make = (~_id) => {
       <div
         className="p-4 absolute bottom-0 h-36 border-top border flex items-center justify-center w-full">
         <Input.Textarea
+          value=message
+          onChange={v => setMessage(_ => v)}
           ref_={ReactDOM.Ref.domRef(textarea)}
           placeholder={j|Napisz wiadomość|j}
         />

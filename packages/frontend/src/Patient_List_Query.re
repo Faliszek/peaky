@@ -8,6 +8,7 @@ module Query = [%graphql
       phoneNumber
       disease
       lastVisit
+      color
     }
   }
 |}

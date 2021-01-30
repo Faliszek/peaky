@@ -26,8 +26,6 @@ let isToday = date => {
 let rowHeight = 60;
 let hourWidth = 96;
 
-[@bs.get] external offsetWidth: Dom.element => float = "offsetWidth";
-
 module Visit = {
   [@react.component]
   let make =
@@ -90,7 +88,7 @@ module Visit = {
           ->Js.Nullable.toOption
           ->Option.map(el => {
               Js.log(el);
-              setWidth(_ => Some(el->offsetWidth));
+              setWidth(_ => Some(el->HTMLElement.offsetWidth));
             })
           ->ignore
         )}
@@ -146,11 +144,18 @@ module Visit = {
 let make = () => {
   let (now, setNow) = React.useState(_ => now()->startOfDay);
   let (visible, setVisible) = React.useState(_ => false);
+  let (date, setDate) = React.useState(_ => None);
 
   let days = makeDays(~now);
   let hours = makeHours();
 
   let query = Calendar_Query.Query.use();
+
+  let (createVisit, result) =
+    Visit_Mutation.Mutation.use(
+      ~refetchQueries=[|Calendar_Query.Query.refetchQueryDescription()|],
+      (),
+    );
 
   <Page title="Kalendarz">
     <div className="flex items-center justify-center pb-8 text-xl pl-24 ">
@@ -226,7 +231,10 @@ let make = () => {
                   <div
                     key={date->Time.getTime->Js.Float.toString}
                     className="group flex-1 border-l border-t cursor-pointer transition-shadow hover:shadow-inner"
-                    onClick={_ => setVisible(_ => true)}>
+                    onClick={_ => {
+                      setVisible(_ => true);
+                      setDate(_ => Some(date));
+                    }}>
                     <span
                       className="p-4 block text-xl opacity-0 transition-opacity group-hover:opacity-50 ">
                       {date->format("HH:mm")->React.string}
@@ -265,7 +273,16 @@ let make = () => {
        <Calendar_AddVisit
          onClose={_ => setVisible(_ => false)}
          visible
+         date
+         loading={result.loading}
          patients={data.patients}
+         onSubmit={(~patientId, ~from_, ~to_, ~notes) =>
+           createVisit({patientId, from_, to_, notes: Some(notes)})
+           ->Request.onFinish(
+               ~onOk=_ => setVisible(_ => false),
+               ~onError=_ => (),
+             )
+         }
        />
      | _ => React.null
      }}

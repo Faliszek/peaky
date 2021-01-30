@@ -8,11 +8,12 @@ let onFinish = (req, ~onOk: 'a => unit, ~onError) => {
   ->Promise.Js.get(res => {
       let generalError = {j|Coś poszło nie tak|j};
       let networkError = {j|Nie mogliśmy nawiązać połączenia z serwerem, sprawdzamy co się dzieje|j};
-
+      Js.log(res);
       switch (res) {
       | Ok(res) =>
         switch (res) {
         | Ok(res: response('a)) =>
+          Js.log2("REST", res);
           onOk(res.data);
 
           res.error

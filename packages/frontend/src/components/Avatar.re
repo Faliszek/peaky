@@ -29,7 +29,7 @@ let make = (~avatar=?, ~firstName=?, ~lastName=?, ~size=`default, ~color=?) => {
       )
       style={ReactDOM.Style.make(
         ~backgroundColor=color,
-        ~filter="contrast(200%)",
+        ~filter="contrast(90%)",
         (),
       )}>
       <span className=Cn.("text-white" + fontSize)>

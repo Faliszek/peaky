@@ -165,3 +165,24 @@ module ExternalLink = {
     (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
     "ExternalLink";
 };
+
+module BarChart = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "BarChart";
+};
+
+module PhoneCall = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "PhoneCall";
+};
+
+module PhoneMissed = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "PhoneMissed";
+};

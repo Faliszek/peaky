@@ -25,6 +25,7 @@ module.exports = {
     "build:css": "postcss",
   },
   install: [
+    "react-vis",
     /* ... */
   ],
   installOptions: {
