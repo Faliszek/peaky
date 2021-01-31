@@ -15,7 +15,6 @@ let toRecord = (~id: string, payload: userData): Domain.User.t => {
 };
 
 let me = (_payload: meQueryPayload, context: Graphql_Context.t) => {
-  Js.log2("USER", context.token);
   let {user_id} = Auth.decode(context.token);
   Firebase.(
     Domain.(

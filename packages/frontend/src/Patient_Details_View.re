@@ -32,7 +32,7 @@ module Section = {
 };
 
 [@react.component]
-let make = (~id: string) => {
+let make = (~id: string, ~callMode=false) => {
   let (visible, setVisible) = React.useState(_ => false);
 
   let query = Calendar_Query.Query.use();
@@ -45,39 +45,57 @@ let make = (~id: string) => {
     );
 
   let name =
-    patientQuery.data
-    ->Option.map(({patient}) => patient.firstName ++ " " ++ patient.lastName)
-    ->Option.getWithDefault("");
+    callMode
+      ? "-"
+      : patientQuery.data
+        ->Option.map(({patient}) =>
+            patient.firstName ++ " " ++ patient.lastName
+          )
+        ->Option.getWithDefault("");
 
   let (width, setWidth) = React.useState(_ => None);
 
-  <Page title={j|Detale: $name|j} hasBackButton=true>
+  <Page
+    title={callMode ? "" : {j|Detale: $name|j}}
+    hasBackButton={callMode ? false : true}>
     <Page.Block>
       {switch (patientQuery) {
        | {loading: true} => <Spinner />
        | {data: Some({patient})} =>
-         let {firstName, lastName, phoneNumber, disease, lastVisit}: Query.t_patient = patient;
+         let {firstName, lastName, phoneNumber, disease, lastVisit, color}: Query.t_patient = patient;
 
          <div className="flex items-center">
            <div className="flex flex-1 items-center ml-4">
-             <Avatar firstName lastName size=`big />
-             <Patient_Block.Info name lastVisit disease phoneNumber />
+             <Avatar
+               firstName={callMode ? "X" : firstName}
+               lastName={callMode ? "X" : lastName}
+               size=`big
+               color
+             />
+             <Patient_Block.Info
+               name={callMode ? "" : name}
+               lastVisit
+               disease
+               phoneNumber
+             />
            </div>
-           <div
-             className="ml-16 flex  flex-1 flex-col items-start justify-start">
-             <Button.CTA
-               onClick={_ => setVisible(_ => true)}
-               icon={<Icons.Plus className="mr-4" />}
-               type_=`ghost>
-               <Text> {j|Dodaj wizytę|j} </Text>
-             </Button.CTA>
-             <div className="h-4" />
-             <Button.CTA
-               icon={<Icons.Video className="mr-4" />}
-               onClick={_ => Router.(push(PatientVideoChat(id)))}>
-               <Text> {j|Rozpocznij videorozmowe|j} </Text>
-             </Button.CTA>
-           </div>
+           {callMode
+              ? React.null
+              : <div
+                  className="ml-16 flex  flex-1 flex-col items-start justify-start">
+                  <Button.CTA
+                    onClick={_ => setVisible(_ => true)}
+                    icon={<Icons.Plus className="mr-4" />}
+                    type_=`ghost>
+                    <Text> {j|Dodaj wizytę|j} </Text>
+                  </Button.CTA>
+                  <div className="h-4" />
+                  <Button.CTA
+                    icon={<Icons.Video className="mr-4" />}
+                    onClick={_ => Router.(push(PatientVideoChat(id)))}>
+                    <Text> {j|Rozpocznij videorozmowe|j} </Text>
+                  </Button.CTA>
+                </div>}
          </div>;
        | _ => React.null
        }}
@@ -134,6 +152,13 @@ let make = (~id: string) => {
            text={j|Nie prowadziłeś jeszcze konsultacji z tym pacjentem|j}
          />
        | calls => <Visits_History calls />
+       }}
+    </Section>
+    <Section title={j|Symptomy|j} icon={<Icons.Thermometer />}>
+      {switch (Symptoms.symptoms) {
+       | symptoms when symptoms->Array.size == 0 =>
+         <NoData title={j|Brak objawów|j} text={j|Pacjent zdrowy|j} />
+       | symptoms => <Symptoms_Table symptoms />
        }}
     </Section>
     {switch (query) {

@@ -71,7 +71,6 @@ let remove = (payload: removeVisitResponse, context: Graphql_Context.t) => {
   ->Promise.Js.map(res => {
       switch (res) {
       | Ok(_) => Some({id: payload.id})
-
       | Error(_) => None
       }
     });
@@ -89,7 +88,6 @@ let list = (_payload: listPayload, context: Graphql_Context.t) => {
       | Ok(res) =>
         let {user_id} = Auth.decode(context.token);
         res->Json.toList(user_id);
-
       | Error(err) => Json.fromObject(err)
       }
     });

@@ -117,6 +117,13 @@ module ChevronRight = {
     "ChevronRight";
 };
 
+module ChevronDown = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "ChevronDown";
+};
+
 module Settings = {
   [@bs.module "react-feather"] [@react.component]
   external make:

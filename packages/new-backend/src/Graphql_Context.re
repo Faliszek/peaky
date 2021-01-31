@@ -3,5 +3,3 @@ type t = {
   db: Firebase.Database.t,
   token: option(string),
 };
-
-let make = ();
