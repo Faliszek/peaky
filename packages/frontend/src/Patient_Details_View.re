@@ -1,18 +1,4 @@
-module Query = [%graphql
-  {|
-    query Patient($id: String!) {
-      patient(id: $id) {
-        id
-        firstName
-        lastName
-        phoneNumber
-        disease
-        lastVisit
-        color
-      }
-}
-|}
-];
+open Patient_Query.Query;
 
 module Section = {
   [@react.component]
@@ -36,7 +22,7 @@ let make = (~id: string, ~callMode=false) => {
   let (visible, setVisible) = React.useState(_ => false);
 
   let query = Calendar_Query.Query.use();
-  let patientQuery = Query.use({id: id});
+  let patientQuery = Patient_Query.Query.use({id: id});
 
   let (createVisit, result) =
     Visit_Mutation.Mutation.use(
@@ -58,127 +44,146 @@ let make = (~id: string, ~callMode=false) => {
   <Page
     title={callMode ? "" : {j|Detale: $name|j}}
     hasBackButton={callMode ? false : true}>
-    <Page.Block>
-      {switch (patientQuery) {
-       | {loading: true} => <Spinner />
-       | {data: Some({patient})} =>
-         let {firstName, lastName, phoneNumber, disease, lastVisit, color}: Query.t_patient = patient;
 
-         <div className="flex items-center">
-           <div className="flex flex-1 items-center ml-4">
-             <Avatar
-               firstName={callMode ? "X" : firstName}
-               lastName={callMode ? "X" : lastName}
-               size=`big
-               color
-             />
-             <Patient_Block.Info
-               name={callMode ? "" : name}
-               lastVisit
-               disease
-               phoneNumber
-             />
-           </div>
-           {callMode
-              ? React.null
-              : <div
-                  className="ml-16 flex  flex-1 flex-col items-start justify-start">
-                  <Button.CTA
-                    onClick={_ => setVisible(_ => true)}
-                    icon={<Icons.Plus className="mr-4" />}
-                    type_=`ghost>
-                    <Text> {j|Dodaj wizytę|j} </Text>
-                  </Button.CTA>
-                  <div className="h-4" />
-                  <Button.CTA
-                    icon={<Icons.Video className="mr-4" />}
-                    onClick={_ => Router.(push(PatientVideoChat(id)))}>
-                    <Text> {j|Rozpocznij videorozmowe|j} </Text>
-                  </Button.CTA>
-                </div>}
-         </div>;
+      <Page.Block>
+        {switch (patientQuery) {
+         | {loading: true} => <Spinner />
+         | {data: Some({patient})} =>
+           let {firstName, lastName, phoneNumber, disease, lastVisit, color} = patient;
+
+           <div className="flex items-center">
+             <div className="flex flex-1 items-center ml-4">
+               <Avatar
+                 firstName={callMode ? "X" : firstName}
+                 lastName={callMode ? "X" : lastName}
+                 size=`big
+                 color
+               />
+               <Patient_Block.Info
+                 name={callMode ? "" : name}
+                 lastVisit
+                 disease
+                 phoneNumber
+               />
+             </div>
+             {callMode
+                ? React.null
+                : <div
+                    className="ml-16 flex  flex-1 flex-col items-start justify-start">
+                    <Button.CTA
+                      onClick={_ => setVisible(_ => true)}
+                      icon={<Icons.Plus className="mr-4" />}
+                      type_=`ghost>
+                      <Text> {j|Dodaj wizytę|j} </Text>
+                    </Button.CTA>
+                    <div className="h-4" />
+                    <Button.CTA
+                      icon={<Icons.Video className="mr-4" />}
+                      onClick={_ => Router.(push(PatientVideoChat(id)))}>
+                      <Text> {j|Rozpocznij videorozmowe|j} </Text>
+                    </Button.CTA>
+                  </div>}
+           </div>;
+         | _ => React.null
+         }}
+      </Page.Block>
+      <Section title={j|Przebieg choroby|j} icon={<Icons.BarChart />}>
+        <div
+          className="flex items-center gap-8"
+          ref={ReactDOM.Ref.callbackDomRef(el =>
+            setWidth(_ =>
+              el
+              ->Js.Nullable.toOption
+              ->Option.map(el => el->HTMLElement.offsetWidth)
+            )
+          )}>
+          <Chart.XYPlot
+            width={width->Option.getWithDefault(600.0)} height=300.0>
+            <Chart.HorizontalGridLines
+              style={ReactDOM.Style.make(~stroke="#E2E8F0", ())}
+            />
+            <Chart.XAxis
+              attr="x"
+              attrAxis="y"
+              orientation="bottom"
+              tickFormat={v => {
+                Js.log(v);
+                "dupa";
+              }}
+            />
+            <Chart.YAxis attr="y" attrAxis="x" orientation="left" />
+            <Chart.LineSeries
+              curve=`curveMonotoneX
+              strokeStyle=`solid
+              data=Chart.([|{x: 1.0, y: 1.0}, {x: 2.0, y: 2.0}|])
+              opacity=1.0
+              style={ReactDOM.Style.make(~strokeWidth="5px", ())}
+            />
+            <Chart.LineSeries
+              curve=`curveMonotoneX
+              strokeStyle=`solid
+              data=Chart.(
+                [|{x: 2.0, y: 2.0}, {x: 3.0, y: 1.0}, {x: 4.0, y: 1.5}|]
+              )
+              opacity=1.0
+              style={ReactDOM.Style.make(
+                ~strokeWidth="5px",
+                ~fill="none",
+                (),
+              )}
+            />
+          </Chart.XYPlot>
+        </div>
+      </Section>
+      <Section title={j|Symptomy|j} icon={<Icons.Thermometer />}>
+        {switch (Symptoms.symptoms) {
+         | symptoms when symptoms->Array.size == 0 =>
+           <NoData title={j|Brak objawów|j} text={j|Pacjent zdrowy|j} />
+         | symptoms => <Symptoms_Table symptoms />
+         }}
+      </Section>
+      {switch (query) {
+       | {data: Some(data)} =>
+         <Calendar_AddVisit
+           onClose={_ => setVisible(_ => false)}
+           visible
+           date=None
+           patientId=id
+           loading={result.loading}
+           patients={data.patients}
+           onSubmit={(~patientId, ~from_, ~to_, ~notes) =>
+             createVisit({patientId, from_, to_, notes: Some(notes)})
+             ->Request.onFinish(
+                 ~onOk=_ => setVisible(_ => false),
+                 ~onError=_ => (),
+               )
+           }
+         />
        | _ => React.null
        }}
-    </Page.Block>
-    <Section title={j|Przebieg choroby|j} icon={<Icons.BarChart />}>
-      <div
-        className="flex items-center gap-8"
-        ref={ReactDOM.Ref.callbackDomRef(el =>
-          setWidth(_ =>
-            el
-            ->Js.Nullable.toOption
-            ->Option.map(el => el->HTMLElement.offsetWidth)
-          )
-        )}>
-        <Chart.XYPlot
-          width={width->Option.getWithDefault(600.0)} height=300.0>
-          <Chart.HorizontalGridLines
-            style={ReactDOM.Style.make(~stroke="#E2E8F0", ())}
-          />
-          <Chart.XAxis
-            attr="x"
-            attrAxis="y"
-            orientation="bottom"
-            tickFormat={v => {
-              Js.log(v);
-              "dupa";
-            }}
-          />
-          <Chart.YAxis attr="y" attrAxis="x" orientation="left" />
-          <Chart.LineSeries
-            curve=`curveMonotoneX
-            strokeStyle=`solid
-            data=Chart.([|{x: 1.0, y: 1.0}, {x: 2.0, y: 2.0}|])
-            opacity=1.0
-            style={ReactDOM.Style.make(~strokeWidth="5px", ())}
-          />
-          <Chart.LineSeries
-            curve=`curveMonotoneX
-            strokeStyle=`solid
-            data=Chart.(
-              [|{x: 2.0, y: 2.0}, {x: 3.0, y: 1.0}, {x: 4.0, y: 1.5}|]
-            )
-            opacity=1.0
-            style={ReactDOM.Style.make(~strokeWidth="5px", ~fill="none", ())}
-          />
-        </Chart.XYPlot>
-      </div>
-    </Section>
-    <Section title={j|Historia wizyt|j} icon={<Icons.Clock />}>
-      {switch (Visit.calls) {
-       | calls when calls->Array.size == 0 =>
-         <NoData
-           title={j|Historia wizyt pusta|j}
-           text={j|Nie prowadziłeś jeszcze konsultacji z tym pacjentem|j}
-         />
-       | calls => <Visits_History calls />
-       }}
-    </Section>
-    <Section title={j|Symptomy|j} icon={<Icons.Thermometer />}>
-      {switch (Symptoms.symptoms) {
-       | symptoms when symptoms->Array.size == 0 =>
-         <NoData title={j|Brak objawów|j} text={j|Pacjent zdrowy|j} />
-       | symptoms => <Symptoms_Table symptoms />
-       }}
-    </Section>
-    {switch (query) {
-     | {data: Some(data)} =>
-       <Calendar_AddVisit
-         onClose={_ => setVisible(_ => false)}
-         visible
-         date=None
-         patientId=id
-         loading={result.loading}
-         patients={data.patients}
-         onSubmit={(~patientId, ~from_, ~to_, ~notes) =>
-           createVisit({patientId, from_, to_, notes: Some(notes)})
-           ->Request.onFinish(
-               ~onOk=_ => setVisible(_ => false),
-               ~onError=_ => (),
-             )
-         }
-       />
-     | _ => React.null
-     }}
-  </Page>;
+    </Page>;
+    // <Section title={j|Historia wizyt|j} icon={<Icons.Clock />}>
+    //   {switch (patientQuery) {
+    //    | {data: Some({calls})} when calls->Array.size == 0 =>
+    //      <NoData
+    //        title={j|Historia wizyt pusta|j}
+    //        text={j|Nie prowadziłeś jeszcze konsultacji z tym pacjentem|j}
+    //      />
+    //    //  | {data: Some({calls})} =>
+    //    //  let calls =
+    //    //    calls->Array.map(c =>
+    //    //      Call.fromGraphql(
+    //    //        ~duration=c.duration,
+    //    //        ~id=c.id,
+    //    //        ~answered=c.answered,
+    //    //        ~timestamp=c.timestamp,
+    //    //        ~withWho=               (),
+    //    //      )
+    //    //    );
+    //    //  <Visits_History calls callMode name />;
+    //    //  React.null
+    //    | {loading: true} => <Spinner />
+    //    | _ => React.null
+    //    }}
+    // </Section>
 };

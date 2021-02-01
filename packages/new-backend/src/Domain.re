@@ -37,6 +37,17 @@ module User = {
   [@decco];
 };
 
+module Call = {
+  type t = {
+    id: string,
+    duration: float,
+    timestamp: string,
+    answered: bool,
+    from_: User.t,
+    to_: User.t,
+  };
+};
+
 module Visit = {
   type t = {
     from_: string,

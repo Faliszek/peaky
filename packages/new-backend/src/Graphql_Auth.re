@@ -27,11 +27,9 @@ let signIn = ({email, password}: payload, context: Graphql_Context.t) => {
 };
 
 let createUser = (~db: Firebase.Database.t, ~uid: string, ~email: string) => {
-  let value = Js.Dict.fromList([(uid, {"email": email})]);
-
   db
-  ->Firebase.Database.ref(~path="/users", ())
-  ->Firebase.Database.Reference.set(~value);
+  ->Firebase.Database.ref(~path="/users/" ++ uid, ())
+  ->Firebase.Database.Reference.set(~value={"email": email});
 };
 
 let signUp = ({email, password}: payload, context: Graphql_Context.t) => {

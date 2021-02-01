@@ -93,8 +93,6 @@ let make = () => {
   let token = Auth.getToken();
   let url = ReasonReactRouter.useUrl();
 
-  Js.log(token);
-
   <ApolloClient.React.ApolloProvider client=instance>
     <div>
       {switch (token) {
@@ -106,8 +104,8 @@ let make = () => {
             | ["patients", id, "chat"] => <Patient_Chat_View _id=id />
             | ["patients", id] => <Patient_Details_View id />
             | ["patients"] => <Patient_List_View />
-            | ["visits"] => <Visits />
-            | ["friends"] => <Friends />
+            | ["calls"] => <Calls_List_View />
+            | ["consultations"] => <Consultations />
             | ["settings"] => <Settings />
             | [] => <Calendar />
 

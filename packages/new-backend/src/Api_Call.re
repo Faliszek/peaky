@@ -39,44 +39,41 @@ let me = (_payload: meQueryPayload, context: Graphql_Context.t) => {
       })
   );
 };
-type searchPayload = {
-  specialization: string,
-  firstName: string,
-  lastName: string,
-};
-let search = (payload: searchPayload, context: Graphql_Context.t) => {
-  let {user_id} = Auth.decode(context.token);
 
+let get = (db, path) => {
   Firebase.(
-    context.db
-    ->Database.ref(~path="/users", ())
+    db
+    ->Database.ref(~path, ())
     ->Database.Reference.once(~eventType="value", ())
     ->Promise.Js.toResult
-    ->Promise.Js.map(res => {
-        switch (res) {
-        | Ok(res) =>
-          let {specialization, firstName, lastName} = payload;
-          let data: array(Domain.User.t) = res->Json.toUserList;
-
-          data->Array.keep(u =>
-            switch (specialization, firstName, lastName, user_id) {
-            | (_, _, _, userId) when userId == u.id => false
-            | ("", "", "", _) => true
-            | (specialization, _, _, _)
-                when u.specialization->Js.String2.includes(specialization) =>
-              true
-            | (_, firstName, _, _)
-                when u.firstName->Js.String2.includes(firstName) =>
-              true
-            | (_, _, lastName, _)
-                when u.lastName->Js.String2.includes(lastName) =>
-              true
-            | _ => false
-            }
-          );
-
-        | Error(err) => Json.fromObject(err)
-        }
-      })
   );
+};
+
+let onFinish = (req, ~onOk) =>
+  req->Promise.Js.map(res => {
+    switch (res) {
+    | Ok(res) => onOk(res)
+    | Error(err) => Json.fromObject(err)
+    }
+  });
+
+type listPayload;
+
+let list = (_payload: listPayload, context: Graphql_Context.t) => {
+  //   context.db
+  //   ->get("/users")
+  //   ->onFinish(~onOk=res => {
+  //       let users = res->Json.toUserList;
+  //       context.db
+  //       ->get("/calls")
+  //       ->onFinish(~onOk=calls => {calls->Json.toCallsList(users)});
+  //     });
+  context.db
+  ->get("/users")
+  ->onFinish(~onOk=Json.toUserList)
+  ->Promise.flatMap(users =>
+      context.db
+      ->get("/calls")
+      ->onFinish(~onOk=calls => {calls->Json.toCallsList(users)})
+    );
 };

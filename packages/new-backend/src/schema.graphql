@@ -1,10 +1,22 @@
-type Sympmtom {
+type Symptom {
   id: String!
-  name: String!
+  name: String
+  date: String
+  circumstances: String
+  description: String
+  occurences: String
+  causedBy: String
+  notes: String
+}
+
+type SymptomEvent {
+  value: Float!
+  timestamp: Float!
+  symptomId: String!
 }
 
 type PatientEvent {
-  symptomps: [Sympmtom!]!
+  symptomps: [SymptomEvent!]!
   feeling: Float!
   timestamp: Float!
 }
@@ -26,6 +38,8 @@ type User {
   specialization: String!
   firstName: String!
   lastName: String!
+  avatar: String
+  online: Boolean!
 }
 
 type Visit {
@@ -49,8 +63,14 @@ type Call {
   duration: Float!
   timestamp: String!
   answered: Boolean!
-  from: User!
-  to: User!
+  from_: User!
+  to_: User!
+}
+
+type PatientEvent {
+  symptomps: [SymptomEvent!]!
+  feeling: Float!
+  timestamp: Float!
 }
 
 type Query {
@@ -65,6 +85,7 @@ type Query {
   patients: [Patient!]!
   patient(id: String!): Patient!
   visits: [Visit!]!
+  symptoms(patientId: String!): [Symptom!]!
 }
 
 type Mutation {

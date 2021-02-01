@@ -48,18 +48,20 @@ module CTA = {
         ~icon=?,
         ~type_=`primary,
         ~onClick=?,
+        ~disabled=false,
       ) => {
     let colors =
-      switch (type_) {
-      | `primary => "border border-green-400 bg-green-400  text-white hover:bg-green-300 hover:border-green-300"
-      | `ghost => "border border-green-400 bg-white  text-green-400 hover:text-green-300 hover:border-green-300"
+      switch (disabled, type_) {
+      | (true, _) => "border border-gray-400 bg-gray-400 text-white cursor-not-allowed"
+      | (false, `primary) => "border border-green-400 bg-green-400  text-white hover:bg-green-300 hover:border-green-300 shadow-lg"
+      | (false, `ghost) => "border border-green-400 bg-white  text-green-400 hover:text-green-300 hover:border-green-300 shadow-lg"
       };
-    Js.log(loading);
+
     <button
       ?onClick
       type_=?htmlType
       className=Cn.(
-        "relative px-8 h-12  shadow-lg flex items-center justify-center text-lg rounded-3xl focus:outline-none transition-colors  overflow-hidden"
+        "relative px-8 h-12   flex items-center justify-center text-lg rounded-3xl focus:outline-none transition-colors  overflow-hidden"
         + colors
         + Cn.mapSome(className, x => x)
       )>

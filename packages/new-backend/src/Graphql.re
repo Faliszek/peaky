@@ -30,6 +30,9 @@ type root = {
   me:
     (Api_User.meQueryPayload, Graphql_Context.t) =>
     res(Domain.User.t, Promise.never),
+  searchSpecialist:
+    (Api_User.searchPayload, Graphql_Context.t) =>
+    res(array(Domain.User.t), Promise.never),
   patients:
     (Api_Patient.listPayload, Graphql_Context.t) =>
     res(array(Domain.Patient.t), Promise.never),
@@ -39,6 +42,9 @@ type root = {
   visits:
     (Api_Visit.listPayload, Graphql_Context.t) =>
     res(array(Domain.Patient.t), Promise.never),
+  calls:
+    (Api_Call.listPayload, Graphql_Context.t) =>
+    res(array(Domain.Call.t), Promise.never),
 };
 
 type headers = {authorization: option(string)};
@@ -58,13 +64,13 @@ let root: root = {
   removeVisit: Api_Visit.remove,
   createPatient: Api_Patient.createPatient,
   removePatient: Api_Patient.removePatient,
-  // searchSpecialist: User.resolve,
+  searchSpecialist: Api_User.search,
   me: Api_User.me,
   patients: Api_Patient.list,
 
   patient: Api_Patient.single,
   visits: Api_Visit.list,
-  //calls: Calls.resolve
+  calls: Api_Call.list,
 };
 
 [@bs.module "express-graphql"]
