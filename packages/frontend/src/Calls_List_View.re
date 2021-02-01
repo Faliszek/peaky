@@ -4,7 +4,6 @@ type userCallFrom = Frontend.Calls_Query.Query.Query_inner.t_calls_from_;
 type userCallTo = Frontend.Calls_Query.Query.Query_inner.t_calls_to_;
 
 let withWho = (from_: userCallFrom, to_: userCallTo, myId) => {
-  Js.log2(from_, to_);
   switch (from_, to_, myId) {
   | (from_, _, myId) when from_.id != myId =>
     Some(from_.firstName ++ " " ++ from_.lastName)
@@ -27,8 +26,10 @@ let make = (~callMode=false) => {
   <Page
     title="Wizyty"
     actions={
-      <Button.CTA onClick={_ => executeQuery()}>
-        <Text> {|Odśwież listę|} </Text>
+      <Button.CTA
+        icon={<Icons.RefreshCcw className="mr-4" />}
+        onClick={_ => executeQuery()}>
+        <Text> {j|Odśwież listę|j} </Text>
       </Button.CTA>
     }>
     {switch (queryCalls) {

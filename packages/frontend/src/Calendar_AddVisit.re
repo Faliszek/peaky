@@ -91,8 +91,6 @@ let make =
     (patientId, patients),
   );
 
-  Js.log(patient);
-
   <SideNav title={j|Dodaj wizytę|j} visible onClose>
     <Input.Wrap>
       <Select

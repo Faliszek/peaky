@@ -117,7 +117,7 @@ let make = () => {
                         icon={
                           c.online
                             ? <Icons.Video className="mr-4" />
-                            : <Icons.Slash className="mr-4" />
+                            : <Icons.PhoneMissed className="mr-4" />
                         }
                         disabled={!c.online}>
                         <Text>

@@ -194,9 +194,9 @@ module PhoneMissed = {
     "PhoneMissed";
 };
 
-module Slash = {
+module RefreshCcw = {
   [@bs.module "react-feather"] [@react.component]
   external make:
     (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
-    "PhoneMissed";
+    "RefreshCcw";
 };

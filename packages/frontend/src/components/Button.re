@@ -15,10 +15,13 @@ module Row = {
 };
 module SmallRound = {
   [@react.component]
-  let make = (~icon, ~onClick=?) => {
+  let make = (~icon, ~onClick=?, ~className=?) => {
     <button
       ?onClick
-      className="rounded-full bg-green-500 w-12 h-12 flex items-center justify-center shadow-md text-white cursor-pointer transition-colors hover:bg-green-400 focus:outline-none">
+      className=Cn.(
+        "rounded-full bg-green-500 w-12 h-12 flex items-center justify-center shadow-md text-white cursor-pointer transition-colors hover:bg-green-400 focus:outline-none"
+        + className->mapSome(x => x)
+      )>
       icon
     </button>;
   };
