@@ -1,4 +1,4 @@
-open Symptoms;
+open Patient_Query.Query;
 
 module SymptomRow = {
   module Label = {

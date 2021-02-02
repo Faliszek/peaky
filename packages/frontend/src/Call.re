@@ -1,7 +1,7 @@
 type t = {
   id: string,
   duration: float,
-  timestamp: string,
+  timestamp: float,
   answered: bool,
   withWho: option(string),
 };

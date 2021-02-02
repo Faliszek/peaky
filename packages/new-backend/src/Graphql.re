@@ -45,6 +45,24 @@ type root = {
   calls:
     (Api_Call.listPayload, Graphql_Context.t) =>
     res(array(Domain.Call.t), Promise.never),
+  addFeeling:
+    (Api_Feeling.addFeelingPayload, Graphql_Context.t) =>
+    res(option(Domain.Feeling.t), Promise.never),
+  addPatientEvent:
+    (Api_PatientEvent.addPatientEventPayload, Graphql_Context.t) =>
+    res(option(Domain.PatientEvent.t), Promise.never),
+  addSymptom:
+    (Api_Symptom.addSymptomPayload, Graphql_Context.t) =>
+    res(option(Domain.Symptom.t), Promise.never),
+  feelings:
+    (Api_Feeling.listPayload, Graphql_Context.t) =>
+    res(array(Domain.Feeling.t), Promise.never),
+  patientEvents:
+    (Api_PatientEvent.listPayload, Graphql_Context.t) =>
+    res(array(Domain.PatientEvent.t), Promise.never),
+  symptoms:
+    (Api_Symptom.listPayload, Graphql_Context.t) =>
+    res(array(Domain.Symptom.t), Promise.never),
 };
 
 type headers = {authorization: option(string)};
@@ -71,6 +89,13 @@ let root: root = {
   patient: Api_Patient.single,
   visits: Api_Visit.list,
   calls: Api_Call.list,
+  addFeeling: Api_Feeling.add,
+  addPatientEvent: Api_PatientEvent.add,
+  addSymptom: Api_Symptom.add,
+
+  feelings: Api_Feeling.list,
+  patientEvents: Api_PatientEvent.list,
+  symptoms: Api_Symptom.list,
 };
 
 [@bs.module "express-graphql"]

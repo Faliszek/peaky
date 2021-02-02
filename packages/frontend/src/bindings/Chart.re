@@ -34,7 +34,8 @@ module XAxis = {
       ~attr: string,
       ~attrAxis: string,
       ~orientation: string,
-      ~tickFormat: 'a => string
+      ~tickFormat: 'a => string,
+      ~tickTotal: int
     ) =>
     React.element =
     "XAxis";

@@ -23,6 +23,11 @@ module Section = {
   };
 };
 
+type t = {
+  id: string,
+  data: array(Chart.dataLine),
+};
+
 [@react.component]
 let make = (~id: string, ~callMode=false) => {
   let (visible, setVisible) = React.useState(_ => false);
@@ -101,48 +106,91 @@ let make = (~id: string, ~callMode=false) => {
        }}
     </Page.Block>
     <Section title={j|Przebieg choroby|j} icon={<Icons.BarChart />}>
-      <div
-        className="flex items-center gap-8"
-        ref={ReactDOM.Ref.callbackDomRef(el =>
-          setWidth(_ =>
-            el
-            ->Js.Nullable.toOption
-            ->Option.map(el => el->HTMLElement.offsetWidth)
-          )
-        )}>
-        <Chart.XYPlot
-          width={width->Option.getWithDefault(600.0)} height=300.0>
-          <Chart.HorizontalGridLines
-            style={ReactDOM.Style.make(~stroke="#E2E8F0", ())}
-          />
-          <Chart.XAxis
-            attr="x"
-            attrAxis="y"
-            orientation="bottom"
-            tickFormat={v => {
-              Js.log(v);
-              "dupa";
-            }}
-          />
-          <Chart.YAxis attr="y" attrAxis="x" orientation="left" />
-          <Chart.LineSeries
-            curve=`curveMonotoneX
-            strokeStyle=`solid
-            data=Chart.([|{x: 1.0, y: 1.0}, {x: 2.0, y: 2.0}|])
-            opacity=1.0
-            style={ReactDOM.Style.make(~strokeWidth="5px", ())}
-          />
-          <Chart.LineSeries
-            curve=`curveMonotoneX
-            strokeStyle=`solid
-            data=Chart.(
-              [|{x: 2.0, y: 2.0}, {x: 3.0, y: 1.0}, {x: 4.0, y: 1.5}|]
-            )
-            opacity=1.0
-            style={ReactDOM.Style.make(~strokeWidth="5px", ~fill="none", ())}
-          />
-        </Chart.XYPlot>
-      </div>
+      {switch (patientQuery) {
+       | {loading: true} => <Spinner />
+       | {data: Some({feelings, patientEvents})} =>
+         let feelings =
+           feelings->Array.map(f =>
+             Chart.{x: f.timestamp, y: f.value->float_of_string}
+           );
+
+         let symptoms =
+           patientEvents->Array.reduce([||], (acc, {symptompId}) =>
+             switch (acc) {
+             | acc
+                 when
+                   acc
+                   ->Array.keep(x => x == symptompId)
+                   ->Array.get(0)
+                   ->Option.isSome => acc
+             | acc => acc->Array.concat([|symptompId|])
+             }
+           );
+
+         let symptomsData: array(t) =
+           symptoms->Array.reduce([||], (acc, id) =>
+             acc->Array.concat([|
+               {
+                 id,
+                 data:
+                   patientEvents->Array.map(e =>
+                     Chart.{x: e.timestamp, y: e.feeling}
+                   ),
+               },
+             |])
+           );
+         Js.log(symptoms);
+
+         <div
+           className="flex items-center gap-8"
+           ref={ReactDOM.Ref.callbackDomRef(el =>
+             setWidth(_ =>
+               el
+               ->Js.Nullable.toOption
+               ->Option.map(el => el->HTMLElement.offsetWidth)
+             )
+           )}>
+           <Chart.XYPlot
+             width={width->Option.getWithDefault(600.0)} height=300.0>
+             <Chart.HorizontalGridLines
+               style={ReactDOM.Style.make(~stroke="#E2E8F0", ())}
+             />
+             <Chart.XAxis
+               attr="x"
+               attrAxis="y"
+               orientation="bottom"
+               tickFormat={v => {v->Time.format("dd.MM.yy")}}
+               tickTotal=8
+             />
+             <Chart.YAxis attr="y" attrAxis="x" orientation="left" />
+             <Chart.LineSeries
+               curve=`curveMonotoneX
+               strokeStyle=`solid
+               data=Chart.(feelings)
+               opacity=1.0
+               style={ReactDOM.Style.make(~strokeWidth="5px", ())}
+             />
+             {symptomsData
+              ->Array.map(s =>
+                  <Chart.LineSeries
+                    key={s.id}
+                    curve=`curveMonotoneX
+                    strokeStyle=`solid
+                    data=Chart.(s.data)
+                    opacity=1.0
+                    style={ReactDOM.Style.make(
+                      ~strokeWidth="5px",
+                      ~fill="none",
+                      (),
+                    )}
+                  />
+                )
+              ->React.array}
+           </Chart.XYPlot>
+         </div>;
+
+       | _ => React.null
+       }}
     </Section>
     <Section
       title={j|Symptomy|j}
@@ -152,10 +200,11 @@ let make = (~id: string, ~callMode=false) => {
           <Text> {j|Dodaj symptom|j} </Text>
         </Button.CTA>
       }>
-      {switch (Symptoms.symptoms) {
-       | symptoms when symptoms->Array.size == 0 =>
+      {switch (patientQuery) {
+       | {loading: true} => <Spinner />
+       | {data: Some({symptoms})} when symptoms->Array.size == 0 =>
          <NoData title={j|Brak objawów|j} text={j|Pacjent zdrowy|j} />
-       | symptoms =>
+       | {data: Some({symptoms})} =>
          <>
            <Symptoms_Table symptoms />
            <Modal
@@ -205,6 +254,7 @@ let make = (~id: string, ~callMode=false) => {
              </Input.Wrap>
            </Modal>
          </>
+       | _ => React.null
        }}
     </Section>
     {switch (query) {

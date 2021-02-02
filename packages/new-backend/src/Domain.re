@@ -57,3 +57,32 @@ module Visit = {
     patientId: string,
   };
 };
+
+module Feeling = {
+  type t = {
+    patientId: string,
+    value: string,
+    timestamp: string,
+  };
+};
+
+module PatientEvent = {
+  type t = {
+    symptompId: string,
+    feeling: float,
+    timestamp: string,
+  };
+};
+
+module Symptom = {
+  type t = {
+    id: string,
+    name: string,
+    date: string,
+    circumstances: string,
+    description: string,
+    occurences: string,
+    causedBy: string,
+    notes: string,
+  };
+};

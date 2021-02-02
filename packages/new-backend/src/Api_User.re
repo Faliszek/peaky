@@ -56,7 +56,7 @@ let search = (payload: searchPayload, context: Graphql_Context.t) => {
         switch (res) {
         | Ok(res) =>
           let {specialization, firstName, lastName} = payload;
-          let data: array(Domain.User.t) = res->Json.toUserList;
+          let data: array(Domain.User.t) = res->Json.toList;
 
           data->Array.keep(u =>
             switch (specialization, firstName, lastName, user_id) {

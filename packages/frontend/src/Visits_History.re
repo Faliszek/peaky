@@ -30,7 +30,6 @@ let make = (~calls: array(Call.t), ~callMode) => {
              <Table.Td width="w-1/5">
                <Text>
                  {c.timestamp
-                  ->float_of_string
                   ->Js.Date.fromFloat
                   ->Time.format("dd.MM.yyyy, HH:mm")}
                </Text>

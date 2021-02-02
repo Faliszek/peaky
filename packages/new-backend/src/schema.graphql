@@ -1,26 +1,3 @@
-type Symptom {
-  id: String!
-  name: String
-  date: String
-  circumstances: String
-  description: String
-  occurences: String
-  causedBy: String
-  notes: String
-}
-
-type SymptomEvent {
-  value: Float!
-  timestamp: Float!
-  symptomId: String!
-}
-
-type PatientEvent {
-  symptomps: [SymptomEvent!]!
-  feeling: Float!
-  timestamp: Float!
-}
-
 type Patient {
   id: String!
   firstName: String!
@@ -61,16 +38,10 @@ type RemovedPatient {
 type Call {
   id: String!
   duration: Float!
-  timestamp: String!
+  timestamp: Float!
   answered: Boolean!
   from_: User!
   to_: User!
-}
-
-type PatientEvent {
-  symptomps: [SymptomEvent!]!
-  feeling: Float!
-  timestamp: Float!
 }
 
 type Query {
@@ -86,6 +57,33 @@ type Query {
   patient(id: String!): Patient!
   visits: [Visit!]!
   symptoms(patientId: String!): [Symptom!]!
+  feelings(patientId: String!): [Feeling!]!
+  patientEvents(patientId: String!): [PatientEvent!]!
+}
+
+type Feeling {
+  id: String!
+  patientId: String!
+  value: String!
+  timestamp: Float!
+}
+
+type PatientEvent {
+  id: String!
+  symptompId: String!
+  feeling: Float!
+  timestamp: Float!
+}
+
+type Symptom {
+  id: String!
+  name: String!
+  date: String!
+  circumstances: String!
+  description: String!
+  occurences: String!
+  causedBy: String!
+  notes: String!
 }
 
 type Mutation {
@@ -110,4 +108,22 @@ type Mutation {
   ): Patient!
 
   removePatient(id: String!): RemovedPatient!
+  addFeeling(patientId: String!, value: String!, timestamp: Float!): Feeling!
+  addPatientEvent(
+    patientId: String!
+    symptompId: String!
+    feeling: Float!
+    timestamp: Float!
+  ): PatientEvent!
+
+  addSymptom(
+    patientId: String!
+    name: String
+    date: String
+    circumstances: String
+    description: String
+    occurences: String
+    causedBy: String
+    notes: String
+  ): Symptom!
 }

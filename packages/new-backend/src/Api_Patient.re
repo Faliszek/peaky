@@ -94,7 +94,7 @@ let list = (_payload: listPayload, context: Graphql_Context.t) => {
       switch (res) {
       | Ok(res) =>
         let {user_id} = Auth.decode(context.token);
-        res->Json.toList(user_id);
+        res->Json.toOwnedList(user_id, `doctor);
 
       | Error(err) => Json.fromObject(err)
       };

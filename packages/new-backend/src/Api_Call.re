@@ -40,40 +40,15 @@ let me = (_payload: meQueryPayload, context: Graphql_Context.t) => {
   );
 };
 
-let get = (db, path) => {
-  Firebase.(
-    db
-    ->Database.ref(~path, ())
-    ->Database.Reference.once(~eventType="value", ())
-    ->Promise.Js.toResult
-  );
-};
-
-let onFinish = (req, ~onOk) =>
-  req->Promise.Js.map(res => {
-    switch (res) {
-    | Ok(res) => onOk(res)
-    | Error(err) => Json.fromObject(err)
-    }
-  });
-
 type listPayload;
 
 let list = (_payload: listPayload, context: Graphql_Context.t) => {
-  //   context.db
-  //   ->get("/users")
-  //   ->onFinish(~onOk=res => {
-  //       let users = res->Json.toUserList;
-  //       context.db
-  //       ->get("/calls")
-  //       ->onFinish(~onOk=calls => {calls->Json.toCallsList(users)});
-  //     });
   context.db
-  ->get("/users")
-  ->onFinish(~onOk=Json.toUserList)
+  ->Chain.get("/users")
+  ->Chain.onFinish(~onOk=Json.toList)
   ->Promise.flatMap(users =>
       context.db
-      ->get("/calls")
-      ->onFinish(~onOk=calls => {calls->Json.toCallsList(users)})
+      ->Chain.get("/calls")
+      ->Chain.onFinish(~onOk=calls => {calls->Json.toCallsList(users)})
     );
 };
