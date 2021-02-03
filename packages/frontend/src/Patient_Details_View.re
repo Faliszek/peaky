@@ -51,14 +51,23 @@ let make = (~id: string, ~callMode=false) => {
         ->Option.getWithDefault("");
 
   let (width, setWidth) = React.useState(_ => None);
-  let (modalVisible, setModalVisible) = React.useState(_ => true);
+  let (modalVisible, setModalVisible) = React.useState(_ => false);
 
+  let (symptomName, setSymptomName) = React.useState(_ => "");
   let (circumstances, setCircumstances) = React.useState(_ => "");
   let (date, setDate) = React.useState(_ => "");
   let (occurences, setOccurences) = React.useState(_ => "");
   let (description, setDescription) = React.useState(_ => "");
   let (causedBy, setCausedBy) = React.useState(_ => "");
   let (notes, setNotes) = React.useState(_ => "");
+
+  let (createSymptom, resultSymptom) =
+    Symptom_Mutation.Mutation.use(
+      ~refetchQueries=[|
+        Patient_Query.Query.refetchQueryDescription({id: id}),
+      |],
+      (),
+    );
 
   <Page
     title={callMode ? "" : {j|Detale: $name|j}}
@@ -166,7 +175,7 @@ let make = (~id: string, ~callMode=false) => {
              <Chart.LineSeries
                curve=`curveMonotoneX
                strokeStyle=`solid
-               data=Chart.(feelings)
+               data=feelings
                opacity=1.0
                style={ReactDOM.Style.make(~strokeWidth="5px", ())}
              />
@@ -176,7 +185,7 @@ let make = (~id: string, ~callMode=false) => {
                     key={s.id}
                     curve=`curveMonotoneX
                     strokeStyle=`solid
-                    data=Chart.(s.data)
+                    data={s.data}
                     opacity=1.0
                     style={ReactDOM.Style.make(
                       ~strokeWidth="5px",
@@ -209,7 +218,31 @@ let make = (~id: string, ~callMode=false) => {
            <Symptoms_Table symptoms />
            <Modal
              visible=modalVisible
-             onVisibleChange={_ => setModalVisible(_ => false)}>
+             loading={resultSymptom.loading}
+             onVisibleChange={_ => setModalVisible(_ => false)}
+             onOk={_ =>
+               createSymptom({
+                 name: symptomName,
+                 occurences,
+                 description,
+                 causedBy,
+                 notes,
+                 patientId: id,
+                 date,
+                 circumstances,
+               })
+               ->Request.onFinish(
+                   ~onOk=_ => setModalVisible(_ => false),
+                   ~onError=Js.log,
+                 )
+             }>
+             <Input.Wrap>
+               <Input
+                 placeholder={j|Nazwa|j}
+                 value=symptomName
+                 onChange={v => setSymptomName(_ => v)}
+               />
+             </Input.Wrap>
              <Input.Wrap>
                <Input
                  placeholder={j|Okoliczności pojawienia się|j}
@@ -276,7 +309,7 @@ let make = (~id: string, ~callMode=false) => {
        />
      | _ => React.null
      }}
-    <Patient_Add_Symptom />
+    <Patient_Add_Event />
   </Page>;
   // <Section title={j|Historia wizyt|j} icon={<Icons.Clock />}>
   //   {switch (patientQuery) {

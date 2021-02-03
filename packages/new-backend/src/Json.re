@@ -4,6 +4,7 @@ let toOwnedList: (Firebase.Database.DataSnapshot.t, string) => 'a = [%raw
   {| function toArray(s, userId, owner) {
     const data = s.val();
     const fieldToCompare = owner === "doctor" ? "doctorId" : "patientId";
+
     if(data) {
       return Object.keys(data).reduce((acc, x) => acc.concat({ ...data[x], id: x }), []).filter(x => x[fieldToCompare] === userId);
     } else {

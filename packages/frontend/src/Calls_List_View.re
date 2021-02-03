@@ -1,7 +1,7 @@
 open Calls_Query.Query;
 
-type userCallFrom = Frontend.Calls_Query.Query.Query_inner.t_calls_from_;
-type userCallTo = Frontend.Calls_Query.Query.Query_inner.t_calls_to_;
+type userCallFrom = Calls_Query.Query.Query_inner.t_calls_from_;
+type userCallTo = Calls_Query.Query.Query_inner.t_calls_to_;
 
 let withWho = (from_: userCallFrom, to_: userCallTo, myId) => {
   switch (from_, to_, myId) {

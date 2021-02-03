@@ -96,7 +96,11 @@ let make = () => {
   <ApolloClient.React.ApolloProvider client=instance>
     <div>
       {switch (token) {
-       | None => <SignIn_View />
+       | None =>
+         switch (url.path) {
+         | ["calls", id] => <Call_View id />
+         | _ => <SignIn_View />
+         }
        | Some(_) =>
          <Layout>
            {switch (url.path) {
@@ -104,6 +108,7 @@ let make = () => {
             | ["patients", id, "chat"] => <Patient_Chat_View _id=id />
             | ["patients", id] => <Patient_Details_View id />
             | ["patients"] => <Patient_List_View />
+            | ["calls", id] => <Call_View id />
             | ["calls"] => <Calls_List_View />
             | ["consultations"] => <Consultations />
             | ["settings"] => <Settings />

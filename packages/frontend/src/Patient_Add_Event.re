@@ -16,7 +16,7 @@ module AddEvent = {
       className="w-64 bg-white shadow-xl rounded-xl fixed top-12 right-12 py-8 px-6 border border-gray-200"
       style={ReactDOM.Style.make(~width="450px", ())}>
       <div className="text-2xl text-gray-600 mb-4">
-        <Text> {j|Dodaj notatkę|j} </Text>
+        <Text> {j|Zaktualizuj przebieg choroby|j} </Text>
       </div>
       <Input.Wrap>
         <Select

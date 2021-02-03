@@ -6,6 +6,7 @@ let make =
       ~title={j|Dodaj symptom|j},
       ~children=React.null,
       ~onOk=_ => (),
+      ~loading=false,
     ) => {
   let modal =
     visible
@@ -23,7 +24,7 @@ let make =
               <Button.CTA type_=`ghost onClick={_ => onVisibleChange(false)}>
                 <Text> {j|Anuluj|j} </Text>
               </Button.CTA>
-              <Button.CTA onClick={_ => onOk()}>
+              <Button.CTA onClick={_ => onOk()} loading>
                 <Text> {j|Dodaj|j} </Text>
               </Button.CTA>
             </div>

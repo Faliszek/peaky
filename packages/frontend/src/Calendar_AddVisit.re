@@ -1,4 +1,4 @@
-type patients = array(Frontend.Calendar_Query.Query.Query_inner.t_patients);
+type patients = array(Calendar_Query.Query.Query_inner.t_patients);
 let toSelectOptions = (patients: patients) => {
   Select.(
     patients->Array.map(p =>
@@ -45,7 +45,7 @@ let make =
       ~visible,
       ~onClose,
       ~date,
-      ~patients: array(Frontend.Calendar_Query.Query.Query_inner.t_patients),
+      ~patients: array(Calendar_Query.Query.Query_inner.t_patients),
       ~loading,
       ~onSubmit,
     ) => {

@@ -30,6 +30,7 @@ module Visit = {
   [@react.component]
   let make =
       (
+        ~id,
         ~from_,
         ~to_,
         ~patientId,
@@ -131,7 +132,10 @@ module Visit = {
              }}
           </div>
           <div className="flex flex-1 p-2  items-end justify-end h-full">
-            <Button.SmallRound icon={<Icons.Phone />} />
+            <Button.SmallRound
+              onClick={_ => Router.(push(Visit(id)))}
+              icon={<Icons.Phone />}
+            />
           </div>
         </div>
       </div>
@@ -256,6 +260,8 @@ let make = () => {
            {data.visits
             ->Array.map(v =>
                 <Visit
+                  key={v.id}
+                  id={v.id}
                   from_={v.from_}
                   to_={v.to_}
                   patients={data.patients}
