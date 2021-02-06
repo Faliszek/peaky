@@ -69,6 +69,8 @@ let make = (~id: string, ~callMode=false) => {
       (),
     );
 
+  let (creatorVisible, setCreatorVisible) = React.useState(_ => false);
+
   <Page
     title={callMode ? "" : {j|Detale: $name|j}}
     hasBackButton={callMode ? false : true}>
@@ -105,9 +107,9 @@ let make = (~id: string, ~callMode=false) => {
                   </Button.CTA>
                   <div className="h-4" />
                   <Button.CTA
-                    icon={<Icons.Video className="mr-4" />}
-                    onClick={_ => Router.(push(PatientVideoChat(id)))}>
-                    <Text> {j|Rozpocznij videorozmowe|j} </Text>
+                    icon={<Icons.Thermometer className="mr-4" />}
+                    onClick={_ => setCreatorVisible(_ => true)}>
+                    <Text> {j|Aktualizuj przebieg leczenia|j} </Text>
                   </Button.CTA>
                 </div>}
          </div>;
@@ -148,7 +150,6 @@ let make = (~id: string, ~callMode=false) => {
                },
              |])
            );
-         Js.log(symptoms);
 
          <div
            className="flex items-center gap-8"
@@ -309,30 +310,11 @@ let make = (~id: string, ~callMode=false) => {
        />
      | _ => React.null
      }}
-    <Patient_Add_Event />
+    {creatorVisible
+       ? <Patient_Add_Event.AddEvent
+           patientId={Some(id)}
+           onClose={_ => setCreatorVisible(_ => false)}
+         />
+       : React.null}
   </Page>;
-  // <Section title={j|Historia wizyt|j} icon={<Icons.Clock />}>
-  //   {switch (patientQuery) {
-  //    | {data: Some({calls})} when calls->Array.size == 0 =>
-  //      <NoData
-  //        title={j|Historia wizyt pusta|j}
-  //        text={j|Nie prowadziłeś jeszcze konsultacji z tym pacjentem|j}
-  //      />
-  //    //  | {data: Some({calls})} =>
-  //    //  let calls =
-  //    //    calls->Array.map(c =>
-  //    //      Call.fromGraphql(
-  //    //        ~duration=c.duration,
-  //    //        ~id=c.id,
-  //    //        ~answered=c.answered,
-  //    //        ~timestamp=c.timestamp,
-  //    //        ~withWho=               (),
-  //    //      )
-  //    //    );
-  //    //  <Visits_History calls callMode name />;
-  //    //  React.null
-  //    | {loading: true} => <Spinner />
-  //    | _ => React.null
-  //    }}
-  // </Section>
 };

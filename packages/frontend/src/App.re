@@ -1,5 +1,7 @@
 let graphqlEndpoint = "localhost:4000/graphql";
 
+let subscriptionEndpoint = "localhost:4000/subscriptions";
+
 let headers = {"high": "five"};
 
 let httpLink =
@@ -12,7 +14,7 @@ let httpLink =
 // let wsLink =
 //   ApolloClient.Link.WebSocketLink.(
 //     make(
-//       ~uri="ws://" ++ graphqlEndpoint,
+//       ~uri="ws://" ++ subscriptionEndpoint,
 //       ~options=
 //         ClientOptions.make(
 //           ~connectionParams=
@@ -98,7 +100,8 @@ let make = () => {
       {switch (token) {
        | None =>
          switch (url.path) {
-         | ["calls", id] => <Call_View id />
+         | ["calls", id, doctorId, patientId] =>
+           <Call_View id patientId isPatient=true doctorId />
          | _ => <SignIn_View />
          }
        | Some(_) =>
@@ -108,7 +111,8 @@ let make = () => {
             | ["patients", id, "chat"] => <Patient_Chat_View _id=id />
             | ["patients", id] => <Patient_Details_View id />
             | ["patients"] => <Patient_List_View />
-            | ["calls", id] => <Call_View id />
+            | ["calls", id, doctorId, patientId] =>
+              <Call_View id patientId doctorId isPatient=false />
             | ["calls"] => <Calls_List_View />
             | ["consultations"] => <Consultations />
             | ["settings"] => <Settings />

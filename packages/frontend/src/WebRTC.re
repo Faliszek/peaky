@@ -1,20 +1,18 @@
 let setVideo = [%raw
   {|
-   function initVideo(video, mediaStream) {
+   function initVideo(video, mediaStream, on) {
+     if(video) {
        video.srcObject = mediaStream
-       if(mediaStream) {
+       if(mediaStream && on) {
         video.play()
        } else {
         video.pause()
        }
+     }
+
   }
   |}
 ];
-
-type mediaState =
-  | Off
-  | Awaits
-  | On;
 
 module MediaTrack = {
   type t;
@@ -28,43 +26,22 @@ module MediaStream = {
   [@bs.send] external addTrack: (t, MediaTrack.t) => 't = "addTrack";
   [@bs.send] external removeTrack: (t, MediaTrack.t) => 't = "removeTrack";
 };
-type state = {
-  video: mediaState,
-  audio: mediaState,
-  mediaStream: option(MediaStream.t),
+
+type mediaOptions = {
+  audio: bool,
+  video: bool,
 };
 
 type action =
-  | ToggleVideo(bool)
-  | ToggleAudio(bool);
+  | SetAudio(bool)
+  | SetVideo(bool);
 
-let initialState = {video: Off, audio: Off, mediaStream: None};
-
-let toMediaState = (~state, ~enabled) =>
-  switch (state, enabled) {
-  | (Off, true) => Awaits
-  | (Awaits, true) => On
-  | (_, false) => Off
-  | _ => state
-  };
-
-let toBool = t =>
-  switch (t) {
-  | On => true
-  | _ => false
-  };
+let initialState = {video: false, audio: false};
 
 let reducer = (state, action) =>
   switch (action) {
-  | ToggleVideo(enabled) => {
-      ...state,
-      video: toMediaState(~state=state.video, ~enabled),
-    }
-
-  | ToggleAudio(enabled) => {
-      ...state,
-      audio: toMediaState(~state=state.audio, ~enabled),
-    }
+  | SetAudio(audio) => {...state, audio}
+  | SetVideo(video) => {...state, video}
   };
 
 module MediaDevices = {
@@ -110,66 +87,62 @@ let getUserMicStream = (~onSuccess) => {
     });
 };
 
-let use = (~videoElement: React.ref(Js.Nullable.t('a))) => {
-  let (state, dispatch) = React.useReducer(reducer, initialState);
-
-  let onAudio = () => {
-    switch (state.audio) {
-    | Awaits => getUserMicStream(~onSuccess=_ => dispatch(ToggleAudio(true)))
-    | Off => ()
-    | _ => Js.log("")
+module Media = {
+  type t = {
+    .
+    "active": bool,
+    "id": string,
+  };
+  module Track = {
+    type t = {
+      enabled: bool,
+      muted: bool,
+      kind: string,
+      id: string,
+      stop: [@bs.meth] (unit => unit),
     };
-    None;
+
+    [@bs.set] external setEnabled: (t, bool) => unit = "enabled";
+
+    [@bs.set] external onMute: (t, t => unit) => unit = "onmute";
+
+    [@bs.set] external onEnd: (t, t => unit) => unit = "onended";
   };
 
-  React.useEffect1(
-    () => {
-      let videoEl = Js.Nullable.toOption(videoElement.current);
-
-      switch (videoEl, state.video, state.mediaStream) {
-      | (Some(video), Awaits, None) =>
-        getUserWebCamStream(~onSuccess=mediaStream => {
-          setVideo(~video, ~mediaStream)->ignore;
-          dispatch(ToggleVideo(true));
-        })
-      | (Some(video), Off, _) => setVideo(~video, ~mediaStream=None)
-      | _ => Js.log("No video element")
-      };
-      None;
-    },
-    [|state.video|],
-  );
-  React.useEffect1(onAudio, [|state.audio|]);
-
-  switch (state.mediaStream) {
-  | Some(mediaStream) =>
-    Js.log3(
-      "Success",
-      mediaStream->MediaStream.getAudioTracks(),
-      mediaStream->MediaStream.getVideoTracks(),
-    )
-
-  | None => Js.log("No media stream provided")
+  type srcObject = {
+    .
+    "getTracks": [@bs.meth] (unit => array(Track.t)),
+    "removeTrack": [@bs.meth] (Track.t => unit),
   };
 
-  (state, dispatch);
+  type event = {. "stream": srcObject};
+
+  type trackEvent = {
+    .
+    "streams": array(srcObject),
+    "track": Track.t,
+  };
+
+  [@bs.val] [@bs.scope ("window", "navigator", "mediaDevices")]
+  external getUserMedia: mediaOptions => Js.Promise.t(srcObject) =
+    "getUserMedia";
+};
+
+let setTrack = (~kind, ~stream: Js.Nullable.t(Media.srcObject), ~enabled) => {
+  let track =
+    stream
+    ->Js.Nullable.toOption
+    ->Option.map(s => s##getTracks())
+    ->Option.flatMap(tracks => tracks->Array.getBy(t => t.kind == kind));
+
+  switch (track) {
+  | Some(track) => track->Media.Track.setEnabled(enabled)
+  | None => ()
+  };
 };
 
 module UserMedia = {
-  //   open WebRTC;
-  //   module Provider = {
-  //     [@bs.module "@vardius/react-user-media"] [@react.component]
-  //     external make:
-  //       (~constraints: MediaDevices.Constraints.t, ~children: React.element) =>
-  //       React.element =
-  //       "UserMediaProvider";
-  //   };
-
-  //   type hook = {stream: MediaStream.t};
-  //   [@bs.module "@vardius/react-user-media"]
-
-  //   external use: MediaDevices.Constraints.t => hook = "useUserMedia";
-  type hook = {stream: Js.Nullable.t(MediaStream.t)};
+  type hook = {stream: Js.Nullable.t(Media.srcObject)};
   let use = [%raw
     {|
 
@@ -197,14 +170,15 @@ function useUserMedia(constraints) {
 
     const cancel = () => {
       didCancel = true;
-
+    console.log("cancelling")
       if (!stream) return;
 
-      if (stream.getVideoTracks) {
+      if (stream.getVideoTracks && !constraints.video) {
+
         stream.getVideoTracks().map(track => track.stop());
       }
 
-      if (stream.getAudioTracks) {
+      if (stream.getAudioTracks && !constraints.audio) {
         stream.getAudioTracks().map(track => track.stop());
       }
 
@@ -228,4 +202,33 @@ function useUserMedia(constraints) {
 }
     |}
   ];
+};
+
+let contstraints = {audio: true, video: true};
+let use = () => {
+  let (state, dispatch) = React.useReducer(reducer, initialState);
+
+  let {stream}: UserMedia.hook = UserMedia.use(contstraints);
+
+  stream
+  ->Js.Nullable.toOption
+  ->Option.map(s => Js.log(s##getTracks()))
+  ->ignore;
+  React.useEffect2(
+    () => {
+      setTrack(~kind="audio", ~stream, ~enabled=state.audio);
+      None;
+    },
+    (state.audio, stream),
+  );
+
+  React.useEffect2(
+    () => {
+      setTrack(~kind="video", ~stream, ~enabled=state.video);
+      None;
+    },
+    (state.video, stream),
+  );
+
+  (stream, state, dispatch);
 };

@@ -86,6 +86,12 @@ type Symptom {
   notes: String!
 }
 
+type Room {
+  doctorId: String!
+  patientId: String!
+  id: String!
+}
+
 type Mutation {
   signIn(email: String!, password: String!): String
   signUp(email: String!, password: String!): User
@@ -126,4 +132,6 @@ type Mutation {
     causedBy: String
     notes: String
   ): Symptom!
+
+  createRoom(patientId: String!, doctorId: String!): Room
 }

@@ -1,8 +1,11 @@
 [@react.component]
-let make = (~children, ~icon=?, ~onClick=?) =>
+let make = (~children, ~icon=?, ~onClick=?, ~className=?) =>
   <button
     ?onClick
-    className=" px-4 py-2 border-green-500 text-green-500 font-medium rounded-md transition-colors hover:text-white hover hover:bg-green-500 flex items-center">
+    className=Cn.(
+      "px-4 py-2 border-green-500 border text-green-500 font-medium rounded-md transition-colors hover:text-white hover hover:bg-green-500 flex items-center"
+      + className->mapSome(x => x)
+    )>
     <span className=Cn.(icon->mapSome(_ => "mr-2"))> children </span>
     {icon->Option.getWithDefault(React.null)}
   </button>;
@@ -13,6 +16,21 @@ module Row = {
     <div className="flex justify-center "> children </div>;
   };
 };
+
+module Round = {
+  [@react.component]
+  let make = (~icon, ~onClick=?, ~className=?) => {
+    <button
+      ?onClick
+      className=Cn.(
+        "rounded-full  w-24 h-24 flex items-center justify-center shadow-md  cursor-pointer transition-colors  focus:outline-none"
+        + className->mapSome(x => x)
+      )>
+      icon
+    </button>;
+  };
+};
+
 module SmallRound = {
   [@react.component]
   let make = (~icon, ~onClick=?, ~className=?) => {

@@ -86,3 +86,11 @@ module Symptom = {
     notes: string,
   };
 };
+
+module Room = {
+  type t = {
+    id: string,
+    doctorId: string,
+    parentId: string,
+  };
+};

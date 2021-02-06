@@ -1,4 +1,13 @@
+type payload = {user_id: string};
+[@bs.module "jwt-decode"]
+external decode: option(string) => payload = "default";
+
 let getToken = () => Dom.Storage2.(getItem(localStorage, "token"));
+
+let getUserId = () => {
+  let {user_id} = getToken()->decode;
+  user_id;
+};
 
 let signIn = (~token) => {
   switch (token) {

@@ -81,6 +81,7 @@ module Visit = {
       | None => hourWidth->Js.Int.toFloat
       };
 
+    let userId = Auth.getUserId();
     switch (first, last) {
     | (Some(first), Some(last)) when from_ > first && from_ < last =>
       <div
@@ -133,7 +134,7 @@ module Visit = {
           </div>
           <div className="flex flex-1 p-2  items-end justify-end h-full">
             <Button.SmallRound
-              onClick={_ => Router.(push(Visit(id)))}
+              onClick={_ => Router.(push(Visit(id, userId, patientId)))}
               icon={<Icons.Phone />}
             />
           </div>

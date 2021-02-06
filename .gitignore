@@ -19,3 +19,5 @@ _release
 *.byte
 *.native
 *.install
+cert.pem
+key.pem

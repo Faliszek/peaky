@@ -63,6 +63,12 @@ type root = {
   symptoms:
     (Api_Symptom.listPayload, Graphql_Context.t) =>
     res(array(Domain.Symptom.t), Promise.never),
+  createRoom:
+    (Api_Room.createPayload, Graphql_Context.t) =>
+    res(option(Domain.Room.t), Promise.never),
+  getRoom:
+    (Api_Room.getPayload, Graphql_Context.t) =>
+    res(option(Domain.Room.t), Promise.never),
 };
 
 type headers = {authorization: option(string)};
@@ -96,6 +102,8 @@ let root: root = {
   feelings: Api_Feeling.list,
   patientEvents: Api_PatientEvent.list,
   symptoms: Api_Symptom.list,
+  createRoom: Api_Room.add,
+  getRoom: Api_Room.get,
 };
 
 [@bs.module "express-graphql"]

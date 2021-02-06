@@ -200,3 +200,31 @@ module RefreshCcw = {
     (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
     "RefreshCcw";
 };
+
+module VideoOff = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "VideoOff";
+};
+
+module MicOff = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "MicOff";
+};
+
+module Link = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "Link";
+};
+
+module Check = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "Check";
+};

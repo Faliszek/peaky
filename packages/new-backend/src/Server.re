@@ -7,10 +7,6 @@ let app = Firebase.initializeApp(~options=Config.default);
 let auth = app->Firebase.auth;
 let database = app->Firebase.database;
 
-// var fs = require('fs');
-// var http = require('http');
-// var https = require('https');
-
 type credentials = {
   key: string,
   cert: string,
@@ -67,6 +63,7 @@ Express.(
 
     let server = app->App.listen(~port=9000, ());
     let peerServer = Peer.make(server, {path: "/", debug: true});
+
     app->App.useOnPath(~path="/calls", peerServer);
   }
 );

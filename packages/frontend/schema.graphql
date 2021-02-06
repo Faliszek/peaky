@@ -1,10 +1,6 @@
-"""
-Exposes a URL that specifies the behaviour of this scalar.
-"""
+"""Exposes a URL that specifies the behaviour of this scalar."""
 directive @specifiedBy(
-  """
-  The URL that specifies the behaviour of this scalar.
-  """
+  """The URL that specifies the behaviour of this scalar."""
   url: String!
 ) on SCALAR
 
@@ -27,39 +23,14 @@ type Feeling {
 type Mutation {
   signIn(email: String!, password: String!): String
   signUp(email: String!, password: String!): User
-  createVisit(
-    patientId: String!
-    from_: String!
-    to_: String!
-    notes: String
-  ): Visit
+  createVisit(patientId: String!, from_: String!, to_: String!, notes: String): Visit
   removeVisit(id: String!): RemovedVisit!
-  createPatient(
-    firstName: String!
-    lastName: String!
-    phoneNumber: String!
-    disease: String!
-    color: String!
-    lastVisit: String
-  ): Patient!
+  createPatient(firstName: String!, lastName: String!, phoneNumber: String!, disease: String!, color: String!, lastVisit: String): Patient!
   removePatient(id: String!): RemovedPatient!
   addFeeling(patientId: String!, value: String!, timestamp: Float!): Feeling!
-  addPatientEvent(
-    patientId: String!
-    symptompId: String!
-    feeling: Float!
-    timestamp: Float!
-  ): PatientEvent!
-  addSymptom(
-    patientId: String!
-    name: String
-    date: String
-    circumstances: String
-    description: String
-    occurences: String
-    causedBy: String
-    notes: String
-  ): Symptom!
+  addPatientEvent(patientId: String!, symptompId: String!, feeling: Float!, timestamp: Float!): PatientEvent!
+  addSymptom(patientId: String!, name: String, date: String, circumstances: String, description: String, occurences: String, causedBy: String, notes: String): Symptom!
+  createRoom(patientId: String!, doctorId: String!): Room
 }
 
 type Patient {
@@ -83,11 +54,7 @@ type PatientEvent {
 type Query {
   me: User!
   calls: [Call!]!
-  searchSpecialist(
-    specialization: String!
-    firstName: String!
-    lastName: String!
-  ): [User!]!
+  searchSpecialist(specialization: String!, firstName: String!, lastName: String!): [User!]!
   patients: [Patient!]!
   patient(id: String!): Patient!
   visits: [Visit!]!
@@ -101,6 +68,12 @@ type RemovedPatient {
 }
 
 type RemovedVisit {
+  id: String!
+}
+
+type Room {
+  doctorId: String!
+  patientId: String!
   id: String!
 }
 
@@ -132,3 +105,4 @@ type Visit {
   notes: String
   patientId: String!
 }
+

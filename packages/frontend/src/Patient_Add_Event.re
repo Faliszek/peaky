@@ -1,3 +1,22 @@
+module Query = [%graphql
+  {|
+    query Patient($id: String!) {
+
+
+        symptoms(patientId: $id) {
+          id
+          name
+          date
+          circumstances
+          description
+          occurences
+          causedBy
+          notes
+        }
+}
+|}
+];
+
 module AddEvent = {
   type values = {
     strength: string,
@@ -5,18 +24,40 @@ module AddEvent = {
   };
 
   [@react.component]
-  let make = (~symptoms) => {
+  let make = (~onClose, ~patientId) => {
     let symptom = Select.use();
 
     let (values, setValues) = React.useState(_ => {strength: "", notes: ""});
 
     let (feeling, setFeeling) = React.useState(_ => "");
 
+    let (query, result) = Query.useLazy();
+
+    React.useEffect1(
+      () => {
+        switch (patientId) {
+        | Some(patientId) => query({id: patientId})
+        | None => ()
+        };
+        None;
+      },
+      [|patientId|],
+    );
+
+    let symptoms =
+      switch (result) {
+      | Executed({data: Some({symptoms})}) =>
+        symptoms->Array.map(s => Select.{value: s.id, label: s.name})
+      | _ => [||]
+      };
     <div
       className="w-64 bg-white shadow-xl rounded-xl fixed top-12 right-12 py-8 px-6 border border-gray-200"
       style={ReactDOM.Style.make(~width="450px", ())}>
-      <div className="text-2xl text-gray-600 mb-4">
+      <div className="text-2xl text-gray-600 mb-4 flex justify-between">
         <Text> {j|Zaktualizuj przebieg choroby|j} </Text>
+        <Button.Nav onClick={_ => onClose()}>
+          <Icons.Plus className="transform rotate-45" size="18" />
+        </Button.Nav>
       </div>
       <Input.Wrap>
         <Select
@@ -27,6 +68,12 @@ module AddEvent = {
           onVisibleChange={symptom.setVisible}
           onChange={symptom.setValue}
           onSearchChange={symptom.setSearch}
+          loading={
+            switch (result) {
+            | Executed({loading: true}) => true
+            | _ => false
+            }
+          }
           options=symptoms
           icon={<Icons.Thermometer />}
         />
@@ -66,10 +113,12 @@ module AddEvent = {
 };
 
 [@react.component]
-let make = () => {
+let make = (~patientId) => {
   let (visible, setVisible) = React.useState(_ => false);
   <div className="fixed bottom-12 right-12">
-    {visible ? <AddEvent symptoms=[||] /> : React.null}
+    {visible
+       ? <AddEvent patientId onClose={_ => setVisible(_ => false)} />
+       : React.null}
     <Button.SmallRound
       className=Cn.(
         "w-16 h-16 transform transition-transform" + on("rotate-45", visible)
