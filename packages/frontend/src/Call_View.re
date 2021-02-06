@@ -146,6 +146,46 @@ let iceServers: array(PeerModule.ice) = [|
   {urls: "stun:stun3.l.google.com:19302", credential: None, username: None},
 |];
 
+let useVideoCall =
+    (
+      ~isPatient,
+      ~doctorPeerId,
+      ~patientPeerId,
+      ~localStream,
+      ~setRemote,
+      ~peer,
+    ) => {
+  React.useEffect0(() => {
+    if (isPatient) {
+      peer->PeerModule.call(doctorPeerId, localStream);
+
+      peer->PeerModule.onCall("call", call => {
+        call->PeerModule.Call.answer(localStream);
+        call->PeerModule.Call.onStream("stream", remote => {
+          remote
+          ->Js.Nullable.toOption
+          ->Option.map(r => setRemote(_ => Some(r)))
+          ->ignore
+        });
+      });
+    } else {
+      peer->PeerModule.call(patientPeerId, localStream);
+
+      peer->PeerModule.onCall("call", call => {
+        call->PeerModule.Call.answer(localStream);
+        call->PeerModule.Call.onStream("stream", remote => {
+          remote
+          ->Js.Nullable.toOption
+          ->Option.map(r => setRemote(_ => Some(r)))
+          ->ignore
+        });
+      });
+    };
+
+    None;
+  });
+};
+
 module Meeting = {
   open WebRTC;
   [@react.component]
@@ -180,23 +220,14 @@ module Meeting = {
         ),
       );
 
-    React.useEffect0(() => {
-      let callingId = if (isPatient) {doctorPeerId} else {patientPeerId};
-
-      peer.current->PeerModule.call(callingId, localStream);
-
-      peer.current
-      ->PeerModule.onCall("call", call => {
-          call->PeerModule.Call.answer(localStream);
-          call->PeerModule.Call.onStream("stream", remote => {
-            remote
-            ->Js.Nullable.toOption
-            ->Option.map(r => setRemote(_ => Some(r)))
-            ->ignore
-          });
-        });
-      None;
-    });
+    useVideoCall(
+      ~peer=peer.current,
+      ~setRemote,
+      ~localStream,
+      ~doctorPeerId,
+      ~patientPeerId,
+      ~isPatient,
+    );
 
     <div className="flex items-center justify-center h-screen">
       <video

@@ -80,7 +80,7 @@ module Menu = {
       <div className="flex px-2 py-4 items-center justify-center">
         <Button
           icon={<Icons.ArrowRight size="18" />} onClick={_ => Auth.signOut()}>
-          <Text> {|Wyloguj się|} </Text>
+          <Text> {j|Wyloguj się|j} </Text>
         </Button>
       </div>
     </nav>;
