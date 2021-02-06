@@ -30,6 +30,7 @@ module Query = [%graphql
           occurences
           causedBy
           notes
+          color
         }
 
         patientEvents(patientId: $id) {
@@ -37,6 +38,7 @@ module Query = [%graphql
           symptompId
           feeling
           timestamp
+
         }
         feelings(patientId: $id) {
           id

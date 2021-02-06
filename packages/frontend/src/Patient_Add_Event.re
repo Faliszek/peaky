@@ -17,6 +17,33 @@ module Query = [%graphql
 |}
 ];
 
+module AddFeeling = [%graphql
+  {|
+
+mutation AddFeeling($patientId: String!, $value: String!, $timestamp: Float!){
+  addFeeling(patientId: $patientId, value: $value, timestamp: $timestamp){
+    id
+    patientId
+    value
+    timestamp
+  }
+}
+|}
+];
+
+module AddEventMutation = [%graphql
+  {|
+mutation AddEventMutation($patientId: String!, $symptomId: String!, $feeling: Float!, $timestamp: Float!) {
+  addPatientEvent(patientId: $patientId, symptompId: $symptomId, feeling: $feeling, timestamp: $timestamp){
+    id
+    symptompId
+    feeling
+    timestamp
+  }
+}
+|}
+];
+
 module AddEvent = {
   type values = {
     strength: string,
@@ -50,6 +77,11 @@ module AddEvent = {
         symptoms->Array.map(s => Select.{value: s.id, label: s.name})
       | _ => [||]
       };
+
+    let (addEvent, addEventResult) = AddEventMutation.use();
+
+    let (addFeeling, addFeelingResult) = AddFeeling.use();
+
     <div
       className="w-64 bg-white shadow-xl rounded-xl fixed top-12 right-12 py-8 px-6 border border-gray-200"
       style={ReactDOM.Style.make(~width="450px", ())}>
@@ -93,7 +125,31 @@ module AddEvent = {
         />
       </Input.Wrap>
       <div className="flex justify-end">
-        <Button.CTA> <Text> {j|Dodaj informację|j} </Text> </Button.CTA>
+        <Button.CTA
+          loading={addEventResult.loading}
+          onClick={_ =>
+            switch (patientId, symptom.value) {
+            | (Some(patientId), Some({value: symptom})) =>
+              addEvent(
+                ~refetchQueries=[|
+                  Patient_Query.Query.refetchQueryDescription({
+                    id: patientId,
+                  }),
+                  Query.refetchQueryDescription({id: patientId}),
+                |],
+                {
+                  patientId,
+                  symptomId: symptom,
+                  feeling: values.strength->float_of_string,
+                  timestamp: Js.Date.now(),
+                },
+              )
+              ->ignore
+            | _ => ()
+            }
+          }>
+          <Text> {j|Dodaj informację|j} </Text>
+        </Button.CTA>
       </div>
       <div className="text-2xl text-gray-600 mb-4 mt-8">
         <Text> {j|Samopoczucie|j} </Text>
@@ -106,7 +162,26 @@ module AddEvent = {
         />
       </Input.Wrap>
       <div className="flex justify-end">
-        <Button.CTA> <Text> {j|Zapisz|j} </Text> </Button.CTA>
+        <Button.CTA
+          loading={addFeelingResult.loading}
+          onClick={_ => {
+            switch (patientId) {
+            | Some(patientId) =>
+              addFeeling(
+                ~refetchQueries=[|
+                  Patient_Query.Query.refetchQueryDescription({
+                    id: patientId,
+                  }),
+                  Query.refetchQueryDescription({id: patientId}),
+                |],
+                {patientId, timestamp: Js.Date.now(), value: feeling},
+              )
+              ->ignore
+            | _ => ()
+            }
+          }}>
+          <Text> {j|Zapisz|j} </Text>
+        </Button.CTA>
       </div>
     </div>;
   };

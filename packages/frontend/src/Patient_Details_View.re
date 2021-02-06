@@ -23,8 +23,119 @@ module Section = {
   };
 };
 
+module Symptom_Add = {
+  [@react.component]
+  let make = (~patientId, ~visible, ~onClose) => {
+    let (symptomName, setSymptomName) = React.useState(_ => "");
+    let (circumstances, setCircumstances) = React.useState(_ => "");
+    let (date, setDate) = React.useState(_ => "");
+    let (occurences, setOccurences) = React.useState(_ => "");
+    let (description, setDescription) = React.useState(_ => "");
+    let (causedBy, setCausedBy) = React.useState(_ => "");
+    let (color, setColor) = React.useState(_ => "");
+    let (notes, setNotes) = React.useState(_ => "");
+
+    let (createSymptom, resultSymptom) =
+      Symptom_Mutation.Mutation.use(
+        ~refetchQueries=[|
+          Patient_Query.Query.refetchQueryDescription({id: patientId}),
+        |],
+        (),
+      );
+
+    <Modal
+      visible
+      loading={resultSymptom.loading}
+      onVisibleChange={_ => onClose()}
+      onOk={_ =>
+        createSymptom({
+          name: symptomName,
+          occurences,
+          description,
+          causedBy,
+          notes,
+          patientId,
+          date,
+          circumstances,
+          color,
+        })
+        ->Request.onFinish(~onOk=_ => onClose(), ~onError=Js.log)
+      }>
+      <Input.Wrap>
+        <Input
+          placeholder={j|Nazwa|j}
+          value=symptomName
+          onChange={v => setSymptomName(_ => v)}
+        />
+      </Input.Wrap>
+      <Input.Wrap>
+        <Input
+          placeholder={j|Okoliczności pojawienia się|j}
+          value=circumstances
+          onChange={v => setCircumstances(_ => v)}
+        />
+      </Input.Wrap>
+      <Input.Wrap>
+        <Input
+          placeholder={j|Data pierwszego wystąpienia|j}
+          value=date
+          onChange={v => setDate(_ => v)}
+        />
+      </Input.Wrap>
+      <Input.Wrap>
+        <Input
+          placeholder={j|Częstotliwość występowania|j}
+          value=occurences
+          onChange={v => setOccurences(_ => v)}
+        />
+      </Input.Wrap>
+      <Input.Wrap>
+        <Input
+          placeholder={j|Opis|j}
+          value=description
+          onChange={v => setDescription(_ => v)}
+        />
+      </Input.Wrap>
+      <Input.Wrap>
+        <Input
+          placeholder={j|Spowodowany przez|j}
+          value=causedBy
+          onChange={v => setCausedBy(_ => v)}
+        />
+      </Input.Wrap>
+      <Input.Wrap>
+        <Input.Textarea
+          placeholder={j|Dodatkowe informacje|j}
+          value=notes
+          onChange={v => setNotes(_ => v)}
+        />
+      </Input.Wrap>
+      <Color_Picker value=color onChange={v => setColor(_ => v)} />
+    </Modal>;
+  };
+};
+
+module Legend = {
+  [@react.component]
+  let make = (~title, ~color) => {
+    <div className="flex justify-center items-center flex-col w-1/6">
+      <div
+        style={ReactDOM.Style.make(
+          ~backgroundColor=color,
+          ~width="100%",
+          ~height="3px",
+          ~borderRadius="10px",
+          (),
+        )}
+      />
+      <div className="text-sm text-gray-800 mt-2"> <Text> title </Text> </div>
+    </div>;
+  };
+};
+
 type t = {
   id: string,
+  color: string,
   data: array(Chart.dataLine),
 };
 
@@ -52,22 +163,6 @@ let make = (~id: string, ~callMode=false) => {
 
   let (width, setWidth) = React.useState(_ => None);
   let (modalVisible, setModalVisible) = React.useState(_ => false);
-
-  let (symptomName, setSymptomName) = React.useState(_ => "");
-  let (circumstances, setCircumstances) = React.useState(_ => "");
-  let (date, setDate) = React.useState(_ => "");
-  let (occurences, setOccurences) = React.useState(_ => "");
-  let (description, setDescription) = React.useState(_ => "");
-  let (causedBy, setCausedBy) = React.useState(_ => "");
-  let (notes, setNotes) = React.useState(_ => "");
-
-  let (createSymptom, resultSymptom) =
-    Symptom_Mutation.Mutation.use(
-      ~refetchQueries=[|
-        Patient_Query.Query.refetchQueryDescription({id: id}),
-      |],
-      (),
-    );
 
   let (creatorVisible, setCreatorVisible) = React.useState(_ => false);
 
@@ -119,19 +214,19 @@ let make = (~id: string, ~callMode=false) => {
     <Section title={j|Przebieg choroby|j} icon={<Icons.BarChart />}>
       {switch (patientQuery) {
        | {loading: true} => <Spinner />
-       | {data: Some({feelings, patientEvents})} =>
+       | {data: Some({feelings, patientEvents, symptoms})} =>
          let feelings =
            feelings->Array.map(f =>
              Chart.{x: f.timestamp, y: f.value->float_of_string}
            );
 
-         let symptoms =
+         let symptomIds =
            patientEvents->Array.reduce([||], (acc, {symptompId}) =>
              switch (acc) {
              | acc
                  when
                    acc
-                   ->Array.keep(x => x == symptompId)
+                   ->Array.keep(id => id == symptompId)
                    ->Array.get(0)
                    ->Option.isSome => acc
              | acc => acc->Array.concat([|symptompId|])
@@ -139,64 +234,89 @@ let make = (~id: string, ~callMode=false) => {
            );
 
          let symptomsData: array(t) =
-           symptoms->Array.reduce([||], (acc, id) =>
+           symptomIds->Array.reduce([||], (acc, id) =>
              acc->Array.concat([|
                {
                  id,
+                 color:
+                   symptoms
+                   ->Array.keep(s => s.id == id)
+                   ->Array.get(0)
+                   ->Option.map(s => s.color)
+                   ->Option.getWithDefault(""),
                  data:
-                   patientEvents->Array.map(e =>
-                     Chart.{x: e.timestamp, y: e.feeling}
-                   ),
+                   patientEvents
+                   ->Array.keep(e => e.symptompId == id)
+                   ->Array.map(e => Chart.{x: e.timestamp, y: e.feeling}),
                },
              |])
            );
-
-         <div
-           className="flex items-center gap-8"
-           ref={ReactDOM.Ref.callbackDomRef(el =>
-             setWidth(_ =>
-               el
-               ->Js.Nullable.toOption
-               ->Option.map(el => el->HTMLElement.offsetWidth)
-             )
-           )}>
-           <Chart.XYPlot
-             width={width->Option.getWithDefault(600.0)} height=300.0>
-             <Chart.HorizontalGridLines
-               style={ReactDOM.Style.make(~stroke="#E2E8F0", ())}
+         <div>
+           <div
+             className="flex items-center gap-8"
+             ref={ReactDOM.Ref.callbackDomRef(el =>
+               setWidth(_ =>
+                 el
+                 ->Js.Nullable.toOption
+                 ->Option.map(el => el->HTMLElement.offsetWidth)
+               )
+             )}>
+             <Chart.XYPlot
+               width={width->Option.getWithDefault(600.0)} height=300.0>
+               <Chart.HorizontalGridLines
+                 style={ReactDOM.Style.make(~stroke="#E2E8F0", ())}
+               />
+               <Chart.XAxis
+                 attr="x"
+                 attrAxis="y"
+                 orientation="bottom"
+                 tickFormat={v => {v->Time.format("dd.MM.yy")}}
+                 tickTotal=8
+               />
+               <Chart.YAxis attr="y" attrAxis="x" orientation="left" />
+               <Chart.LineSeries
+                 curve=`curveMonotoneX
+                 strokeStyle=`solid
+                 data=feelings
+                 opacity=1.0
+                 style={ReactDOM.Style.make(
+                   ~strokeWidth="5px",
+                   ~fill="none",
+                   ~stroke="green",
+                   (),
+                 )}
+               />
+               {symptomsData
+                ->Array.map(s =>
+                    <Chart.LineSeries
+                      key={s.id}
+                      curve=`curveMonotoneX
+                      strokeStyle=`solid
+                      data={s.data}
+                      opacity=1.0
+                      style={ReactDOM.Style.make(
+                        ~strokeWidth="5px",
+                        ~fill="none",
+                        ~stroke=s.color,
+                        (),
+                      )}
+                    />
+                  )
+                ->React.array}
+             </Chart.XYPlot>
+           </div>
+           <div className="flex gap-10 px-8 pt-16 pb-8 justify-center">
+             <Legend
+               key="feeling"
+               title={j|Ogólne samopoczucie|j}
+               color="green"
              />
-             <Chart.XAxis
-               attr="x"
-               attrAxis="y"
-               orientation="bottom"
-               tickFormat={v => {v->Time.format("dd.MM.yy")}}
-               tickTotal=8
-             />
-             <Chart.YAxis attr="y" attrAxis="x" orientation="left" />
-             <Chart.LineSeries
-               curve=`curveMonotoneX
-               strokeStyle=`solid
-               data=feelings
-               opacity=1.0
-               style={ReactDOM.Style.make(~strokeWidth="5px", ())}
-             />
-             {symptomsData
+             {symptoms
               ->Array.map(s =>
-                  <Chart.LineSeries
-                    key={s.id}
-                    curve=`curveMonotoneX
-                    strokeStyle=`solid
-                    data={s.data}
-                    opacity=1.0
-                    style={ReactDOM.Style.make(
-                      ~strokeWidth="5px",
-                      ~fill="none",
-                      (),
-                    )}
-                  />
+                  <Legend key={s.id} title={s.name} color={s.color} />
                 )
               ->React.array}
-           </Chart.XYPlot>
+           </div>
          </div>;
 
        | _ => React.null
@@ -210,84 +330,16 @@ let make = (~id: string, ~callMode=false) => {
           <Text> {j|Dodaj symptom|j} </Text>
         </Button.CTA>
       }>
+      <Symptom_Add
+        visible=modalVisible
+        onClose={_ => setModalVisible(_ => false)}
+        patientId=id
+      />
       {switch (patientQuery) {
        | {loading: true} => <Spinner />
        | {data: Some({symptoms})} when symptoms->Array.size == 0 =>
          <NoData title={j|Brak objawów|j} text={j|Pacjent zdrowy|j} />
-       | {data: Some({symptoms})} =>
-         <>
-           <Symptoms_Table symptoms />
-           <Modal
-             visible=modalVisible
-             loading={resultSymptom.loading}
-             onVisibleChange={_ => setModalVisible(_ => false)}
-             onOk={_ =>
-               createSymptom({
-                 name: symptomName,
-                 occurences,
-                 description,
-                 causedBy,
-                 notes,
-                 patientId: id,
-                 date,
-                 circumstances,
-               })
-               ->Request.onFinish(
-                   ~onOk=_ => setModalVisible(_ => false),
-                   ~onError=Js.log,
-                 )
-             }>
-             <Input.Wrap>
-               <Input
-                 placeholder={j|Nazwa|j}
-                 value=symptomName
-                 onChange={v => setSymptomName(_ => v)}
-               />
-             </Input.Wrap>
-             <Input.Wrap>
-               <Input
-                 placeholder={j|Okoliczności pojawienia się|j}
-                 value=circumstances
-                 onChange={v => setCircumstances(_ => v)}
-               />
-             </Input.Wrap>
-             <Input.Wrap>
-               <Input
-                 placeholder={j|Data pierwszego wystąpienia|j}
-                 value=date
-                 onChange={v => setDate(_ => v)}
-               />
-             </Input.Wrap>
-             <Input.Wrap>
-               <Input
-                 placeholder={j|Częstotliwość występowania|j}
-                 value=occurences
-                 onChange={v => setOccurences(_ => v)}
-               />
-             </Input.Wrap>
-             <Input.Wrap>
-               <Input
-                 placeholder={j|Opis|j}
-                 value=description
-                 onChange={v => setDescription(_ => v)}
-               />
-             </Input.Wrap>
-             <Input.Wrap>
-               <Input
-                 placeholder={j|Spowodowany przez|j}
-                 value=causedBy
-                 onChange={v => setCausedBy(_ => v)}
-               />
-             </Input.Wrap>
-             <Input.Wrap>
-               <Input.Textarea
-                 placeholder={j|Dodatkowe informacje|j}
-                 value=notes
-                 onChange={v => setNotes(_ => v)}
-               />
-             </Input.Wrap>
-           </Modal>
-         </>
+       | {data: Some({symptoms})} => <> <Symptoms_Table symptoms /> </>
        | _ => React.null
        }}
     </Section>

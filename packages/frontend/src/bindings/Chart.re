@@ -48,14 +48,18 @@ module YAxis = {
     "YAxis";
 };
 
-module DiscreteColorLegendItem = {
+module DiscreteColorLegend = {
+  type t = {
+    title: string,
+    color: string,
+  };
+
   [@bs.module "react-vis"] [@react.component]
   external make:
     (
-      ~colors: array(string),
-      ~items: array(string),
-      ~orientation: string,
-      ~style: ReactDOM.Style.t
+      ~items: array(React.element),
+      ~orientation: string=?,
+      ~style: ReactDOM.Style.t=?
     ) =>
     React.element =
     "DiscreteColorLegend";

@@ -60,7 +60,7 @@ module Preroom = {
              ? <div
                  className="bg-black w-full h-full flex items-center justify-center">
                  <div className="text-3xl text-white">
-                   <Text> {|Twoja kamera jest wyłączona|} </Text>
+                   <Text> {j|Twoja kamera jest wyłączona|j} </Text>
                  </div>
                </div>
              : <video
@@ -97,16 +97,16 @@ module Preroom = {
   };
 };
 
+type mediaStream = Js.Nullable.t(WebRTC.Media.srcObject);
+module Call = {
+  type call;
+  [@bs.send] external answer: (call, mediaStream) => unit = "answer";
+  [@bs.send]
+  external onStream: (call, string, mediaStream => unit) => unit = "on";
+};
+
 module PeerModule = {
   type t = {id: string};
-  type mediaStream = Js.Nullable.t(WebRTC.Media.srcObject);
-
-  module Call = {
-    type call;
-    [@bs.send] external answer: (call, mediaStream) => unit = "answer";
-    [@bs.send]
-    external onStream: (call, string, mediaStream => unit) => unit = "on";
-  };
 
   type ice = {
     urls: string,
@@ -133,6 +133,7 @@ module PeerModule = {
   [@bs.send] external onError: (t, string, string => unit) => unit = "on";
 
   [@bs.send] external call: (t, string, mediaStream) => unit = "call";
+  [@bs.send] external disconnect: t => unit = "disconnect";
 };
 
 type view =
@@ -160,8 +161,8 @@ let useVideoCall =
       peer->PeerModule.call(doctorPeerId, localStream);
 
       peer->PeerModule.onCall("call", call => {
-        call->PeerModule.Call.answer(localStream);
-        call->PeerModule.Call.onStream("stream", remote => {
+        call->Call.answer(localStream);
+        call->Call.onStream("stream", remote => {
           remote
           ->Js.Nullable.toOption
           ->Option.map(r => setRemote(_ => Some(r)))
@@ -172,8 +173,8 @@ let useVideoCall =
       peer->PeerModule.call(patientPeerId, localStream);
 
       peer->PeerModule.onCall("call", call => {
-        call->PeerModule.Call.answer(localStream);
-        call->PeerModule.Call.onStream("stream", remote => {
+        call->Call.answer(localStream);
+        call->Call.onStream("stream", remote => {
           remote
           ->Js.Nullable.toOption
           ->Option.map(r => setRemote(_ => Some(r)))
@@ -229,14 +230,13 @@ module Meeting = {
       ~isPatient,
     );
 
+    let localClassName =
+      remote->Option.isSome
+        ? "w-64 h-auto absolute bottom-12 left-4 shadow-xl border-2 border-gray rounded-xl"
+        : "";
+    let remoteClassName = remote->Option.isSome ? "w-full h-full" : "";
+
     <div className="flex items-center justify-center h-screen">
-      <video
-        ref={ReactDOM.Ref.callbackDomRef(el =>
-          WebRTC.setVideo(el, localStream, media.video)
-        )}
-        style={ReactDOM.Style.make(~transform="scale(-1, 1)", ())}
-        className="transform rounded-xl flex-1 w-1/2"
-      />
       {switch (remote) {
        | Some(remote) =>
          <video
@@ -244,11 +244,28 @@ module Meeting = {
              WebRTC.setVideo(el, remote, true)
            )}
            style={ReactDOM.Style.make(~transform="scale(-1, 1)", ())}
-           className="transform rounded-xl flex-1 w-1/2"
+           className=Cn.(
+             "transform rounded-xl border-2 border-gray bg-black"
+             + remoteClassName
+           )
          />
-       | None =>
-         <div className="flex-1 w-1/2"> "No Video :("->React.string </div>
+       | None => React.null
        }}
+      <video
+        ref={ReactDOM.Ref.callbackDomRef(el =>
+          WebRTC.setVideo(el, localStream, media.video)
+        )}
+        style={ReactDOM.Style.make(~transform="scale(-1, 1)", ())}
+        className=Cn.("transform rounded-xl" + localClassName)
+      />
+      {remote->Option.isNone
+         ? <div
+             className="bg-black opacity-50 text-3xl text-white w-full h-full flex items-center justify-center absolute top-0 left-0">
+             <Text>
+               {j|Twój rozmówca jeszcze nie dołączył do rozmowy|j}
+             </Text>
+           </div>
+         : React.null}
       <div className="fixed bottom-24 flex  gap-4">
         <Button.Round
           className="bg-white  text-gray-600 hover:bg-gray-100"
@@ -267,7 +284,7 @@ module Meeting = {
         />
         <Button.Round
           className="bg-red-400 text-white  hover:bg-red-300"
-          onClick={_ => ()}
+          onClick={_ => peer.current->PeerModule.disconnect}
           icon={<Icons.Phone size="36" />}
         />
       </div>
@@ -286,8 +303,6 @@ module Meeting = {
 };
 [@react.component]
 let make = (~id as callId, ~patientId, ~doctorId, ~isPatient) => {
-  // open WebRTC.MediaDevices.Constraints;
-
   let (stream, media, setMedia) = WebRTC.use();
 
   let (mutation, result) = Call_CreateRoom_Mutation.Mutation.use();

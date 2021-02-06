@@ -7,27 +7,5 @@ type symptom = {
   occurences: string,
   causedBy: string,
   notes: string,
+  color: string,
 };
-
-let symptoms = [|
-  {
-    id: "1",
-    name: {j|Kołatanie serca|j},
-    date: "",
-    circumstances: "",
-    occurences: "",
-    description: "",
-    causedBy: "",
-    notes: "",
-  },
-  {
-    id: "2",
-    name: {j|Arytmia|j},
-    date: "",
-    circumstances: "",
-    occurences: "",
-    description: "",
-    causedBy: "",
-    notes: "",
-  },
-|];

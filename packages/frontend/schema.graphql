@@ -29,7 +29,7 @@ type Mutation {
   removePatient(id: String!): RemovedPatient!
   addFeeling(patientId: String!, value: String!, timestamp: Float!): Feeling!
   addPatientEvent(patientId: String!, symptompId: String!, feeling: Float!, timestamp: Float!): PatientEvent!
-  addSymptom(patientId: String!, name: String, date: String, circumstances: String, description: String, occurences: String, causedBy: String, notes: String): Symptom!
+  addSymptom(patientId: String!, name: String, date: String, circumstances: String, description: String, occurences: String, causedBy: String, notes: String, color: String): Symptom!
   createRoom(patientId: String!, doctorId: String!): Room
 }
 
@@ -86,6 +86,7 @@ type Symptom {
   occurences: String!
   causedBy: String!
   notes: String!
+  color: String!
 }
 
 type User {
