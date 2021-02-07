@@ -17,8 +17,11 @@ let colors = [|
 |];
 
 [@react.component]
-let make = (~value, ~onChange) => {
-  <div className="mb-12 mt-8 flex flex-wrap gap-4">
+let make = (~value, ~onChange, ~className=?) => {
+  <div
+    className=Cn.(
+      "mb-12 mt-8 flex flex-wrap gap-4" + className->mapSome(x => x)
+    )>
     {{
        colors->Array.map(c => {
          let active = value == c ? "ring-4 ring-green-400" : "";

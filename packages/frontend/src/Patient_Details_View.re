@@ -187,7 +187,7 @@ let make = (~id: string, ~callMode=false) => {
                name={callMode ? "" : name}
                lastVisit
                disease
-               phoneNumber
+               phoneNumber={callMode ? "" : phoneNumber}
              />
            </div>
            {callMode
@@ -326,9 +326,11 @@ let make = (~id: string, ~callMode=false) => {
       title={j|Symptomy|j}
       icon={<Icons.Thermometer />}
       button={
-        <Button.CTA onClick={_ => setModalVisible(_ => true)}>
-          <Text> {j|Dodaj symptom|j} </Text>
-        </Button.CTA>
+        callMode
+          ? React.null
+          : <Button.CTA onClick={_ => setModalVisible(_ => true)}>
+              <Text> {j|Dodaj symptom|j} </Text>
+            </Button.CTA>
       }>
       <Symptom_Add
         visible=modalVisible

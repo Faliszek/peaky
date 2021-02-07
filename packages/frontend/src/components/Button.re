@@ -45,6 +45,20 @@ module SmallRound = {
   };
 };
 
+module CallButton = {
+  [@react.component]
+  let make = (~icon, ~onClick=?, ~className=?) => {
+    <button
+      ?onClick
+      className=Cn.(
+        "rounded-full  w-12 h-12 flex items-center justify-center shadow-md text-white cursor-pointer transition-colors  focus:outline-none"
+        + className->mapSome(x => x)
+      )>
+      icon
+    </button>;
+  };
+};
+
 module Nav = {
   [@react.component]
   let make = (~onClick, ~children, ~className=?) =>

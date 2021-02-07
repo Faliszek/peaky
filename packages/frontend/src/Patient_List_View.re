@@ -22,7 +22,7 @@ module Mutation = [%graphql
 module ListQuery = Patient_List_Query.Query;
 
 [@react.component]
-let make = () => {
+let make = (~callMode as _=false) => {
   let (creatorVisible, setCreatorVisible) = React.useState(_ => false);
 
   let queryUsers = ListQuery.use();

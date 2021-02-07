@@ -44,7 +44,6 @@ type payloadToReturn = {
 };
 
 let decline = (payload: declinePayload, context: Graphql_Context.t) => {
-  Js.log(payload);
   context.db
   ->Firebase.Database.ref(~path="/consultations/" ++ payload.id, ())
   ->Firebase.Database.Reference.set(
@@ -53,16 +52,31 @@ let decline = (payload: declinePayload, context: Graphql_Context.t) => {
     )
   ->Promise.Js.toResult
   ->Promise.Js.map(res => {
-      Domain.Consultation.(
-        switch (res) {
-        | Ok(_) =>
-          Some({
-            id: payload.id,
-            callerId: payload.callerId,
-            userIds: payload.userIds,
-          })
-        | Error(_) => None
-        }
-      )
+      switch (res) {
+      | Ok(_) =>
+        let res: Domain.Consultation.t = {
+          id: payload.id,
+          callerId: payload.callerId,
+          userIds: payload.userIds,
+        };
+        Some(res);
+      | Error(_) => None
+      }
+    });
+};
+
+type singlePayload = {id: string};
+let single = (payload: singlePayload, context: Graphql_Context.t) => {
+  let r =
+    context.db
+    ->Firebase.Database.ref(~path="/consultations/" ++ payload.id, ());
+  r
+  ->Firebase.Database.Reference.once(~eventType="value", ())
+  ->Promise.Js.toResult
+  ->Promise.Js.map(res => {
+      switch (res) {
+      | Ok(res) => res->Json.toObject(payload.id)
+      | Error(err) => Json.fromObject(err)
+      }
     });
 };

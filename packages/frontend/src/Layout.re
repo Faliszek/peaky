@@ -20,7 +20,7 @@ module Menu = {
   };
 
   [@react.component]
-  let make = () => {
+  let make = (~firstName, ~lastName) => {
     let url = ReasonReactRouter.useUrl();
 
     <nav
@@ -83,7 +83,9 @@ module Menu = {
       //   view=Router.Settings
       //   active={Router.Settings == url.path->Router.toView}
       // />
-      <div className="flex px-2 py-4 items-center justify-center">
+      <div className="flex px-2 py-4 items-center justify-center flex-col">
+        <Avatar firstName lastName />
+        <div className="h-4" />
         <Button
           icon={<Icons.ArrowRight size="18" />} onClick={_ => Auth.signOut()}>
           <Text> {j|Wyloguj się|j} </Text>
@@ -98,6 +100,8 @@ module Query = [%graphql
   query IncomingsConsultations {
     me {
       id
+      firstName
+      lastName
     }
     consultations {
       id
@@ -155,13 +159,20 @@ let make = (~children) => {
 
   let myId =
     consultations.data->Option.map(c => c.me.id)->Option.getWithDefault("");
-  Js.log(url.path);
+  let firstName =
+    consultations.data
+    ->Option.map(c => c.me.firstName)
+    ->Option.getWithDefault("");
+  let lastName =
+    consultations.data
+    ->Option.map(c => c.me.lastName)
+    ->Option.getWithDefault("");
+
   <div className="flex">
-    <Menu />
+    <Menu lastName firstName />
     <div className="bg-white flex-1 pl-40"> children </div>
     {switch (incomingCall, url.path) {
      | (Some(call), path) when path->List.get(1) != Some(call.id) =>
-       Js.log(call.userIds->Array.keep(x => x != myId));
        <div>
          {declineResult.loading ? <Loader /> : React.null}
          <div
@@ -194,7 +205,7 @@ let make = (~children) => {
              </div>
            </div>
          </div>
-       </div>;
+       </div>
      | _ => React.null
      }}
   </div>;

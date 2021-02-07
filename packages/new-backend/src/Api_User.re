@@ -80,3 +80,10 @@ let search = (payload: searchPayload, context: Graphql_Context.t) => {
       })
   );
 };
+
+type listPayload;
+let list = (_payload: listPayload, context: Graphql_Context.t) => {
+  context.db
+  ->Chain.get("/users")
+  ->Chain.onFinish(~onOk=users => {users->Json.toList});
+};

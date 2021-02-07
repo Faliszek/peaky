@@ -190,12 +190,12 @@ let make = () => {
                       ->Request.onFinish(
                           ~onError=_ => (),
                           ~onOk=
-                            ({createConsultation: Some(consultation)}) => {
-                              CreateConsultation.(
-                                Router.push(
-                                  ConsultationRoom(consultation.id),
+                            ({createConsultation: consultation}) => {
+                              consultation
+                              ->Option.map(c =>
+                                  Router.push(ConsultationRoom(c.id))
                                 )
-                              )
+                              ->ignore
                             },
                         )
                     }

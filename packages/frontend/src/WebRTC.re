@@ -9,7 +9,6 @@ let setVideo = [%raw
         video.pause()
        }
      }
-
   }
   |}
 ];
@@ -111,6 +110,7 @@ module Media = {
 
   type srcObject = {
     .
+    "id": string,
     "getTracks": [@bs.meth] (unit => array(Track.t)),
     "removeTrack": [@bs.meth] (Track.t => unit),
   };
@@ -170,7 +170,6 @@ function useUserMedia(constraints) {
 
     const cancel = () => {
       didCancel = true;
-    console.log("cancelling")
       if (!stream) return;
 
       if (stream.getVideoTracks && !constraints.video) {

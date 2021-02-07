@@ -78,6 +78,12 @@ type root = {
   decline:
     (Api_Consultations.declinePayload, Graphql_Context.t) =>
     res(option(Domain.Consultation.t), Promise.never),
+  users:
+    (Api_User.listPayload, Graphql_Context.t) =>
+    res(array(Domain.User.t), Promise.never),
+  consultation:
+    (Api_Consultations.singlePayload, Graphql_Context.t) =>
+    res(option(Domain.Consultation.t), Promise.never),
 };
 
 type headers = {authorization: option(string)};
@@ -116,6 +122,8 @@ let root: root = {
   consultations: Api_Consultations.list,
   createConsultation: Api_Consultations.create,
   decline: Api_Consultations.decline,
+  users: Api_User.list,
+  consultation: Api_Consultations.single,
 };
 
 [@bs.module "express-graphql"]

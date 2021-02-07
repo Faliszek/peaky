@@ -70,6 +70,8 @@ type Query {
   feelings(patientId: String!): [Feeling!]!
   patientEvents(patientId: String!): [PatientEvent!]!
   consultations: [Consultation!]!
+  users: [User!]!
+  consultation(id: String!): Consultation
 }
 
 type RemovedPatient {
