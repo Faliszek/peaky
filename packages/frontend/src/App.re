@@ -1,6 +1,6 @@
 let graphqlEndpoint = "localhost:4000/graphql";
 
-let subscriptionEndpoint = "localhost:4000/subscriptions";
+let subscriptionEndpoint = "localhost:4001/subscriptions";
 
 let headers = {"high": "five"};
 
@@ -11,20 +11,20 @@ let httpLink =
     (),
   );
 
-// let wsLink =
-//   ApolloClient.Link.WebSocketLink.(
-//     make(
-//       ~uri="ws://" ++ subscriptionEndpoint,
-//       ~options=
-//         ClientOptions.make(
-//           ~connectionParams=
-//             ConnectionParams(Obj.magic({"headers": headers})),
-//           ~reconnect=true,
-//           (),
-//         ),
-//       (),
-//     )
-//   );
+let wsLink =
+  ApolloClient.Link.WebSocketLink.(
+    make(
+      ~uri="ws://" ++ subscriptionEndpoint,
+      ~options=
+        ClientOptions.make(
+          ~connectionParams=
+            ConnectionParams(Obj.magic({"headers": headers})),
+          ~reconnect=true,
+          (),
+        ),
+      (),
+    )
+  );
 
 let authPayload = token => {
   "headers": {
@@ -54,7 +54,7 @@ let terminatingLink =
         | None => false
         };
       },
-    // ~whenTrue=wsLink,
+    ~whenTrue=wsLink,
     ~whenFalse=httpLink,
   );
 
@@ -114,6 +114,8 @@ let make = () => {
             | ["calls", id, doctorId, patientId] =>
               <Call_View id patientId doctorId isPatient=false />
             | ["calls"] => <Calls_List_View />
+
+            | ["consultations", id] => <Consultation_Room id />
             | ["consultations"] => <Consultations />
             | ["settings"] => <Settings />
             | [] => <Calendar />

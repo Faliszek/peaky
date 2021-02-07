@@ -17,6 +17,7 @@
     "node-uuid": "^1.4.8",
     "peer": "^0.6.1",
     "reason-promise": "^1.1.2",
+    "subscriptions-transport-ws": "^0.9.18",
     "ws": "^7.4.0"
   },
   "scripts": {

@@ -138,6 +138,13 @@ module Phone = {
     "Phone";
 };
 
+module PhoneOff = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "PhoneOff";
+};
+
 module Thermometer = {
   [@bs.module "react-feather"] [@react.component]
   external make:

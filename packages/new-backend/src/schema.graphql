@@ -1,3 +1,9 @@
+type Consultation {
+  id: String!
+  callerId: String!
+  userIds: [String!]!
+}
+
 type Patient {
   id: String!
   firstName: String!
@@ -49,7 +55,7 @@ type Query {
   calls: [Call!]!
   searchSpecialist(
     specialization: String!
-    firstName: String!
+    firstName: String
     lastName: String!
   ): [User!]!
 
@@ -59,6 +65,7 @@ type Query {
   symptoms(patientId: String!): [Symptom!]!
   feelings(patientId: String!): [Feeling!]!
   patientEvents(patientId: String!): [PatientEvent!]!
+  consultations: [Consultation!]!
 }
 
 type Feeling {
@@ -84,6 +91,7 @@ type Symptom {
   occurences: String!
   causedBy: String!
   notes: String!
+  color: String!
 }
 
 type Room {
@@ -131,7 +139,10 @@ type Mutation {
     occurences: String
     causedBy: String
     notes: String
+    color: String
   ): Symptom!
 
   createRoom(patientId: String!, doctorId: String!): Room
+  createConsultation(userIds: [String!]!, callerId: String!): Consultation
+  decline(id: String!, userIds: [String!]!, callerId: String!): Consultation
 }

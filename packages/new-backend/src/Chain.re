@@ -7,10 +7,11 @@ let get = (db, path) => {
   );
 };
 
-let onFinish = (req, ~onOk) =>
+let onFinish = (req, ~onOk) => {
   req->Promise.Js.map(res => {
     switch (res) {
     | Ok(res) => onOk(res)
     | Error(err) => Json.fromObject(err)
     }
   });
+};

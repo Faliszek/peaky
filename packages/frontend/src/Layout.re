@@ -22,7 +22,6 @@ module Menu = {
   [@react.component]
   let make = () => {
     let url = ReasonReactRouter.useUrl();
-    let [@r] asd = "";
 
     <nav
       className="w-40  h-screen  bg-white border-r-2 border-gray-100 z-10 pr-1 flex flex-col justify-between fixed left-0 top-0">
@@ -33,7 +32,7 @@ module Menu = {
               <Icons.Activity size="18" color="white" />
             </span>
             <span className="text-green-500 uppercase font-bold text-md">
-              <Text> {j|Peaky $asd|j} </Text>
+              <Text> {j|Peaky|j} </Text>
             </span>
           </div>
         </div>
@@ -67,7 +66,14 @@ module Menu = {
             icon={<Icons.Share className="mr-3" size="14" />}
             text={j|Konsultacje|j}
             view=Router.Consultations
-            active={Router.Consultations == url.path->Router.toView}
+            active={
+              switch (url.path) {
+              | ["consultations", _, _] => true
+              | ["consultations", _] => true
+              | ["consultations"] => true
+              | _ => false
+              }
+            }
           />
         </ul>
       </div>
@@ -87,10 +93,109 @@ module Menu = {
   };
 };
 
+module Query = [%graphql
+  {|
+  query IncomingsConsultations {
+    me {
+      id
+    }
+    consultations {
+      id
+      userIds
+      callerId
+    }
+
+
+  }
+|}
+];
+
+module Decline = [%graphql
+  {|
+  mutation Decline($id: String!, $callerId: String!, $userIds: [String!]!) {
+    decline(id:$id, callerId:$callerId, userIds: $userIds) {
+      id
+    }
+
+
+
+  }
+|}
+];
+
 [@react.component]
 let make = (~children) => {
+  let consultations = Query.use(~pollInterval=2000, ());
+  let (decline, declineResult) =
+    Decline.use(~refetchQueries=[|Query.refetchQueryDescription()|], ());
+  let (incomingCall, setIncomingCall) = React.useState(_ => None);
+  let url = ReasonReactRouter.useUrl();
+
+  React.useEffect1(
+    () => {
+      {
+        switch (consultations) {
+        | {data: Some({me, consultations})} =>
+          let incoming =
+            consultations
+            ->Array.keep(c =>
+                c.userIds->Js.Array2.find(x => x == me.id)->Option.isSome
+              )
+            ->Array.get(0);
+
+          setIncomingCall(_ => incoming);
+        | _ => ()
+        };
+      };
+
+      None;
+    },
+    [|consultations|],
+  );
+
+  let myId =
+    consultations.data->Option.map(c => c.me.id)->Option.getWithDefault("");
+  Js.log(url.path);
   <div className="flex">
     <Menu />
     <div className="bg-white flex-1 pl-40"> children </div>
+    {switch (incomingCall, url.path) {
+     | (Some(call), path) when path->List.get(1) != Some(call.id) =>
+       Js.log(call.userIds->Array.keep(x => x != myId));
+       <div>
+         {declineResult.loading ? <Loader /> : React.null}
+         <div
+           className="fixed bottom-12 right-12 flex p-8 shadow-lg border border-gray flex-col bg-white rounded-xl">
+           <span className="text-3xl text-gray-500 mb-8">
+             <Text> {j|Przychodzące połączenie|j} </Text>
+           </span>
+           <div className="flex justify-around gap-8">
+             <div
+               className=" animate-pulse flex justify-center flex-col items-center w-24 h-24 rounded-full bg-green-500 hover:bg-green-400 cursor-pointer text-white "
+               onClick={_ => Router.(push(ConsultationRoom(call.id)))}>
+               <Icons.Phone size="24" />
+               <Text> {j|Odbierz|j} </Text>
+             </div>
+             <div
+               className="flex justify-center flex-col items-center w-24 h-24 rounded-full bg-red-500 hover:bg-red-400 cursor-pointer text-white "
+               onClick={_ =>
+                 decline({
+                   id: call.id,
+                   callerId: call.callerId,
+                   userIds: call.userIds->Array.keep(x => x != myId),
+                 })
+                 ->Request.onFinish(
+                     ~onOk=_ => setIncomingCall(_ => None),
+                     ~onError=_ => (),
+                   )
+               }>
+               <Icons.PhoneOff />
+               <Text> {j|Odrzuć|j} </Text>
+             </div>
+           </div>
+         </div>
+       </div>;
+     | _ => React.null
+     }}
   </div>;
 };

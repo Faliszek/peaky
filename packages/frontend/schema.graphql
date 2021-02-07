@@ -13,6 +13,12 @@ type Call {
   to_: User!
 }
 
+type Consultation {
+  id: String!
+  callerId: String!
+  userIds: [String!]!
+}
+
 type Feeling {
   id: String!
   patientId: String!
@@ -31,6 +37,8 @@ type Mutation {
   addPatientEvent(patientId: String!, symptompId: String!, feeling: Float!, timestamp: Float!): PatientEvent!
   addSymptom(patientId: String!, name: String, date: String, circumstances: String, description: String, occurences: String, causedBy: String, notes: String, color: String): Symptom!
   createRoom(patientId: String!, doctorId: String!): Room
+  createConsultation(userIds: [String!]!, callerId: String!): Consultation
+  decline(id: String!, userIds: [String!]!, callerId: String!): Consultation
 }
 
 type Patient {
@@ -54,13 +62,14 @@ type PatientEvent {
 type Query {
   me: User!
   calls: [Call!]!
-  searchSpecialist(specialization: String!, firstName: String!, lastName: String!): [User!]!
+  searchSpecialist(specialization: String!, firstName: String, lastName: String!): [User!]!
   patients: [Patient!]!
   patient(id: String!): Patient!
   visits: [Visit!]!
   symptoms(patientId: String!): [Symptom!]!
   feelings(patientId: String!): [Feeling!]!
   patientEvents(patientId: String!): [PatientEvent!]!
+  consultations: [Consultation!]!
 }
 
 type RemovedPatient {

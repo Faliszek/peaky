@@ -94,3 +94,11 @@ module Room = {
     parentId: string,
   };
 };
+
+module Consultation = {
+  type t = {
+    id: string,
+    userIds: array(string),
+    callerId: string,
+  };
+};

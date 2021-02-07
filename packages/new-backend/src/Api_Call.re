@@ -52,3 +52,5 @@ let list = (_payload: listPayload, context: Graphql_Context.t) => {
       ->Chain.onFinish(~onOk=calls => {calls->Json.toCallsList(users)})
     );
 };
+
+type incomingCallPayload;

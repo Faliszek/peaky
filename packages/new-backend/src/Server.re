@@ -23,6 +23,18 @@ type peerOptions = {
 
 type peerServer = Express.Middleware.t;
 
+module SubscrpitionServer = {
+  type t;
+  type args;
+  [@bs.module "subscriptions-transport-ws"] [@bs.new]
+  external make: unit => t = "SubscriptionServer";
+};
+
+type wsServer = {listen: (int, (. unit) => SubscrpitionServer.t) => unit};
+
+[@bs.module "http"] [@bs.val]
+external createServer: Express.App.t => wsServer = "createServer";
+
 Express.(
   {
     let app = express();
@@ -45,7 +57,9 @@ Express.(
         )
       ),
     );
+    // ->App.useOnPath(~path="/subscriptions", () => ());
 
+    SubServer.start(app, schema)->ignore;
     app->App.listen(~port=4000, ()) |> ignore;
   }
 );

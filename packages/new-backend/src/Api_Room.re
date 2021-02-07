@@ -43,5 +43,3 @@ let get = (payload: getPayload, context: Graphql_Context.t) => {
       }
     });
 };
-
-let stopMeeting = () => {};
