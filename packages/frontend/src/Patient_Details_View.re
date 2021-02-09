@@ -25,7 +25,7 @@ module Section = {
 
 module Symptom_Add = {
   [@react.component]
-  let make = (~patientId, ~visible, ~onClose) => {
+  let make = (~patientId, ~visible, ~onClose, ~callMode) => {
     let (symptomName, setSymptomName) = React.useState(_ => "");
     let (circumstances, setCircumstances) = React.useState(_ => "");
     let (date, setDate) = React.useState(_ => "");
@@ -42,76 +42,77 @@ module Symptom_Add = {
         |],
         (),
       );
-
-    <Modal
-      visible
-      loading={resultSymptom.loading}
-      onVisibleChange={_ => onClose()}
-      onOk={_ =>
-        createSymptom({
-          name: symptomName,
-          occurences,
-          description,
-          causedBy,
-          notes,
-          patientId,
-          date,
-          circumstances,
-          color,
-        })
-        ->Request.onFinish(~onOk=_ => onClose(), ~onError=Js.log)
-      }>
-      <Input.Wrap>
-        <Input
-          placeholder={j|Nazwa|j}
-          value=symptomName
-          onChange={v => setSymptomName(_ => v)}
-        />
-      </Input.Wrap>
-      <Input.Wrap>
-        <Input
-          placeholder={j|Okoliczności pojawienia się|j}
-          value=circumstances
-          onChange={v => setCircumstances(_ => v)}
-        />
-      </Input.Wrap>
-      <Input.Wrap>
-        <Input
-          placeholder={j|Data pierwszego wystąpienia|j}
-          value=date
-          onChange={v => setDate(_ => v)}
-        />
-      </Input.Wrap>
-      <Input.Wrap>
-        <Input
-          placeholder={j|Częstotliwość występowania|j}
-          value=occurences
-          onChange={v => setOccurences(_ => v)}
-        />
-      </Input.Wrap>
-      <Input.Wrap>
-        <Input
-          placeholder={j|Opis|j}
-          value=description
-          onChange={v => setDescription(_ => v)}
-        />
-      </Input.Wrap>
-      <Input.Wrap>
-        <Input
-          placeholder={j|Spowodowany przez|j}
-          value=causedBy
-          onChange={v => setCausedBy(_ => v)}
-        />
-      </Input.Wrap>
-      <Input.Wrap>
-        <Input.Textarea
-          placeholder={j|Dodatkowe informacje|j}
-          value=notes
-          onChange={v => setNotes(_ => v)}
-        />
-      </Input.Wrap>
-      <Color_Picker value=color onChange={v => setColor(_ => v)} />
-    </Modal>;
+    !callMode
+      ? <Modal
+          visible
+          loading={resultSymptom.loading}
+          onVisibleChange={_ => onClose()}
+          onOk={_ =>
+            createSymptom({
+              name: symptomName,
+              occurences,
+              description,
+              causedBy,
+              notes,
+              patientId,
+              date,
+              circumstances,
+              color,
+            })
+            ->Request.onFinish(~onOk=_ => onClose(), ~onError=Js.log)
+          }>
+          <Input.Wrap>
+            <Input
+              placeholder={j|Nazwa|j}
+              value=symptomName
+              onChange={v => setSymptomName(_ => v)}
+            />
+          </Input.Wrap>
+          <Input.Wrap>
+            <Input
+              placeholder={j|Okoliczności pojawienia się|j}
+              value=circumstances
+              onChange={v => setCircumstances(_ => v)}
+            />
+          </Input.Wrap>
+          <Input.Wrap>
+            <Input
+              placeholder={j|Data pierwszego wystąpienia|j}
+              value=date
+              onChange={v => setDate(_ => v)}
+            />
+          </Input.Wrap>
+          <Input.Wrap>
+            <Input
+              placeholder={j|Częstotliwość występowania|j}
+              value=occurences
+              onChange={v => setOccurences(_ => v)}
+            />
+          </Input.Wrap>
+          <Input.Wrap>
+            <Input
+              placeholder={j|Opis|j}
+              value=description
+              onChange={v => setDescription(_ => v)}
+            />
+          </Input.Wrap>
+          <Input.Wrap>
+            <Input
+              placeholder={j|Spowodowany przez|j}
+              value=causedBy
+              onChange={v => setCausedBy(_ => v)}
+            />
+          </Input.Wrap>
+          <Input.Wrap>
+            <Input.Textarea
+              placeholder={j|Dodatkowe informacje|j}
+              value=notes
+              onChange={v => setNotes(_ => v)}
+            />
+          </Input.Wrap>
+          <Color_Picker value=color onChange={v => setColor(_ => v)} />
+        </Modal>
+      : React.null;
   };
 };
 
@@ -140,7 +141,7 @@ type t = {
 };
 
 [@react.component]
-let make = (~id: string, ~callMode=false) => {
+let make = (~id, ~callMode=false) => {
   let (visible, setVisible) = React.useState(_ => false);
 
   let query = Calendar_Query.Query.use();
@@ -336,6 +337,7 @@ let make = (~id: string, ~callMode=false) => {
         visible=modalVisible
         onClose={_ => setModalVisible(_ => false)}
         patientId=id
+        callMode
       />
       {switch (patientQuery) {
        | {loading: true} => <Spinner />

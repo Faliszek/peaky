@@ -20,83 +20,158 @@ query Consultation($id: String!) {
 |}
 ];
 
-let useConsultation =
-    (~myId, ~callerId, ~peer, ~userIds, ~localStream, ~setStreams, ~streams) => {
-  React.useEffect0(() => {
-    Js.log2("Mounted", myId);
-    let userIds =
-      userIds->Array.concat([|callerId|])->Array.keep(u => u != myId);
+let useData =
+    (
+      ~myId,
+      ~callerId,
+      ~peer,
+      ~userIds,
+      ~onReceiveData,
+      ~data: string,
+      ~patientId,
+    ) => {
+  let incomingCall = React.useRef(None);
+  let myConnection = React.useRef(None);
+  let patientId = patientId->Option.getWithDefault("");
 
-    let call = () =>
-      if (streams->Array.size == userIds->Array.size) {
-        ();
-      } else {
-        userIds
-        ->Array.map(userId => {
-            Js.log2("calling to", userId);
-            peer->Peer.call(userId, localStream);
-          })
-        ->ignore;
-      };
-
-    call();
-
-    peer->Peer.onCall("error", _err => call());
-    peer->Peer.onCall("call", call => {
-      call->Peer.Call.answer(localStream);
-      call->Peer.Call.onStream("stream", remoteStream => {
-        switch (remoteStream->Js.Nullable.toOption) {
-        | Some(remoteStream) =>
-          setStreams(streams =>
-            if (streams
-                ->Array.keep(x => x##id == remoteStream##id)
-                ->Array.get(0)
-                ->Option.isSome) {
-              streams;
-            } else {
-              streams->Array.concat([|remoteStream|]);
-            }
-          )
-        | None => Js.log("no Stream")
-        }
-      });
-    });
-
-    None;
-  });
-};
-
-let useData = (~myId, ~callerId, ~peer, ~userIds) => {
   Peer.(
     React.useEffect0(() => {
-      let userIds =
-        userIds->Array.concat([|callerId|])->Array.keep(u => u != myId);
+      let userId = userIds->Array.keep(u => u != myId)->Array.getExn(0);
 
-      userIds
-      ->Array.map(userId => {
-          Js.log2("SETTING UP CONNECTION for", userId);
-          peer->onConnection("connection", x => {
-            x->Connection.onOpen("open", () => {
-              x->Connection.onData("data", data =>
-                Js.log2("RECEIVE FUCKING DATA", data)
-              )
-            });
+      Js.log2(myId, userId);
 
-            x->Connection.send("dupa");
-          });
+      let call = peer->Peer.connect(userId, {serialization: "none"});
 
-          let incomingConnection = peer->connect(userId);
+      call->Connection.onOpen("open", () => {
+        Js.log2("User resond", userId);
 
-          incomingConnection->Connection.onOpen("open", () => {
-            incomingConnection->Connection.send("dupa")
-          });
+        call->Connection.onData("data", data => {onReceiveData(data)});
+      });
 
-          incomingConnection;
-        })
-      ->ignore;
+      incomingCall.current = Some(call);
+
+      peer->Peer.onConnection("connection", conn => {
+        Js.log2("SOMEONE JOINED", conn);
+
+        myConnection.current = Some(conn);
+
+        conn->Connection.onOpen("open", () => {
+          Js.log2("Open connection with", conn.peer);
+          conn->Connection.onData("data", data => {onReceiveData(data)});
+        });
+      });
+
+      peer->Peer.onError("error", err => Js.log(err));
+
       None;
     })
   );
+
+  React.useEffect1(
+    () => {
+      open Peer;
+      Js.log3("Will send ", myConnection, incomingCall);
+      incomingCall.current
+      ->Option.map(i => i->Connection.send(patientId))
+      ->ignore;
+      // connections.current
+      // ->Array.forEach(c => {
+      //     ->Connection.send(patientId->Option.getWithDefault(""))
+      //   });
+      None;
+    },
+    [|patientId|],
+  );
+};
+
+module PatientData = {
+  [@react.component]
+  let make =
+      (~patientId, ~callerId, ~userIds, ~peer, ~myId, ~color, ~setPatientId) => {
+    let (width, setWidth) = React.useState(_ => None);
+    let (height, setHeight) = React.useState(_ => None);
+    let (data, setData) = React.useState(_ => "");
+
+    // useData(
+    //   ~myId,
+    //   ~callerId,
+    //   ~userIds,
+    //   ~peer,
+    //   ~onReceiveData=
+    //     data => {
+    //       Js.log2(
+    //         "RECEIVE",
+    //         data,
+    //         // setPatientId(Some(data.patientId));
+    //         // setData(_ => data.data);
+    //       )
+    //     },
+    //   ~data,
+    //   ~patientId,
+    // );
+
+    React.useEffect1(
+      () => {
+        if (myId == callerId) {
+          setData(_ => "")->ignore;
+        } else {
+          ();
+        };
+
+        None;
+      },
+      [|patientId|],
+    );
+
+    let amICaller = myId != callerId;
+    <div className="w-full h-full relative">
+      <div
+        ref={ReactDOM.Ref.callbackDomRef(el =>
+          el
+          ->Js.Nullable.toOption
+          ->Option.map(el => {
+              Timeout.set(
+                () => {
+                  setWidth(_ => Some(el->HTMLElement.offsetWidth));
+                  setHeight(_ => Some(el->HTMLElement.offsetHeight));
+                },
+                1000,
+              )
+            })
+          ->ignore
+        )}>
+        {switch (amICaller, patientId) {
+         | (_, Some(patientId)) =>
+           <Patient_Details_View id=patientId callMode=true />
+         | (true, _) =>
+           <Text> {j|Prowadzący nie wybrał jeszcze pacjenta|j} </Text>
+
+         | _ => React.null
+         }}
+      </div>
+      <div className="absolute w-full h-full top-0 left-0">
+        {switch (height, width, patientId) {
+         | (Some(height), Some(width), Some(patientId)) =>
+           <CanvasDraw
+             onChange={v => {
+               let data = v.getSaveData();
+               setData(_ => data);
+             }}
+             gridColor="transparent"
+             backgroundColor="transparent"
+             hideGrid=true
+             brushColor=color
+             canvasHeight=height
+             canvasWidth=width
+             brushRadius=4.0
+             saveData=data
+             immediateLoading=true
+           />
+         | _ => React.null
+         }}
+      </div>
+    </div>;
+  };
 };
 
 module PatientView = {
@@ -111,39 +186,8 @@ module PatientView = {
     );
   };
 
-  // let d =
-  //   Obj.magic(
-  //     Js.Json.stringifyAny({
-  //       "lines": [|
-  //         {
-  //           "points": [|
-  //             {"x": 147.3007884391191, "y": 225.43386344836821},
-  //             {"x": 147.3007884391191, "y": 225.43386344836821},
-  //             {"x": 147.3007884391191, "y": 225.43386344836821},
-  //             {"x": 149.84546070411582, "y": 224.42450597203526},
-  //             {"x": 157.30787132407474, "y": 222.70076415586524},
-  //             {"x": 168.08409881624166, "y": 221.41820272842315},
-  //             {"x": 185.01440694056703, "y": 220.58784267765463},
-  //             {"x": 225.00076712444866, "y": 220.13568492284585},
-  //             {"x": 240.00015153165222, "y": 220.0603053620484},
-  //             {"x": 272.0000112709399, "y": 220.0164469581163},
-  //             {"x": 284.0000028177353, "y": 220.0082234809891},
-  //             {"x": 331.00694535072813, "y": 218.4082158492491},
-  //             {"x": 357.02403407359037, "y": 216.75910482113866},
-  //             {"x": 407.1768371840599, "y": 208.0525157801515},
-  //             {"x": 407.1768371840599, "y": 208.0525157801515},
-  //           |],
-  //           "brushColor": "rgb(96, 165, 250)",
-  //           "brushRadius": 4,
-  //         },
-  //       |],
-  //       "width": 1168,
-  //       "height": 600,
-  //     }),
-  //   );
-
   [@react.component]
-  let make = (~callerId, ~myId, ~userIds) => {
+  let make = (~callerId, ~myId, ~userIds, ~peer) => {
     let query = Query.use();
     let patient = Select.use();
 
@@ -152,51 +196,11 @@ module PatientView = {
 
     let (visible, setVisible) = React.useState(_ => false);
 
-    let (drawer, setDrawer) = React.useState(_ => None);
-
-    let (width, setWidth) = React.useState(_ => None);
-    let (height, setHeight) = React.useState(_ => None);
-
-    let (data, setData) = React.useState(_ => "");
-
-    let myId = "data" ++ myId;
     let callerId = "data" ++ callerId;
     let userIds = userIds->Array.map(u => "data" ++ u);
 
     let userIds =
       userIds->Array.concat([|callerId|])->Array.keep(u => u != myId);
-
-    let peer =
-      React.useRef(
-        Peer.make(
-          myId,
-          {
-            port: "9000",
-            host: "localhost",
-            path: "/calls",
-            debug: 0,
-            pingInterval: 5000,
-
-            config: {
-              iceServers: Peer.iceServers,
-            },
-          },
-        ),
-      );
-    Js.log3(myId, callerId, userIds);
-    useData(~myId, ~callerId, ~userIds, ~peer=peer.current);
-
-    React.useEffect1(
-      () => {
-        open CanvasDraw;
-        switch (drawer) {
-        | Some(drawer) => Js.log2("change triggered", drawer.getSaveData())
-        | None => ()
-        };
-        None;
-      },
-      [|drawer|],
-    );
 
     <div className="w-full h-screen flex items-center">
       {switch (query) {
@@ -205,89 +209,58 @@ module PatientView = {
          <div className="h-full py-8 px-4 w-full">
            <div
              className="w-full flex gap-8 justify-between shadow-lg sticky border-bottom border-gray-300 top-0 p-4 rounded-xl z-20 bg-white">
-             {callerId == myId
-                ? <div className="flex gap-8 justify-between">
-                    <Select
-                      value={patient.value}
-                      search={patient.search}
-                      visible={patient.visible}
-                      onChange={patient.setValue}
-                      onSearchChange={patient.setSearch}
-                      onVisibleChange={patient.setVisible}
-                      placeholder={j|Wybierz pacjenta|j}
-                      icon={<Icons.User size="20" />}
-                      options={patients->toSelectOptions}
-                    />
-                    <Button.CTA
-                      onClick={_ =>
-                        setPatientId(_ =>
-                          patient.value->Option.map(x => x.value)
-                        )
-                      }>
-                      <Text> {j|Wybierz|j} </Text>
-                    </Button.CTA>
-                  </div>
-                : React.null}
-             <div className="flex items-center">
-               {[||]->Array.size != 0
-                  ? <Button.CTA icon={<Icons.ArrowLeft className="mr-2" />}>
-                      <Text> {j|Cofnij|j} </Text>
-                    </Button.CTA>
-                  : React.null}
-               <Button.Nav
-                 onClick={_ => setVisible(v => !v)} className="relative">
-                 <span style={ReactDOM.Style.make(~color, ())}>
-                   <Icons.Edit3 />
-                 </span>
-                 {visible
-                    ? <Color_Picker
-                        value=color
-                        onChange={v => setColor(_ => v)}
-                        className="w-48 absolute right-0 top-4 border border-gray-200 shadow-lg bg-white p-4 z-30"
-                      />
+             //  {callerId == myId  ?
+
+               <div className="flex gap-8 justify-between">
+                 <Select
+                   value={patient.value}
+                   search={patient.search}
+                   visible={patient.visible}
+                   onChange={patient.setValue}
+                   onSearchChange={patient.setSearch}
+                   onVisibleChange={patient.setVisible}
+                   placeholder={j|Wybierz pacjenta|j}
+                   icon={<Icons.User size="20" />}
+                   options={patients->toSelectOptions}
+                 />
+                 <Button.CTA
+                   onClick={_ =>
+                     setPatientId(_ => patient.value->Option.map(x => x.value))
+                   }>
+                   <Text> {j|Wybierz|j} </Text>
+                 </Button.CTA>
+               </div>
+               // : React.null}
+               <div className="flex items-center">
+                 {[||]->Array.size != 0
+                    ? <Button.CTA icon={<Icons.ArrowLeft className="mr-2" />}>
+                        <Text> {j|Cofnij|j} </Text>
+                      </Button.CTA>
                     : React.null}
-               </Button.Nav>
+                 <Button.Nav
+                   onClick={_ => setVisible(v => !v)} className="relative">
+                   <span style={ReactDOM.Style.make(~color, ())}>
+                     <Icons.Edit3 />
+                   </span>
+                   {visible
+                      ? <Color_Picker
+                          value=color
+                          onChange={v => setColor(_ => v)}
+                          className="w-48 absolute right-0 top-4 border border-gray-200 shadow-lg bg-white p-4 z-30"
+                        />
+                      : React.null}
+                 </Button.Nav>
+               </div>
              </div>
-           </div>
-           {switch (patientId) {
-            | Some(value) =>
-              <div className="w-full h-full relative">
-                <div
-                  ref={ReactDOM.Ref.callbackDomRef(el =>
-                    el
-                    ->Js.Nullable.toOption
-                    ->Option.map(el => {
-                        setWidth(_ => Some(el->HTMLElement.offsetWidth));
-                        setHeight(_ => Some(el->HTMLElement.offsetHeight));
-                      })
-                    ->ignore
-                  )}>
-                  <Patient_Details_View id=value callMode=true />
-                </div>
-                <div className="absolute w-full h-full top-0 left-0">
-                  <CanvasDraw
-                    onChange={v => {
-                      Js.log2("change triggered", v);
-                      setDrawer(_ => Some(v));
-                      drawer
-                      ->Option.map(d =>
-                          setData(_ => d.getSaveData->CanvasDraw.dataToString)
-                        )
-                      ->ignore;
-                    }}
-                    gridColor="transparent"
-                    backgroundColor="transparent"
-                    hideGrid=true
-                    brushColor=color
-                    canvasHeight={height->Option.getWithDefault(0.0)}
-                    canvasWidth={width->Option.getWithDefault(0.0)}
-                    brushRadius=4.0
-                    saveData=data
-                  />
-                </div>
-              </div>
-            | None => React.null
-            }}
+           <PatientData
+             peer
+             patientId
+             color
+             myId
+             userIds
+             callerId
+             setPatientId={v => setPatientId(_ => v)}
+           />
          </div>
        | _ => React.null
        }}
@@ -311,6 +284,8 @@ module Meeting = {
 
   [@react.component]
   let make = (~myId, ~callerId, ~userIds, ~localStream, ~media, ~setMedia) => {
+    let myId = "data" ++ myId;
+
     let peer =
       React.useRef(
         Peer.make(
@@ -319,7 +294,7 @@ module Meeting = {
             port: "9000",
             host: "localhost",
             path: "/calls",
-            debug: 1,
+            debug: 3,
             pingInterval: 5000,
 
             config: {
@@ -353,7 +328,7 @@ module Meeting = {
           {streams->Array.map(stream => <Video stream />)->React.array}
         </div>
         <div className="w-1/2 flex items-center justify-center">
-          <PatientView callerId myId userIds />
+          <PatientView callerId myId userIds peer={peer.current} />
         </div>
       </div>
       <div

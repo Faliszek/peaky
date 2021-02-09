@@ -209,10 +209,10 @@ let use = () => {
 
   let {stream}: UserMedia.hook = UserMedia.use(contstraints);
 
-  stream
-  ->Js.Nullable.toOption
-  ->Option.map(s => Js.log(s##getTracks()))
-  ->ignore;
+  // stream
+  // ->Js.Nullable.toOption
+  // ->Option.map(s => Js.log(s##getTracks()))
+  // ->ignore;
   React.useEffect2(
     () => {
       setTrack(~kind="audio", ~stream, ~enabled=state.audio);

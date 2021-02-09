@@ -1,9 +1,3 @@
-type timeoutID;
-
-[@bs.val] external setTimeout: (unit => unit, int) => timeoutID = "setTimeout";
-
-[@bs.val] external clearTimeout: timeoutID => unit = "setTimeout";
-
 let copy = [%raw
   {|function updateClipboard(newClip) {
   navigator.clipboard.writeText(newClip);
@@ -16,7 +10,7 @@ let make = (~link) => {
   React.useEffect1(
     () => {
       let timeout =
-        setTimeout(
+        Timeout.set(
           () =>
             if (copied) {
               setCopied(_ => false);
@@ -24,7 +18,7 @@ let make = (~link) => {
           2000,
         );
 
-      Some(_ => clearTimeout(timeout));
+      Some(_ => Timeout.clear(timeout));
     },
     [|copied|],
   );

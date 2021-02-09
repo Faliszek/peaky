@@ -1,5 +1,5 @@
 type data;
-type t = {getSaveData: unit => data};
+type t = {getSaveData: unit => string};
 
 let dataToString = x => Obj.magic(Js.Json.stringifyAny(x));
 
@@ -22,7 +22,8 @@ external make:
     // ~saveData: null,
     ~saveData: string=?,
     ~immediateLoading: bool=?,
-    ~hideInterface: bool=?
+    ~hideInterface: bool=?,
+    ~style: ReactDOM.Style.t=?
   ) =>
   React.element =
   "default";
