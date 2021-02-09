@@ -17,14 +17,17 @@ module Connection = {
   //   patientId: string,
   // };
 
-  type d = string;
+  type receivedData = {
+    patientId: option(string),
+    canvas: option(string),
+  };
   [@bs.send] external onOpen: (t, string, unit => unit) => unit = "on";
   // Receive messages
-  [@bs.send] external onData: (t, string, d => unit) => unit = "on";
+  [@bs.send] external onData: (t, string, receivedData => unit) => unit = "on";
 
   [@bs.send] external onError: (t, string, string => unit) => unit = "on";
 
-  [@bs.send] external send: (t, d) => unit = "send";
+  [@bs.send] external send: (t, receivedData) => unit = "send";
 };
 type t = {id: string};
 
@@ -57,7 +60,8 @@ external make: (string, options) => t = "default";
 [@bs.send] external disconnect: t => unit = "disconnect";
 
 type connectOpts = {serialization: string};
-[@bs.send] external connect: (t, string) => Connection.t = "connect";
+[@bs.send]
+external connect: (t, string, connectOpts) => Connection.t = "connect";
 
 [@bs.send]
 external onConnection: (t, string, Connection.t => unit) => unit = "on";

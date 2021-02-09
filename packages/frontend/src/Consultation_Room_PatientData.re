@@ -1,9 +1,8 @@
 [@react.component]
-let make =
-    (~patientId, ~callerId, ~userIds, ~peer, ~myId, ~color, ~setPatientId) => {
+let make = (~patientId, ~callerId, ~myId, ~color, ~onChange, ~data) => {
   let (width, setWidth) = React.useState(_ => None);
   let (height, setHeight) = React.useState(_ => None);
-  let (data, setData) = React.useState(_ => "");
+  //   let (data, setData) = React.useState(_ => "");
 
   // useData(
   //   ~myId,
@@ -23,18 +22,18 @@ let make =
   //   ~patientId,
   // );
 
-  React.useEffect1(
-    () => {
-      if (myId == callerId) {
-        setData(_ => "")->ignore;
-      } else {
-        ();
-      };
+  //   React.useEffect1(
+  //     () => {
+  //       if (myId == callerId) {
+  //         setData(_ => "")->ignore;
+  //       } else {
+  //         ();
+  //       };
 
-      None;
-    },
-    [|patientId|],
-  );
+  //       None;
+  //     },
+  //     [|patientId|],
+  //   );
 
   let amICaller = myId != callerId;
   <div className="w-full h-full relative">
@@ -64,11 +63,11 @@ let make =
     </div>
     <div className="absolute w-full h-full top-0 left-0">
       {switch (height, width, patientId) {
-       | (Some(height), Some(width), Some(patientId)) =>
+       | (Some(height), Some(width), Some(_)) =>
          <CanvasDraw
            onChange={v => {
              let data = v.getSaveData();
-             setData(_ => data);
+             onChange(Some(data));
            }}
            gridColor="transparent"
            backgroundColor="transparent"
@@ -77,7 +76,7 @@ let make =
            canvasHeight=height
            canvasWidth=width
            brushRadius=4.0
-           saveData=data
+           saveData={data->Option.getWithDefault("")}
            immediateLoading=true
          />
        | _ => React.null
