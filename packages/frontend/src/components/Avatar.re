@@ -21,7 +21,7 @@ let make = (~avatar=?, ~firstName=?, ~lastName=?, ~size=`default, ~color=?) => {
       className=Cn.("rounded-full shadow-md border border-gray-100" + size)
     />
 
-  | (_, Some(firstName), Some(lastName)) =>
+  | (_, Some(firstName), Some(_lastName)) =>
     <div
       className=Cn.(
         "rounded-full shadow-md border-border-gray flex items-center justify-center bg-green-300"
@@ -33,8 +33,7 @@ let make = (~avatar=?, ~firstName=?, ~lastName=?, ~size=`default, ~color=?) => {
         (),
       )}>
       <span className=Cn.("text-white" + fontSize)>
-        {(firstName->Js.String.get(0) ++ lastName->Js.String.get(0))
-         ->React.string}
+        firstName->React.string
       </span>
     </div>
   | _ => React.null

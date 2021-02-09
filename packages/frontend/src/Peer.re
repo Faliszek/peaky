@@ -57,8 +57,7 @@ external make: (string, options) => t = "default";
 [@bs.send] external disconnect: t => unit = "disconnect";
 
 type connectOpts = {serialization: string};
-[@bs.send]
-external connect: (t, string, connectOpts) => Connection.t = "connect";
+[@bs.send] external connect: (t, string) => Connection.t = "connect";
 
 [@bs.send]
 external onConnection: (t, string, Connection.t => unit) => unit = "on";
@@ -70,11 +69,11 @@ type view =
 let iceServers: array(ice) = [|
   {urls: "stun:stun.l.google.com:19302", credential: None, username: None},
   {urls: "stun:stun1.l.google.com:19302", credential: None, username: None},
-  {
-    urls: "turn:0.peerjs.com:3478",
-    username: Some("peerjs"),
-    credential: Some("peerjsp"),
-  },
-  {urls: "stun:stun2.l.google.com:19302", credential: None, username: None},
-  {urls: "stun:stun3.l.google.com:19302", credential: None, username: None},
+  // {
+  //   urls: "turn:0.peerjs.com:3478",
+  //   username: Some("peerjs"),
+  //   credential: Some("peerjsp"),
+  // },
+  // {urls: "stun:stun2.l.google.com:19302", credential: None, username: None},
+  // {urls: "stun:stun3.l.google.com:19302", credential: None, username: None},
 |];

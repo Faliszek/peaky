@@ -22,7 +22,8 @@ query Consultation($id: String!) {
 
 module Meeting = {
   [@react.component]
-  let make = (~myId, ~callerId, ~userIds, ~localStream, ~media, ~setMedia) => {
+  let make =
+      (~myId, ~callerId, ~userIds, ~localStream, ~media, ~setMedia, ~peer) => {
     // let myId = "data" ++ myId;
     Js.log(userIds);
     let userId =
@@ -32,82 +33,69 @@ module Meeting = {
       ->Array.get(0)
       ->Option.map(u => "data" ++ u)
       ->Option.getWithDefault("-");
-    let peer =
-      React.useRef(
-        Peer.make(
-          "data" ++ myId,
-          {
-            port: "9000",
-            host: "localhost",
-            path: "/calls",
-            debug: 1,
-            pingInterval: 5000,
 
-            config: {
-              iceServers: Peer.iceServers,
-            },
-          },
-        ),
-      );
-
+    Js.log2("ALWAYS HAVE PEER", peer);
     let myConn = React.useRef(None);
     let incoming = React.useRef(None);
     let (value, setValue) = React.useState(_ => "dupa");
 
     React.useEffect0(() => {
       open Peer;
-      // make(
-      //   ~peer=peer.current,
-      //   ~myVariable=value,
-      //   ~userId,
-      //   ~myConn=myConn.current,
-      //   ~incoming=incoming.current,
-      // )
 
-      myConn.current =
-        Some(peer.current->connect(userId, {serialization: "none"}));
+      myConn.current = Some(peer->connect(userId));
 
-      switch (myConn.current) {
-      | Some(myConn) =>
-        myConn->Connection.onOpen("open", () =>
-          myConn->Connection.send(value)
-        )
-
-      | None => ()
-      };
-
-      peer.current
-      ->onConnection("connection", conn => {
-          incoming.current = Some(conn);
-          incoming.current
-          ->Option.map(i =>
-              i->Connection.onData("data", data => {
-                // Will print 'this is a test'
+      peer->onConnection("connection", conn => {
+        incoming.current = Some(conn);
+        switch (incoming.current) {
+        | Some(incoming) =>
+          incoming
+          ->Connection.onOpen("open", _ => {
+              // Will print 'this is a test'
+              incoming->Connection.onData("data", data => {
                 Js.log2("ON RECEIVE", data);
                 setValue(_ => data);
               })
-            )
-          ->ignore;
-        });
+            })
+          ->ignore
+        | None => ()
+        };
+      });
 
-      // peer.on('connection', function(conn) {
+      switch (myConn.current) {
+      | Some(myConn) =>
+        myConn->Connection.onOpen("open", () => {
+          //     // myConn->Connection.send(value)
+          myConn->Connection.onData("data", data => {
+            Js.log2("ON RECEIVE", data);
+            setValue(_ => data);
+          });
+          Js.log("Connection opened");
+        })
+      | None => ()
+      };
 
-      //   incoming = conn;
-
+      Js.log2(myConn, incoming);
       None;
     });
-
-    Js.log2(myConn, incoming);
 
     React.useEffect1(
       () => {
         open Peer;
-        myConn.current->Option.map(i => i->Connection.send(value))->ignore;
-        incoming.current->Option.map(i => i->Connection.send(value))->ignore;
+        // myConn.current->Option.map(i => i->Connection.send(value))->ignore;
+        switch (incoming.current) {
+        | Some(i) => i->Connection.send(value)->ignore
+        | None => ()
+        };
+
+        switch (myConn.current) {
+        | Some(i) => i->Connection.send(value)->ignore
+        | None => ()
+        };
         None;
       },
       [|value|],
     );
+
     <div>
       {{
          "Call from " ++ myId ++ "To " ++ userId;
@@ -129,13 +117,56 @@ let make = (~id) => {
 
   let (stream, media, setMedia) = WebRTC.use();
 
-  switch (query) {
-  | {loading: true} =>
+  let peer = React.useRef(None);
+
+  React.useEffect2(
+    () => {
+      Js.log2("QUERY rerended", query.data);
+      switch (query, peer.current) {
+      | ({data: Some({me})}, None) =>
+        peer.current =
+          Some(
+            Peer.make(
+              "data" ++ me.id,
+              {
+                port: "9000",
+                host: "localhost",
+                path: "/calls",
+                debug: 3,
+                pingInterval: 5000,
+
+                config: {
+                  iceServers: Peer.iceServers,
+                },
+              },
+            ),
+          )
+
+      | _ => ()
+      };
+      None;
+    },
+    (query.data, peer.current),
+  );
+
+  switch (query, peer.current) {
+  | ({loading: true}, _) =>
     <div className="flex items-center justify-center w-full h-screen">
       <Spinner />
     </div>
-  | {data: Some({me, consultation: Some({userIds, callerId})})} =>
-    <Meeting myId={me.id} userIds callerId localStream=stream media setMedia />
+  | (
+      {data: Some({me, consultation: Some({userIds, callerId})})},
+      Some(peer),
+    ) =>
+    <Meeting
+      myId={me.id}
+      userIds
+      callerId
+      localStream=stream
+      media
+      setMedia
+      peer
+    />
   | _ => React.null
   };
 };
