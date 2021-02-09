@@ -20,59 +20,72 @@ query Consultation($id: String!) {
 |}
 ];
 
+module Video = {
+  [@react.component]
+  let make = (~stream) => {
+    <video
+      ref={ReactDOM.Ref.callbackDomRef(el =>
+        WebRTC.setVideo(el, stream, true)
+      )}
+      style={ReactDOM.Style.make(~transform="scale(-1, 1)", ())}
+      className="shadow-xl rounded-xl flex-1 transform border-2 border-gray bg-black"
+    />;
+  };
+};
+
+let useShareDate = () => {};
+
 module Meeting = {
   [@react.component]
   let make =
       (~myId, ~callerId, ~userIds, ~localStream, ~media, ~setMedia, ~peer) => {
     // let myId = "data" ++ myId;
-    Js.log(userIds);
-    let userId =
+    // Js.log(userIds);
+    let userIds =
       userIds
       ->Array.concat([|callerId|])
       ->Array.keep(u => u != myId)
-      ->Array.get(0)
-      ->Option.map(u => "data" ++ u)
-      ->Option.getWithDefault("-");
+      ->Array.map(u => "data" ++ u);
 
-    Js.log2("ALWAYS HAVE PEER", peer);
+    Js.log3("IDS", myId, userIds);
     let myConn = React.useRef(None);
+    // let incoming = React.useRef(None);
     let incoming = React.useRef(None);
+
+    let calls = React.useRef([||]);
     let (value, setValue) = React.useState(_ => "dupa");
 
     React.useEffect0(() => {
       open Peer;
 
-      myConn.current = Some(peer->connect(userId));
-
-      peer->onConnection("connection", conn => {
-        incoming.current = Some(conn);
-        switch (incoming.current) {
-        | Some(incoming) =>
-          incoming
+      let handleConnection = c => {
+        switch (c) {
+        | Some(c) =>
+          c
           ->Connection.onOpen("open", _ => {
               // Will print 'this is a test'
-              incoming->Connection.onData("data", data => {
+              c->Connection.onData("data", data => {
                 Js.log2("ON RECEIVE", data);
-                setValue(_ => data);
+                if (data != value) {
+                  setValue(v => v == data ? v : data);
+                };
               })
             })
           ->ignore
         | None => ()
         };
+      };
+
+      peer->onConnection("connection", conn => {
+        incoming.current = Some(conn);
+        handleConnection(incoming.current);
       });
 
-      switch (myConn.current) {
-      | Some(myConn) =>
-        myConn->Connection.onOpen("open", () => {
-          //     // myConn->Connection.send(value)
-          myConn->Connection.onData("data", data => {
-            Js.log2("ON RECEIVE", data);
-            setValue(_ => data);
-          });
-          Js.log("Connection opened");
-        })
-      | None => ()
-      };
+      // myConn.current = Some(peer->connect(userId));
+      // handleConnection(myConn.current);
+
+      calls.current = userIds->Array.map(peer->connect);
+      calls.current->Array.map(x => handleConnection(Some(x)))->ignore;
 
       Js.log2(myConn, incoming);
       None;
@@ -81,16 +94,21 @@ module Meeting = {
     React.useEffect1(
       () => {
         open Peer;
-        // myConn.current->Option.map(i => i->Connection.send(value))->ignore;
+
+        // switch (myConn.current) {
+        // | Some(i) => i->Connection.send(value)->ignore
+        // | None => ()
+        // };
+
+        let send = (conn, value) => conn->Connection.send(value)->ignore;
+
         switch (incoming.current) {
         | Some(i) => i->Connection.send(value)->ignore
         | None => ()
         };
 
-        switch (myConn.current) {
-        | Some(i) => i->Connection.send(value)->ignore
-        | None => ()
-        };
+        calls.current->Array.map(c => send(c, value))->ignore;
+
         None;
       },
       [|value|],
@@ -98,9 +116,10 @@ module Meeting = {
 
     <div>
       {{
-         "Call from " ++ myId ++ "To " ++ userId;
+         "Call from " ++ myId ++ "To ";
        }
        ->React.string}
+      {userIds->Array.map(s => s->React.string)->React.array}
       <Input placeholder={||} value onChange={v => setValue(_ => v)} />
       <Button onClick={_ => ()}> <Text> {j|Wyślij|j} </Text> </Button>
     </div>;
@@ -113,18 +132,19 @@ type view =
 [@react.component]
 let make = (~id) => {
   let query = ConsultationsQuery.use({id: id});
-  // let (view, setView) = React.useState(_ => Room);
 
   let (stream, media, setMedia) = WebRTC.use();
 
-  let peer = React.useRef(None);
+  let (peer, setPeer) = React.useState(_ => None);
+
+  let (view, setView) = React.useState(_ => Meeting);
 
   React.useEffect2(
     () => {
       Js.log2("QUERY rerended", query.data);
-      switch (query, peer.current) {
+      switch (query, peer) {
       | ({data: Some({me})}, None) =>
-        peer.current =
+        setPeer(_ =>
           Some(
             Peer.make(
               "data" ++ me.id,
@@ -132,7 +152,7 @@ let make = (~id) => {
                 port: "9000",
                 host: "localhost",
                 path: "/calls",
-                debug: 3,
+                debug: 0,
                 pingInterval: 5000,
 
                 config: {
@@ -141,15 +161,16 @@ let make = (~id) => {
               },
             ),
           )
+        )
 
       | _ => ()
       };
       None;
     },
-    (query.data, peer.current),
+    (query.data, peer),
   );
 
-  switch (query, peer.current) {
+  switch (query, peer) {
   | ({loading: true}, _) =>
     <div className="flex items-center justify-center w-full h-screen">
       <Spinner />
@@ -158,15 +179,27 @@ let make = (~id) => {
       {data: Some({me, consultation: Some({userIds, callerId})})},
       Some(peer),
     ) =>
-    <Meeting
-      myId={me.id}
-      userIds
-      callerId
-      localStream=stream
-      media
-      setMedia
-      peer
-    />
+    switch (view) {
+    | Room =>
+      <Call_View_Preroom
+        stream
+        media
+        setMedia
+        onJoin={_ => setView(_ => Meeting)}
+        loading=false
+      />
+    | Meeting =>
+      <Meeting
+        myId={me.id}
+        userIds
+        callerId
+        localStream=stream
+        media
+        setMedia
+        peer
+      />
+    }
+
   | _ => React.null
   };
 };
