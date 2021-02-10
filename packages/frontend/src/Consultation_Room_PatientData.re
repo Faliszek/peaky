@@ -17,30 +17,32 @@ let make =
       ~color,
       ~onChange,
       ~saveElCanvas,
-      ~userIds,
       ~data as canvases: array(Peer.Connection.data),
     ) => {
   let (width, setWidth) = React.useState(_ => "400");
   let (height, setHeight) = React.useState(_ => "400");
 
-  let amICaller = myId != callerId;
+  let amICaller = myId == callerId;
 
   let canvasEl = React.useRef(Js.Nullable.null);
 
   let (data, setData) = React.useState(_ => [||]);
 
-  let [|debouncedData, _|] = Timeout.useDebounce(data, 200);
+  let waitForData = Timeout.useDebounce(data, 200);
+
+  let debouncedData = waitForData->Array.get(0);
 
   React.useEffect1(
     () => {
-      Js.log2("updated data", canvasEl);
       exportPath(canvasEl.current, onChange)->ignore;
       saveElCanvas(canvasEl.current);
       None;
     },
     [|debouncedData|],
   );
-  <div className="w-full h-full relative">
+
+  Js.log(canvases);
+  <div className="relative">
     <div
       ref={ReactDOM.Ref.callbackDomRef(el =>
         el
@@ -55,34 +57,43 @@ let make =
                   el->HTMLElement.offsetHeight->Js.Float.toString ++ "px"
                 );
               },
-              1000,
+              100,
             )
           })
         ->ignore
       )}>
       {switch (amICaller, patientId) {
+       | (true, None) =>
+         <NoData
+           title={j|Wybierz pacjenta|j}
+           text={j|Dane wrażliwe nie zostaną wyświetlane dla innych uczestników|j}
+           icon={<Icons.AlertCircle size="64" />}
+         />
        | (_, Some(patientId)) =>
          <Patient_Details_View id=patientId callMode=true />
-       | (true, _) =>
-         <Text> {j|Prowadzący nie wybrał jeszcze pacjenta|j} </Text>
-
-       | _ => React.null
+       | (false, _) =>
+         <NoData
+           title={j|Prowadzący nie wybrał jeszcze pacjenta|j}
+           text={j|Po wybraniu pacjenta przez prowadzącego, tutaj pojawi się widok przebiegu choroby|j}
+           icon={<Icons.AlertCircle size="64" />}
+         />
        }}
     </div>
     {canvases
      ->Array.map(x =>
          x.id == myId
            ? React.null
-           : <div className="absolute w-full h-full top-0 left-0">
+           : <div key={x.id} className="absolute w-full h-full top-0 left-0">
                <div dangerouslySetInnerHTML={"__html": x.svg} />
              </div>
        )
      ->React.array}
-    <div className="absolute w-full h-full top-0 left-0">
+    <div className="absolute w-full h-full top-0 left-0 shadow-xl">
       <CanvasDraw
         ref={ReactDOM.Ref.domRef(canvasEl)}
         height
         width
+        style={ReactDOM.Style.make(~border="none", ())}
         background="transparent"
         strokeColor=color
         onUpdate={data => setData(_ => data)}

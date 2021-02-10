@@ -36,7 +36,8 @@ external make:
     ~strokeColor: string=?,
     ~onUpdate: 'a,
     ~ref: 'b,
-    ~withTimestamp: bool=?
+    ~withTimestamp: bool=?,
+    ~style: ReactDOM.Style.t=?
   ) =>
   React.element =
   "ReactSketchCanvas";

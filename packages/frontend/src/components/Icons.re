@@ -242,3 +242,17 @@ module Edit3 = {
     (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
     "Edit3";
 };
+
+module AlertCircle = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "AlertCircle";
+};
+
+module MessageCircle = {
+  [@bs.module "react-feather"] [@react.component]
+  external make:
+    (~color: string=?, ~size: string=?, ~className: string=?) => React.element =
+    "MessageCircle";
+};

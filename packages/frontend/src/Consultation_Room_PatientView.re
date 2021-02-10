@@ -12,7 +12,6 @@ let toSelectOptions = patients => {
 let updateCanvas = [%bs.raw
   {|
   function(canvas, data) {
-    console.log("I DO WHATEVER THE FUCK I WANT", canvas, data);
     if(data !== "") {
       canvas.loadPaths(data);
     }
@@ -20,30 +19,23 @@ let updateCanvas = [%bs.raw
 |}
 ];
 
+let clearCanvas = [%bs.raw
+  {|
+  function(canvas) {
+    if(canvas) {
+      canvas.clearCanvas();
+      }
+  }
+|}
+];
+
 let useSharedData =
-    (
-      ~peer,
-      ~userIds,
-      ~callerId,
-      ~myId,
-      ~canvas: React.Ref.t(array('b)),
-      ~setPatientId,
-      ~patientId,
-      ~canvasEl: React.Ref.t('a),
-      ~setData,
-    ) => {
+    (~peer, ~userIds, ~myId, ~setPatientId, ~patientId, ~setData) => {
   open Peer;
 
-  let userIds =
-    userIds
-    ->Array.concat([|callerId|])
-    ->Array.keep(u => u != myId)
-    ->Array.map(u => "data" ++ u);
-
-  let myConn = React.useRef(None);
   let incoming = React.useRef(None);
 
-  let calls = React.useRef([||]);
+  let calls: React.ref(array(option(Connection.t))) = React.useRef([||]);
 
   let send = (conn, value) => conn->Connection.send(value)->ignore;
 
@@ -54,39 +46,28 @@ let useSharedData =
         | Some(i) => i->send(data)->ignore
         | None => ()
         };
-        // nDataChange({patientId, canvas: data, updater: myId})
-        calls.current->Array.map(c => c->send(data))->ignore;
+        calls.current
+        ->Array.map(c =>
+            switch (c) {
+            | Some(c) => c->send(data)
+            | None => ()
+            }
+          )
+        ->ignore;
       },
       [|patientId|],
     );
 
   React.useEffect0(() => {
-    Js.log("ONLY ONCE");
     let handleConnection = c => {
       switch (c) {
       | Some(c) =>
         c
         ->Connection.onOpen("open", _ => {
-            // Will print 'this is a test'
             c->Connection.onData("data", data => {
               setPatientId(v => v == data.patientId ? v : data.patientId);
-              Js.log3("updater", data.updater, myId);
               if (data.updater != myId) {
                 setData(_ => data.canvas);
-                Js.log2(
-                  "DATA",
-                  data.canvas,
-                  // switch (canvasEl.current) {
-                  // | Some(el) => updateCanvas(el, data.canvas)
-                  // | _ => ()
-                  // };
-                  // canvas.current = data.canvas;
-                  // Js.log2(
-                  //   "EL",
-                  //   canvasEl,
-                  //   // setResetKey(x => x + 1);
-                  // );
-                );
               };
             })
           })
@@ -100,17 +81,11 @@ let useSharedData =
       handleConnection(incoming.current);
     });
 
-    // myConn.current = Some(peer->connect(userId));
-    // handleConnection(myConn.current);
-
     calls.current =
-      userIds->Array.map(x => peer->connect(x, {serialization: "json"}));
-    calls.current
-    ->Array.map(x => {
-        Js.log2("connection", x);
-        handleConnection(Some(x));
-      })
-    ->ignore;
+      userIds->Array.map(x =>
+        Obj.magic(peer->connect(x, {serialization: "json"}))
+      );
+    calls.current->Array.map(x => {handleConnection(x)})->ignore;
 
     None;
   });
@@ -118,68 +93,47 @@ let useSharedData =
   onDataChange;
 };
 
+let initalData = (myId, userIds) => {
+  userIds
+  ->Array.concat([|myId|])
+  ->Array.map(u => {Peer.Connection.id: u, svg: ""});
+};
+
 [@react.component]
 let make = (~callerId, ~myId, ~userIds: array(string), ~peer) => {
-  open Peer;
-
   let query = Query.use();
   let patient = Select.use();
-
+  let callerId = "data" ++ callerId;
   let (color, setColor) = React.useState(_ => "rgb(96, 165, 250)");
-
   let (visible, setVisible) = React.useState(_ => false);
-
-  // let (resetKey, setResetKey) = React.useState(_ => 0);
-  // let (time, setTime) = React.useState(_ => 0);
-
-  //   let userIds = userIds->Array.map(u => "data" ++ u);
-
-  //   let userIds =
-  // userIds->Array.concat([|callerId|])->Array.keep(u => u != myId);
-
-  // let myId = "data" ++ myId;
-  // Js.log(userIds);
   let (patientId, setPatientId) = React.useState(_ => None);
-  let canvas = React.useRef([||]);
+
+  let (data, setData) = React.useState(_ => initalData(myId, userIds));
+
   let canvasEl = React.useRef(None);
-
-  let (data, setData) =
-    React.useState(_ =>
-      [|callerId|]
-      ->Array.concat(userIds)
-      ->Array.map(u => Connection.{id: u, svg: ""})
-    );
-  // let lock = React.useRef(0);
-
-  // Js.log2("LOCK", lock.current);
 
   let onDataChange =
     useSharedData(
       ~peer,
-      ~canvas,
+      ~userIds,
       ~patientId,
       ~setPatientId,
-      ~userIds,
-      ~callerId,
       ~myId,
-      ~canvasEl,
       ~setData,
     );
 
   React.useEffect1(
     () => {
-      Js.log(data);
-      onDataChange({patientId, canvas: data, updater: myId});
+      onDataChange({
+        patientId,
+        canvas: initalData(myId, userIds),
+        updater: myId,
+      });
+      clearCanvas(canvasEl.current)->ignore;
       None;
     },
     [|patientId|],
   );
-
-  // React.useEffect0(() => {
-  //   let interval = Timeout.setInterval(() => {setTime(x => x + 1)}, 200);
-
-  //   Some(() => Timeout.clearInterval(interval));
-  // });
 
   <div className="w-full h-screen flex items-center">
     {switch (query) {
@@ -233,7 +187,6 @@ let make = (~callerId, ~myId, ~userIds: array(string), ~peer) => {
            </div>
          </div>
          <Consultation_Room_PatientData
-           userIds
            patientId
            color
            myId
@@ -246,9 +199,7 @@ let make = (~callerId, ~myId, ~userIds: array(string), ~peer) => {
                updater: myId,
              })
            }}
-           //  ;
            saveElCanvas={el => {canvasEl.current = Some(el)}}
-           //  data={canvas.current}
          />
        </div>
      | _ => React.null

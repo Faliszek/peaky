@@ -20,6 +20,44 @@ query Consultation($id: String!) {
 |}
 ];
 
+let useConsultation = (~peer, ~userIds, ~localStream, ~setStreams, ~streams) => {
+  React.useEffect0(() => {
+    let call = () =>
+      if (streams->Array.size == userIds->Array.size) {
+        ();
+      } else {
+        userIds
+        ->Array.map(userId => {peer->Peer.call(userId, localStream)})
+        ->ignore;
+      };
+
+    call();
+
+    peer->Peer.onCall("error", _err => {call()});
+    peer->Peer.onCall("call", call => {
+      call->Peer.Call.answer(localStream);
+      call->Peer.Call.onStream("stream", remoteStream => {
+        switch (remoteStream->Js.Nullable.toOption) {
+        | Some(remoteStream) =>
+          setStreams(streams =>
+            if (streams
+                ->Array.keep(x => x##id == remoteStream##id)
+                ->Array.get(0)
+                ->Option.isSome) {
+              streams;
+            } else {
+              streams->Array.concat([|remoteStream|]);
+            }
+          )
+        | None => Js.log("no Stream")
+        }
+      });
+    });
+
+    None;
+  });
+};
+
 module Video = {
   [@react.component]
   let make = (~stream) => {
@@ -36,67 +74,77 @@ module Video = {
 module Meeting = {
   [@react.component]
   let make =
-      (~myId, ~callerId, ~userIds, ~localStream, ~media, ~setMedia, ~peer) => {
-    <div>
+      (
+        ~dataMyId,
+        ~callerId,
+        ~userIds,
+        ~localStream,
+        ~media,
+        ~setMedia,
+        ~peer,
+        ~dataPeer,
+        ~dataUserIds,
+      ) => {
+    let (streams, setStreams) = React.useState(_ => [||]);
 
-        <div className="flex w-full h-screen  ">
-          <div
-            className="w-1/2 flex items-center justify-center gap-4 flex-col"
-            // {streams->Array.map(stream => <Video stream />)->React.array}
-          />
-          <div className="w-1/2 flex items-center justify-center">
-            <Consultation_Room_PatientView callerId myId userIds peer />
-          </div>
+    useConsultation(~userIds, ~localStream, ~setStreams, ~peer, ~streams);
+    Js.log2("STREAMS", streams);
+    <div>
+      <div className="flex w-full h-screen  ">
+        <div className="w-1/2 flex items-center justify-center gap-4 flex-col">
+          {streams
+           ->Array.map(stream => <Video key={stream##id} stream />)
+           ->React.array}
         </div>
-        <div
-          className="w-64 h-32 fixed left-40 ml-12 top-12 bg-black flex items-center rounded-xl justify-center">
-          <video
-            style={ReactDOM.Style.make(~transform="scale(-1, 1)", ())}
-            className="transform rounded-xl border-2 border-gray bg-black"
-            ref={ReactDOM.Ref.callbackDomRef(el =>
-              WebRTC.setVideo(el, localStream, true)
-            )}
+        <div className="w-1/2 flex items-center justify-center">
+          <Consultation_Room_PatientView
+            callerId
+            myId=dataMyId
+            userIds=dataUserIds
+            peer=dataPeer
           />
-          <div className="flex justify-around gap-4 absolute bottom-2 w-full">
-            <Button.CallButton
-              className="bg-white  text-gray-600 hover:bg-gray-100"
-              onClick={_ => setMedia(SetAudio(!media.audio))}
-              icon={
-                media.audio
-                  ? <Icons.Mic size="16" /> : <Icons.MicOff size="16" />
-              }
-            />
-            <Button.CallButton
-              className="bg-white text-gray-600  hover:bg-gray-100"
-              onClick={_ => setMedia(SetVideo(!media.video))}
-              icon={
-                media.video
-                  ? <Icons.Video size="16" /> : <Icons.VideoOff size="16" />
-              }
-            />
-            <Button.CallButton
-              className="bg-red-400 text-white  hover:bg-red-300"
-              onClick={_ => peer->Peer.disconnect}
-              icon={<Icons.Phone size="16" />}
-            />
-          </div>
         </div>
-      </div>;
-      // </div>;
-      //   <Button onClick={_ => ()}> <Text> {j|Wyślij|j} </Text> </Button>
-      //   <Input placeholder={||} value onChange={v => setValue(_ => v)} />
-      //   {userIds->Array.map(s => s->React.string)->React.array}
-      //    ->React.string}
-      //    }
-      //      "Call from " ++ myId ++ "To ";
-      //   {{
-      // <div>
+      </div>
+      <div
+        className="w-64 h-32 fixed left-40 ml-12 top-12 bg-black flex items-center rounded-xl justify-center">
+        <video
+          style={ReactDOM.Style.make(~transform="scale(-1, 1)", ())}
+          className="transform rounded-xl border-2 border-gray bg-black"
+          ref={ReactDOM.Ref.callbackDomRef(el =>
+            WebRTC.setVideo(el, localStream, true)
+          )}
+        />
+        <div className="flex justify-around gap-4 absolute bottom-2 w-full">
+          <Button.CallButton
+            className="bg-white  text-gray-600 hover:bg-gray-100"
+            onClick={_ => setMedia(SetAudio(!media.audio))}
+            icon={
+              media.audio
+                ? <Icons.Mic size="16" /> : <Icons.MicOff size="16" />
+            }
+          />
+          <Button.CallButton
+            className="bg-white text-gray-600  hover:bg-gray-100"
+            onClick={_ => setMedia(SetVideo(!media.video))}
+            icon={
+              media.video
+                ? <Icons.Video size="16" /> : <Icons.VideoOff size="16" />
+            }
+          />
+          <Button.CallButton
+            className="bg-red-400 text-white  hover:bg-red-300"
+            onClick={_ => peer->Peer.disconnect}
+            icon={<Icons.Phone size="16" />}
+          />
+        </div>
+      </div>
+    </div>;
   };
 };
 
 type view =
   | Room
-  | Meeting;
+  | Consulting;
 [@react.component]
 let make = (~id) => {
   let query = ConsultationsQuery.use({id: id});
@@ -104,15 +152,15 @@ let make = (~id) => {
   let (stream, media, setMedia) = WebRTC.use();
 
   let (peer, setPeer) = React.useState(_ => None);
+  let (dataPeer, setDataPeer) = React.useState(_ => None);
 
-  let (view, setView) = React.useState(_ => Meeting);
+  let (view, setView) = React.useState(_ => Room);
 
-  React.useEffect2(
+  React.useEffect3(
     () => {
-      Js.log2("QUERY rerended", query.data);
-      switch (query, peer) {
+      switch (query, dataPeer) {
       | ({data: Some({me})}, None) =>
-        setPeer(_ =>
+        setDataPeer(_ =>
           Some(
             Peer.make(
               "data" ++ me.id,
@@ -133,40 +181,74 @@ let make = (~id) => {
 
       | _ => ()
       };
+
+      switch (query, peer) {
+      | ({data: Some({me})}, None) =>
+        setPeer(_ =>
+          Some(
+            Peer.make(
+              me.id,
+              {
+                port: "9000",
+                host: "localhost",
+                path: "/calls",
+                debug: 0,
+                pingInterval: 5000,
+
+                config: {
+                  iceServers: Peer.iceServers,
+                },
+              },
+            ),
+          )
+        )
+
+      | _ => ()
+      };
       None;
     },
-    (query.data, peer),
+    (query.data, peer, dataPeer),
   );
 
-  switch (query, peer) {
-  | ({loading: true}, _) =>
+  switch (query, dataPeer, peer) {
+  | ({loading: true}, _, _) =>
     <div className="flex items-center justify-center w-full h-screen">
       <Spinner />
     </div>
   | (
       {data: Some({me, consultation: Some({userIds, callerId})})},
+      Some(dataPeer),
       Some(peer),
     ) =>
+    let myId = me.id;
+    let dataMyId = "data" ++ me.id;
+    let userIds =
+      userIds->Array.concat([|callerId|])->Array.keep(u => u != myId);
+
+    let dataUserIds = userIds->Array.map(u => "data" ++ u);
+
     switch (view) {
     | Room =>
       <Call_View_Preroom
         stream
         media
         setMedia
-        onJoin={_ => setView(_ => Meeting)}
+        onJoin={_ => setView(_ => Consulting)}
         loading=false
       />
-    | Meeting =>
+    | Consulting =>
       <Meeting
-        myId={me.id}
-        userIds
+        dataMyId
         callerId
         localStream=stream
         media
         setMedia
         peer
+        userIds
+        dataPeer
+        dataUserIds
       />
-    }
+    };
 
   | _ => React.null
   };

@@ -84,7 +84,7 @@ module Menu = {
       //   active={Router.Settings == url.path->Router.toView}
       // />
       <div className="flex px-2 py-4 items-center justify-center flex-col">
-        <Avatar firstName lastName />
+        <Avatar ?firstName ?lastName />
         <div className="h-4" />
         <Button
           icon={<Icons.ArrowRight size="18" />} onClick={_ => Auth.signOut()}>
@@ -134,7 +134,7 @@ let make = (~children) => {
     Decline.use(~refetchQueries=[|Query.refetchQueryDescription()|], ());
   let (incomingCall, setIncomingCall) = React.useState(_ => None);
   let url = ReasonReactRouter.useUrl();
-
+  let (open_, setOpen) = React.useState(_ => true);
   React.useEffect1(
     () => {
       {
@@ -159,20 +159,15 @@ let make = (~children) => {
 
   let myId =
     consultations.data->Option.map(c => c.me.id)->Option.getWithDefault("");
-  let firstName =
-    consultations.data
-    ->Option.map(c => c.me.firstName)
-    ->Option.getWithDefault("");
-  let lastName =
-    consultations.data
-    ->Option.map(c => c.me.lastName)
-    ->Option.getWithDefault("");
+  let firstName = consultations.data->Option.map(c => c.me.firstName);
+  let lastName = consultations.data->Option.map(c => c.me.lastName);
 
   <div className="flex">
     <Menu lastName firstName />
     <div className="bg-white flex-1 pl-40"> children </div>
-    {switch (incomingCall, url.path) {
-     | (Some(call), path) when path->List.get(1) != Some(call.id) =>
+    {switch (incomingCall, open_, url.path) {
+     | (Some(call), true, path)
+         when path->List.get(0) != Some("consultations") =>
        <div>
          {declineResult.loading ? <Loader /> : React.null}
          <div
@@ -189,20 +184,17 @@ let make = (~children) => {
              </div>
              <div
                className="flex justify-center flex-col items-center w-24 h-24 rounded-full bg-red-500 hover:bg-red-400 cursor-pointer text-white "
-               onClick={_ =>
-                 decline({
-                   id: call.id,
-                   callerId: call.callerId,
-                   userIds: call.userIds->Array.keep(x => x != myId),
-                 })
-                 ->Request.onFinish(
-                     ~onOk=_ => setIncomingCall(_ => None),
-                     ~onError=_ => (),
-                   )
-               }>
-               <Icons.PhoneOff />
-               <Text> {j|Odrzuć|j} </Text>
-             </div>
+               onClick={_ => setOpen(_ => false)}>
+               //  decline({
+               //    id: call.id,
+               //    callerId: call.callerId,
+               //    userIds: call.userIds->Array.keep(x => x != myId),
+               //  })
+               //  ->Request.onFinish(
+               //      ~onOk=_ => setIncomingCall(_ => None),
+               //      ~onError=_ => (),
+               //    )
+                <Icons.PhoneOff /> <Text> {j|Odrzuć|j} </Text> </div>
            </div>
          </div>
        </div>

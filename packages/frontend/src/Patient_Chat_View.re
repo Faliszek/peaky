@@ -51,7 +51,6 @@ let make = (~_id) => {
   let (message, setMessage) = React.useState(_ => "");
   React.useEffect1(
     () => {
-      Js.log(textarea.current);
       switch (textarea.current->Js.Nullable.toOption) {
       | Some(textarea) => focus(textarea)
       | _ => ()
