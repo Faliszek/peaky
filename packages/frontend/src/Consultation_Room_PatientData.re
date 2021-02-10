@@ -1,41 +1,45 @@
+let exportPath = [%bs.raw
+  {|
+function(canvas, cb) {
+  if(canvas) {
+    canvas.exportSvg().then(data => cb(data))
+  }
+}
+|}
+];
+
 [@react.component]
-let make = (~patientId, ~callerId, ~myId, ~color, ~onChange, ~data) => {
-  let (width, setWidth) = React.useState(_ => None);
-  let (height, setHeight) = React.useState(_ => None);
-  //   let (data, setData) = React.useState(_ => "");
-
-  // useData(
-  //   ~myId,
-  //   ~callerId,
-  //   ~userIds,
-  //   ~peer,
-  //   ~onReceiveData=
-  //     data => {
-  //       Js.log2(
-  //         "RECEIVE",
-  //         data,
-  //         // setPatientId(Some(data.patientId));
-  //         // setData(_ => data.data);
-  //       )
-  //     },
-  //   ~data,
-  //   ~patientId,
-  // );
-
-  //   React.useEffect1(
-  //     () => {
-  //       if (myId == callerId) {
-  //         setData(_ => "")->ignore;
-  //       } else {
-  //         ();
-  //       };
-
-  //       None;
-  //     },
-  //     [|patientId|],
-  //   );
+let make =
+    (
+      ~patientId,
+      ~callerId,
+      ~myId,
+      ~color,
+      ~onChange,
+      ~saveElCanvas,
+      ~userIds,
+      ~data as canvases: array(Peer.Connection.data),
+    ) => {
+  let (width, setWidth) = React.useState(_ => "400");
+  let (height, setHeight) = React.useState(_ => "400");
 
   let amICaller = myId != callerId;
+
+  let canvasEl = React.useRef(Js.Nullable.null);
+
+  let (data, setData) = React.useState(_ => [||]);
+
+  let [|debouncedData, _|] = Timeout.useDebounce(data, 200);
+
+  React.useEffect1(
+    () => {
+      Js.log2("updated data", canvasEl);
+      exportPath(canvasEl.current, onChange)->ignore;
+      saveElCanvas(canvasEl.current);
+      None;
+    },
+    [|debouncedData|],
+  );
   <div className="w-full h-full relative">
     <div
       ref={ReactDOM.Ref.callbackDomRef(el =>
@@ -44,8 +48,12 @@ let make = (~patientId, ~callerId, ~myId, ~color, ~onChange, ~data) => {
         ->Option.map(el => {
             Timeout.set(
               () => {
-                setWidth(_ => Some(el->HTMLElement.offsetWidth));
-                setHeight(_ => Some(el->HTMLElement.offsetHeight));
+                setWidth(_ =>
+                  el->HTMLElement.offsetWidth->Js.Float.toString ++ "px"
+                );
+                setHeight(_ =>
+                  el->HTMLElement.offsetHeight->Js.Float.toString ++ "px"
+                );
               },
               1000,
             )
@@ -61,26 +69,25 @@ let make = (~patientId, ~callerId, ~myId, ~color, ~onChange, ~data) => {
        | _ => React.null
        }}
     </div>
+    {canvases
+     ->Array.map(x =>
+         x.id == myId
+           ? React.null
+           : <div className="absolute w-full h-full top-0 left-0">
+               <div dangerouslySetInnerHTML={"__html": x.svg} />
+             </div>
+       )
+     ->React.array}
     <div className="absolute w-full h-full top-0 left-0">
-      {switch (height, width, patientId) {
-       | (Some(height), Some(width), Some(_)) =>
-         <CanvasDraw
-           onChange={v => {
-             let data = v.getSaveData();
-             onChange(Some(data));
-           }}
-           gridColor="transparent"
-           backgroundColor="transparent"
-           hideGrid=true
-           brushColor=color
-           canvasHeight=height
-           canvasWidth=width
-           brushRadius=4.0
-           saveData={data->Option.getWithDefault("")}
-           immediateLoading=true
-         />
-       | _ => React.null
-       }}
+      <CanvasDraw
+        ref={ReactDOM.Ref.domRef(canvasEl)}
+        height
+        width
+        background="transparent"
+        strokeColor=color
+        onUpdate={data => setData(_ => data)}
+        withTimestamp=true
+      />
     </div>
   </div>;
 };

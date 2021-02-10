@@ -10,6 +10,16 @@ module Call = {
 };
 
 module Connection = {
+  type data = {
+    id: string,
+    svg: string,
+  };
+
+  type r = {
+    loadPaths: data => unit,
+    exportPaths: unit => Js.Promise.t(data),
+  };
+
   type t = {peer: string};
 
   // type d = {
@@ -19,7 +29,8 @@ module Connection = {
 
   type receivedData = {
     patientId: option(string),
-    canvas: option(string),
+    canvas: array(data),
+    updater: string,
   };
   [@bs.send] external onOpen: (t, string, unit => unit) => unit = "on";
   // Receive messages
