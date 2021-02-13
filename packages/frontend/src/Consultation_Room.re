@@ -88,15 +88,15 @@ module Meeting = {
     let (streams, setStreams) = React.useState(_ => [||]);
 
     useConsultation(~userIds, ~localStream, ~setStreams, ~peer, ~streams);
-    Js.log2("STREAMS", streams);
     <div>
-      <div className="flex w-full h-screen  ">
+      <div className="flex w-full h-screen  overflow-hidden">
         <div className="w-1/2 flex items-center justify-center gap-4 flex-col">
           {streams
            ->Array.map(stream => <Video key={stream##id} stream />)
            ->React.array}
         </div>
-        <div className="w-1/2 flex items-center justify-center">
+        <div
+          className="w-1/2 flex items-center justify-center overflow-y-scroll">
           <Consultation_Room_PatientView
             callerId
             myId=dataMyId
@@ -147,7 +147,7 @@ type view =
   | Consulting;
 [@react.component]
 let make = (~id) => {
-  let query = ConsultationsQuery.use({id: id});
+  let query = ConsultationsQuery.use(~fetchPolicy=NetworkOnly, {id: id});
 
   let (stream, media, setMedia) = WebRTC.use();
 
@@ -155,7 +155,6 @@ let make = (~id) => {
   let (dataPeer, setDataPeer) = React.useState(_ => None);
 
   let (view, setView) = React.useState(_ => Room);
-
   React.useEffect3(
     () => {
       switch (query, dataPeer) {
@@ -181,13 +180,12 @@ let make = (~id) => {
 
       | _ => ()
       };
-
       switch (query, peer) {
       | ({data: Some({me})}, None) =>
         setPeer(_ =>
           Some(
             Peer.make(
-              me.id,
+              "media" ++ me.id,
               {
                 port: "9000",
                 host: "localhost",
@@ -222,10 +220,18 @@ let make = (~id) => {
     ) =>
     let myId = me.id;
     let dataMyId = "data" ++ me.id;
-    let userIds =
-      userIds->Array.concat([|callerId|])->Array.keep(u => u != myId);
 
-    let dataUserIds = userIds->Array.map(u => "data" ++ u);
+    let mediaUserIds =
+      userIds
+      ->Array.concat([|callerId|])
+      ->Array.keep(u => u != myId)
+      ->Array.map(u => "media" ++ u);
+
+    let dataUserIds =
+      userIds
+      ->Array.concat([|callerId|])
+      ->Array.keep(u => u != myId)
+      ->Array.map(u => "data" ++ u);
 
     switch (view) {
     | Room =>
@@ -244,7 +250,7 @@ let make = (~id) => {
         media
         setMedia
         peer
-        userIds
+        userIds=mediaUserIds
         dataPeer
         dataUserIds
       />

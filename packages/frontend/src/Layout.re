@@ -130,8 +130,6 @@ module Decline = [%graphql
 [@react.component]
 let make = (~children) => {
   let consultations = Query.use(~pollInterval=2000, ());
-  let (decline, declineResult) =
-    Decline.use(~refetchQueries=[|Query.refetchQueryDescription()|], ());
   let (incomingCall, setIncomingCall) = React.useState(_ => None);
   let url = ReasonReactRouter.useUrl();
   let (open_, setOpen) = React.useState(_ => true);
@@ -142,6 +140,7 @@ let make = (~children) => {
         | {data: Some({me, consultations})} =>
           let incoming =
             consultations
+            ->Array.reverse
             ->Array.keep(c =>
                 c.userIds->Js.Array2.find(x => x == me.id)->Option.isSome
               )
@@ -157,8 +156,6 @@ let make = (~children) => {
     [|consultations|],
   );
 
-  let myId =
-    consultations.data->Option.map(c => c.me.id)->Option.getWithDefault("");
   let firstName = consultations.data->Option.map(c => c.me.firstName);
   let lastName = consultations.data->Option.map(c => c.me.lastName);
 
@@ -169,7 +166,6 @@ let make = (~children) => {
      | (Some(call), true, path)
          when path->List.get(0) != Some("consultations") =>
        <div>
-         {declineResult.loading ? <Loader /> : React.null}
          <div
            className="fixed bottom-12 right-12 flex p-8 shadow-lg border border-gray flex-col bg-white rounded-xl">
            <span className="text-3xl text-gray-500 mb-8">
@@ -185,16 +181,9 @@ let make = (~children) => {
              <div
                className="flex justify-center flex-col items-center w-24 h-24 rounded-full bg-red-500 hover:bg-red-400 cursor-pointer text-white "
                onClick={_ => setOpen(_ => false)}>
-               //  decline({
-               //    id: call.id,
-               //    callerId: call.callerId,
-               //    userIds: call.userIds->Array.keep(x => x != myId),
-               //  })
-               //  ->Request.onFinish(
-               //      ~onOk=_ => setIncomingCall(_ => None),
-               //      ~onError=_ => (),
-               //    )
-                <Icons.PhoneOff /> <Text> {j|Odrzuć|j} </Text> </div>
+               <Icons.PhoneOff />
+               <Text> {j|Odrzuć|j} </Text>
+             </div>
            </div>
          </div>
        </div>

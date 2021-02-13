@@ -1,4 +1,0 @@
-(executable
-  (name Server)
-  (public_name Server)
-  (libraries console.lib lib))

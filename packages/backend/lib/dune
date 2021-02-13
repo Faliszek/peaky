@@ -1,8 +1,0 @@
-(library
- (name lib)
- (flags
-  (-w -40 -w +26))
- (public_name backend)
- (libraries console.lib fmt.tty graphql-lwt logs.fmt morph
-   morph_graphql_server jose mirage-crypto-rng mirage-crypto-rng.lwt
-   pastel.lib pgx_lwt_unix uri safepass yojson))
