@@ -33,8 +33,9 @@ let make = (~avatar=?, ~firstName=?, ~lastName=?, ~size=`default, ~color=?) => {
         (),
       )}>
       <span className=Cn.("text-white" + fontSize)>
-        {(firstName->Js.String.get(0) ++ lastName->Js.String.get(0))
-         ->React.string}
+        <Text>
+          {firstName->Js.String.get(0) ++ lastName->Js.String.get(0)}
+        </Text>
       </span>
     </div>
   | _ => React.null

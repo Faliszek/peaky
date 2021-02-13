@@ -13,7 +13,9 @@ let make = (~calls: array(Call.t), ~callMode) => {
        ->Array.map(c => {
            let iconColor = c.answered ? "text-green-500" : "text-red-500";
 
-           <div className="flex w-full border-t border-gray-300 items-center">
+           <div
+             className="flex w-full border-t border-gray-300 items-center"
+             key={c.id}>
              <Table.Td width="w-1/6 ">
                <Text> {c.id} </Text>
                <span className=Cn.("ml-2" + iconColor)>

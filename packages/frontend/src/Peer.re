@@ -10,6 +10,16 @@ module Call = {
 };
 
 module Connection = {
+  type data = {
+    id: string,
+    svg: string,
+  };
+
+  type r = {
+    loadPaths: data => unit,
+    exportPaths: unit => Js.Promise.t(data),
+  };
+
   type t = {peer: string};
 
   // type d = {
@@ -17,14 +27,18 @@ module Connection = {
   //   patientId: string,
   // };
 
-  type d = string;
+  type receivedData = {
+    patientId: option(string),
+    canvas: array(data),
+    updater: string,
+  };
   [@bs.send] external onOpen: (t, string, unit => unit) => unit = "on";
   // Receive messages
-  [@bs.send] external onData: (t, string, d => unit) => unit = "on";
+  [@bs.send] external onData: (t, string, receivedData => unit) => unit = "on";
 
   [@bs.send] external onError: (t, string, string => unit) => unit = "on";
 
-  [@bs.send] external send: (t, d) => unit = "send";
+  [@bs.send] external send: (t, receivedData) => unit = "send";
 };
 type t = {id: string};
 
@@ -70,11 +84,11 @@ type view =
 let iceServers: array(ice) = [|
   {urls: "stun:stun.l.google.com:19302", credential: None, username: None},
   {urls: "stun:stun1.l.google.com:19302", credential: None, username: None},
-  {
-    urls: "turn:0.peerjs.com:3478",
-    username: Some("peerjs"),
-    credential: Some("peerjsp"),
-  },
-  {urls: "stun:stun2.l.google.com:19302", credential: None, username: None},
-  {urls: "stun:stun3.l.google.com:19302", credential: None, username: None},
+  // {
+  //   urls: "turn:0.peerjs.com:3478",
+  //   username: Some("peerjs"),
+  //   credential: Some("peerjsp"),
+  // },
+  // {urls: "stun:stun2.l.google.com:19302", credential: None, username: None},
+  // {urls: "stun:stun3.l.google.com:19302", credential: None, username: None},
 |];

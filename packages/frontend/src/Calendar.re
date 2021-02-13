@@ -89,8 +89,7 @@ module Visit = {
           el
           ->Js.Nullable.toOption
           ->Option.map(el => {
-              Js.log(el);
-              setWidth(_ => Some(el->HTMLElement.offsetWidth));
+              setWidth(_ => Some(el->HTMLElement.offsetWidth))
             })
           ->ignore
         )}
@@ -210,7 +209,7 @@ let make = () => {
       </div>
       {hours
        ->Array.map(h =>
-           <div className="flex w-full">
+           <div key={h->Js.Int.toString} className="flex w-full">
              <div
                className="w-24 border-t"
                style={ReactDOM.Style.make(
