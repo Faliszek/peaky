@@ -9,16 +9,3 @@ npm run build
 ```
 npm run watch
 ```
-
-# Firebase
-
-// SINGLE GET
-return firebase
-        .database()
-        .ref("/test/")
-        .once("value")
-        .then((snapshot) => {
-        console.log(snapshot.val());
-        return snapshot.val();
-        // ...
-        });
