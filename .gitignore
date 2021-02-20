@@ -4,7 +4,7 @@
 .merlin
 .bsb.lock
 npm-debug.log
-*.bs.js
+# *.bs.js
 
 # FRONTEND
 node_modules/
