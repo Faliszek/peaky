@@ -1,7 +1,7 @@
 
 
 import * as Cn from "re-classnames/src/Cn.bs.js";
-import * as Curry from "bs-platform/lib/es6/curry.js";
+import * as Curry from "@rescript/std/lib/es6/curry.js";
 import * as React from "react";
 import * as ReactFeather from "react-feather";
 

@@ -1,8 +1,8 @@
 
 
 import * as React from "react";
-import * as Belt_Option from "bs-platform/lib/es6/belt_Option.js";
-import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
+import * as Belt_Option from "@rescript/std/lib/es6/belt_Option.js";
+import * as Caml_option from "@rescript/std/lib/es6/caml_option.js";
 import * as Button$Peaky from "./Button.bs.js";
 import * as ReactFeather from "react-feather";
 

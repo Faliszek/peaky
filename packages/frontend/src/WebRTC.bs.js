@@ -1,11 +1,11 @@
 
 
-import * as Curry from "bs-platform/lib/es6/curry.js";
+import * as Curry from "@rescript/std/lib/es6/curry.js";
 import * as React from "react";
 import * as $$Promise from "reason-promise/src/js/promise.bs.js";
-import * as Belt_Array from "bs-platform/lib/es6/belt_Array.js";
-import * as Belt_Option from "bs-platform/lib/es6/belt_Option.js";
-import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
+import * as Belt_Array from "@rescript/std/lib/es6/belt_Array.js";
+import * as Belt_Option from "@rescript/std/lib/es6/belt_Option.js";
+import * as Caml_option from "@rescript/std/lib/es6/caml_option.js";
 
 var setVideo = (function initVideo(video, mediaStream, on) {
      if(video && !video.srcObject) {

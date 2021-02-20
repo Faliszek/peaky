@@ -1,7 +1,7 @@
 
 
 import JwtDecode from "jwt-decode";
-import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
+import * as Caml_option from "@rescript/std/lib/es6/caml_option.js";
 import * as Router$Peaky from "./Router.bs.js";
 import * as ApolloClient__Link_Context from "reason-apollo-client/src/@apollo/client/link/context/ApolloClient__Link_Context.bs.js";
 

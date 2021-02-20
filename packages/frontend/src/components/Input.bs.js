@@ -1,11 +1,11 @@
 
 
 import * as Cn from "re-classnames/src/Cn.bs.js";
-import * as Curry from "bs-platform/lib/es6/curry.js";
+import * as Curry from "@rescript/std/lib/es6/curry.js";
 import * as React from "react";
 import * as Text$Peaky from "./Text.bs.js";
-import * as Belt_Option from "bs-platform/lib/es6/belt_Option.js";
-import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
+import * as Belt_Option from "@rescript/std/lib/es6/belt_Option.js";
+import * as Caml_option from "@rescript/std/lib/es6/caml_option.js";
 
 function Input$Wrap(Props) {
   var children = Props.children;

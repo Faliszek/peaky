@@ -10,10 +10,11 @@
   "dependencies": {
     "@apollo/client": "^3.2.7",
     "@reasonml-community/graphql-ppx": "1.0.2-ca56c96.0",
+    "@rescript/std": "^9.0.1",
     "@vardius/react-user-media": "^1.0.1",
     "antd": "^4.8.4",
     "autoprefixer": "^9",
-    "bs-platform": "^8.4.2",
+    "bs-platform": "^9.0.1",
     "date-fns": "^2.16.1",
     "graphql": "^15.4.0",
     "jwt-decode": "^3.1.2",

@@ -1,8 +1,8 @@
 
 
-import * as Curry from "bs-platform/lib/es6/curry.js";
+import * as Curry from "@rescript/std/lib/es6/curry.js";
 import * as $$Promise from "reason-promise/src/js/promise.bs.js";
-import * as Belt_Option from "bs-platform/lib/es6/belt_Option.js";
+import * as Belt_Option from "@rescript/std/lib/es6/belt_Option.js";
 import * as Error$Peaky from "./Error.bs.js";
 
 function onFinish(req, onOk, onError) {

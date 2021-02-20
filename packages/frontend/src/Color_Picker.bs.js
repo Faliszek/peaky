@@ -1,9 +1,9 @@
 
 
 import * as Cn from "re-classnames/src/Cn.bs.js";
-import * as Curry from "bs-platform/lib/es6/curry.js";
+import * as Curry from "@rescript/std/lib/es6/curry.js";
 import * as React from "react";
-import * as Belt_Array from "bs-platform/lib/es6/belt_Array.js";
+import * as Belt_Array from "@rescript/std/lib/es6/belt_Array.js";
 
 var colors = [
   "#F87171",

@@ -3,7 +3,7 @@
 import * as Cn from "re-classnames/src/Cn.bs.js";
 import * as React from "react";
 import * as Text$Peaky from "./Text.bs.js";
-import * as Belt_Option from "bs-platform/lib/es6/belt_Option.js";
+import * as Belt_Option from "@rescript/std/lib/es6/belt_Option.js";
 
 function Avatar(Props) {
   var avatar = Props.avatar;

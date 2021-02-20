@@ -1,6 +1,6 @@
 
 
-import * as Curry from "bs-platform/lib/es6/curry.js";
+import * as Curry from "@rescript/std/lib/es6/curry.js";
 import * as React from "react";
 import * as Text$Peaky from "./Text.bs.js";
 import * as Button$Peaky from "./Button.bs.js";

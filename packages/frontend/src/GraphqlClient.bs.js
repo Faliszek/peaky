@@ -1,7 +1,7 @@
 
 
 import * as Auth$Peaky from "./Auth.bs.js";
-import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
+import * as Caml_option from "@rescript/std/lib/es6/caml_option.js";
 import * as ApolloClient from "reason-apollo-client/src/ApolloClient.bs.js";
 import * as ApolloClient__Link_Ws from "reason-apollo-client/src/@apollo/client/link/ws/ApolloClient__Link_Ws.bs.js";
 import * as ApolloClient__Utilities from "reason-apollo-client/src/@apollo/client/utilities/ApolloClient__Utilities.bs.js";
