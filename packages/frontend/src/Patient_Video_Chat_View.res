@@ -1,12 +1,12 @@
 open Patient
 let patient = {
   id: 1,
-  firstName: j`Adam`,
-  lastName: j`Smith`,
-  disease: j`Depresja`,
-  condition: j`Dobry`,
-  avatar: Some(j`https://www.thispersondoesnotexist.com/image`),
-  phoneNumber: j`+48 674 300 232`,
+  firstName: `Adam`,
+  lastName: `Smith`,
+  disease: `Depresja`,
+  condition: `Dobry`,
+  avatar: Some(`https://www.thispersondoesnotexist.com/image`),
+  phoneNumber: `+48 674 300 232`,
   lastVisit: None,
 }
 

@@ -5,11 +5,11 @@ module Info = {
       <div className="text-xl font-medium text-gray-700"> <Text> name </Text> </div>
       <div className="text-lg mb-2 text-gray-600 "> <Text> phoneNumber </Text> </div>
       <div className="text-lg ">
-        <span className="text-gray-400"> <Text> j`Przypadłość: ` </Text> </span>
+        <span className="text-gray-400"> <Text> `Przypadłość: ` </Text> </span>
         <span className="text-gray-500"> <Text> disease </Text> </span>
       </div>
       <div className="text-lg ">
-        <span className="text-gray-400"> <Text> j`Ostatnia wizyta: ` </Text> </span>
+        <span className="text-gray-400"> <Text> `Ostatnia wizyta: ` </Text> </span>
         <span className="text-gray-500">
           <Text> {lastVisit->Option.getWithDefault("-")} </Text>
         </span>
@@ -21,7 +21,7 @@ module Link = {
   @react.component
   let make = () =>
     <div className="text-green-500 flex items-center">
-      <Text> j`Zobacz więcej` </Text> <Icons.ArrowRight size="16" className="ml-1" />
+      <Text> `Zobacz więcej` </Text> <Icons.ArrowRight size="16" className="ml-1" />
     </div>
 }
 
@@ -39,8 +39,7 @@ let make = (~patient, ~className=?) => {
   let name = firstName ++ (" " ++ lastName)
   <div
     onClick={_ => {
-      open Router
-      push(Patient(id))
+      Router.push(Patient(id))
     }}
     className={
       open Cn

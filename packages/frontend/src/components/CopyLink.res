@@ -23,7 +23,7 @@ let make = (~link) => {
         copy(link)
       }}
       icon={copied ? <Icons.Check className="mr-4" /> : <Icons.Link className="mr-4" />}>
-      <Text> {copied ? j`Skopiowano!` : j`Skopiuj link`} </Text>
+      <Text> {copied ? `Skopiowano!` : `Skopiuj link`} </Text>
     </Button.CTA>
   </div>
 }

@@ -15,12 +15,12 @@ let toUrl = view =>
   switch view {
   | Calendar => "/"
   | Patients => "/patients"
-  | PatientVideoChat(id) => j`/patients/$id/video`
-  | PatientChat(id) => j`/patients/$id/chat`
-  | Patient(id) => j`/patients/$id`
+  | PatientVideoChat(id) => `/patients/$id/video`
+  | PatientChat(id) => `/patients/$id/chat`
+  | Patient(id) => `/patients/$id`
   | Consultations => "/consultations"
-  | ConsultationRoom(id) => j`/consultations/$id`
-  | Visit(id, doctorId, patientId) => j`/calls/$id/$doctorId/$patientId`
+  | ConsultationRoom(id) => `/consultations/$id`
+  | Visit(id, doctorId, patientId) => `/calls/$id/$doctorId/$patientId`
   | Visits => "/calls"
   | SignIn => "/sign-in"
   | Settings => "/settings"

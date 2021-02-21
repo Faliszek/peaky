@@ -50,15 +50,15 @@ let make = (
       {switch (amICaller, patientId) {
       | (true, None) =>
         <NoData
-          title=j`Wybierz pacjenta`
-          text=j`Dane wrażliwe nie zostaną wyświetlane dla innych uczestników`
+          title=`Wybierz pacjenta`
+          text=`Dane wrażliwe nie zostaną wyświetlane dla innych uczestników`
           icon={<Icons.AlertCircle size="64" />}
         />
       | (_, Some(patientId)) => <Patient_Details_View id=patientId callMode=true />
       | (false, _) =>
         <NoData
-          title=j`Prowadzący nie wybrał jeszcze pacjenta`
-          text=j`Po wybraniu pacjenta przez prowadzącego, tutaj pojawi się widok przebiegu choroby`
+          title=`Prowadzący nie wybrał jeszcze pacjenta`
+          text=`Po wybraniu pacjenta przez prowadzącego, tutaj pojawi się widok przebiegu choroby`
           icon={<Icons.AlertCircle size="64" />}
         />
       }}

@@ -61,9 +61,9 @@ function Symptoms_Table$SymptomRow(Props) {
                           children: index$1 + name
                         })), React.createElement(ReactFeather.ChevronDown, {
                       size: "36",
-                      className: Cn.$plus("transition transition-transform transform", rotated)
+                      className: Cn.$plus(" transition-transform transform", rotated)
                     })), React.createElement("div", {
-                  className: Cn.$plus("h-full transition transition-transform transform origin-top rounded-md overflow-hidden mx-6", toggled)
+                  className: Cn.$plus("h-full  transition-transform transform origin-top rounded-md overflow-hidden mx-6", toggled)
                 }, React.createElement("div", {
                       className: "h-6"
                     }), React.createElement(Symptoms_Table$SymptomRow$Label, {

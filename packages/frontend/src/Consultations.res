@@ -54,8 +54,6 @@ let make = () => {
 
   let (checkedIds, setCheckedIds) = React.useState(_ => [])
 
-  let ids = checkedIds->Array.size->Js.Int.toString
-
   let (createConsultation, createConsultationResult) = CreateConsultation.use()
 
   <Page title="Konsultacje">
@@ -64,14 +62,14 @@ let make = () => {
       <Icons.Info />
       <span className="ml-4 ">
         <Text>
-          j`Tutaj możesz znaleźć specjalistów z różnych dziedzin którzy mogą pomóc ci w diagnozie twoich pacjentów`
+          `Tutaj możesz znaleźć specjalistów z różnych dziedzin którzy mogą pomóc ci w diagnozie twoich pacjentów`
         </Text>
       </span>
     </div>
     <div className="flex justify-items-start">
       <SearchComponent>
         <Select
-          placeholder=j`Wybierz specjalizację`
+          placeholder=`Wybierz specjalizację`
           value=specialization.value
           search=specialization.search
           visible=specialization.visible
@@ -83,10 +81,10 @@ let make = () => {
         />
       </SearchComponent>
       <SearchComponent>
-        <Input value=firstName onChange={v => setFirstName(_ => v)} placeholder=j`Imię` />
+        <Input value=firstName onChange={v => setFirstName(_ => v)} placeholder=`Imię` />
       </SearchComponent>
       <SearchComponent>
-        <Input value=lastName onChange={v => setLastName(_ => v)} placeholder=j`Nazwisko` />
+        <Input value=lastName onChange={v => setLastName(_ => v)} placeholder=`Nazwisko` />
       </SearchComponent>
       <Button.CTA
         icon={<Icons.Search />}
@@ -96,7 +94,7 @@ let make = () => {
             lastName: lastName,
             specialization: specialization.search,
           })}>
-        <span className="ml-4"> <Text> j`Wyszukaj` </Text> </span>
+        <span className="ml-4"> <Text> `Wyszukaj` </Text> </span>
       </Button.CTA>
     </div>
     <div className="pt-12">
@@ -104,17 +102,17 @@ let make = () => {
       | Unexecuted(_) =>
         <NoData
           icon={<Icons.Search size="64" />}
-          title=j`Wyszukaj specjalistów`
-          text=j`Wprowadź kryteria wyszukiwania a następnie kliknij przycisk "Wyszukaj"`
+          title=`Wyszukaj specjalistów`
+          text=`Wprowadź kryteria wyszukiwania a następnie kliknij przycisk "Wyszukaj"`
         />
       | Executed({loading: true}) => <Spinner />
       | Executed({data: Some({searchSpecialist, me})}) =>
         <div>
           <div className="shadow-md border border-gray-200 rounded-lg px-8">
             <div className="flex w-full">
-              <Table.Th text=j`` width="w-1/5" />
-              <Table.Th text=j`Użytkownik` width="w-1/4" />
-              <Table.Th text=j`Specjalizacja` width="w-1/4" />
+              <Table.Th text=`` width="w-1/5" />
+              <Table.Th text=`Użytkownik` width="w-1/4" />
+              <Table.Th text=`Specjalizacja` width="w-1/4" />
             </div>
             //  <Table.Th text={j||j} width="w-1/2" />
             <div className="flex w-full flex-col">
@@ -162,7 +160,7 @@ let make = () => {
                         consultation->Option.map(c => Router.push(ConsultationRoom(c.id)))->ignore,
                     )}
                   icon={<Icons.Video className="mr-4" />}>
-                  <Text> j`Przejdź do konsultacji online ($ids)` </Text>
+                  <Text> `Przejdź do konsultacji online ($ids)` </Text>
                 </Button.CTA>
               </div>
             : React.null}

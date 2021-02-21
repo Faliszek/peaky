@@ -32,23 +32,23 @@ module SymptomRow = {
           size="36"
           className={
             open Cn
-            "transition transition-transform transform" + rotated
+            " transition-transform transform" + rotated
           }
         />
       </div>
       <div
         className={
           open Cn
-          "h-full transition transition-transform transform origin-top rounded-md overflow-hidden mx-6" +
+          "h-full  transition-transform transform origin-top rounded-md overflow-hidden mx-6" +
           toggled
         }>
         <div className="h-6" />
-        <Label label=j`Okoliczności pojawienia się` value=circumstances />
-        <Label label=j`Data pierwszego wystąpienia` value=date />
-        <Label label=j`Częstotliwość występowania` value=occurences />
-        <Label label=j`Opis` value=description />
-        <Label label=j`Spowodowany przez` value=causedBy />
-        <Label label=j`Dodatkowe informacje` value=notes />
+        <Label label=`Okoliczności pojawienia się` value=circumstances />
+        <Label label=`Data pierwszego wystąpienia` value=date />
+        <Label label=`Częstotliwość występowania` value=occurences />
+        <Label label=`Opis` value=description />
+        <Label label=`Spowodowany przez` value=causedBy />
+        <Label label=`Dodatkowe informacje` value=notes />
       </div>
     </li>
   }

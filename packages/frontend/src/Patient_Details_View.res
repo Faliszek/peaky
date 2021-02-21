@@ -53,38 +53,38 @@ module Symptom_Add = {
               color: color,
             })->Request.onFinish(~onOk=_ => onClose(), ~onError=Js.log)}>
           <Input.Wrap>
-            <Input placeholder=j`Nazwa` value=symptomName onChange={v => setSymptomName(_ => v)} />
+            <Input placeholder=`Nazwa` value=symptomName onChange={v => setSymptomName(_ => v)} />
           </Input.Wrap>
           <Input.Wrap>
             <Input
-              placeholder=j`Okoliczności pojawienia się`
+              placeholder=`Okoliczności pojawienia się`
               value=circumstances
               onChange={v => setCircumstances(_ => v)}
             />
           </Input.Wrap>
           <Input.Wrap>
             <Input
-              placeholder=j`Data pierwszego wystąpienia` value=date onChange={v => setDate(_ => v)}
+              placeholder=`Data pierwszego wystąpienia` value=date onChange={v => setDate(_ => v)}
             />
           </Input.Wrap>
           <Input.Wrap>
             <Input
-              placeholder=j`Częstotliwość występowania`
+              placeholder=`Częstotliwość występowania`
               value=occurences
               onChange={v => setOccurences(_ => v)}
             />
           </Input.Wrap>
           <Input.Wrap>
-            <Input placeholder=j`Opis` value=description onChange={v => setDescription(_ => v)} />
+            <Input placeholder=`Opis` value=description onChange={v => setDescription(_ => v)} />
           </Input.Wrap>
           <Input.Wrap>
             <Input
-              placeholder=j`Spowodowany przez` value=causedBy onChange={v => setCausedBy(_ => v)}
+              placeholder=`Spowodowany przez` value=causedBy onChange={v => setCausedBy(_ => v)}
             />
           </Input.Wrap>
           <Input.Wrap>
             <Input.Textarea
-              placeholder=j`Dodatkowe informacje` value=notes onChange={v => setNotes(_ => v)}
+              placeholder=`Dodatkowe informacje` value=notes onChange={v => setNotes(_ => v)}
             />
           </Input.Wrap>
           <Color_Picker value=color onChange={v => setColor(_ => v)} />
@@ -139,7 +139,7 @@ let make = (~id, ~callMode=false) => {
 
   let (creatorVisible, setCreatorVisible) = React.useState(_ => false)
 
-  <Page title={callMode ? "" : j`Detale: $name`} hasBackButton={callMode ? false : true}>
+  <Page title={callMode ? "" : `Detale: $name`} hasBackButton={callMode ? false : true}>
     <Page.Block>
       {switch patientQuery {
       | {loading: true} => <Spinner />
@@ -168,20 +168,20 @@ let make = (~id, ~callMode=false) => {
                   onClick={_ => setVisible(_ => true)}
                   icon={<Icons.Plus className="mr-4" />}
                   type_=#ghost>
-                  <Text> j`Dodaj wizytę` </Text>
+                  <Text> `Dodaj wizytę` </Text>
                 </Button.CTA>
                 <div className="h-4" />
                 <Button.CTA
                   icon={<Icons.Thermometer className="mr-4" />}
                   onClick={_ => setCreatorVisible(_ => true)}>
-                  <Text> j`Aktualizuj przebieg leczenia` </Text>
+                  <Text> `Aktualizuj przebieg leczenia` </Text>
                 </Button.CTA>
               </div>}
         </div>
       | _ => React.null
       }}
     </Page.Block>
-    <Section title=j`Przebieg choroby` icon={<Icons.BarChart />}>
+    <Section title=`Przebieg choroby` icon={<Icons.BarChart />}>
       {switch patientQuery {
       | {loading: true} => <Spinner />
       | {data: Some({feelings, patientEvents, symptoms})} =>
@@ -253,7 +253,7 @@ let make = (~id, ~callMode=false) => {
             </Chart.XYPlot>
           </div>
           <div className="flex gap-10 px-8 pt-16 pb-8 justify-center">
-            <Legend key="feeling" title=j`Ogólne samopoczucie` color="green" />
+            <Legend key="feeling" title=`Ogólne samopoczucie` color="green" />
             {symptoms->Array.map(s => <Legend key=s.id title=s.name color=s.color />)->React.array}
           </div>
         </div>
@@ -262,12 +262,12 @@ let make = (~id, ~callMode=false) => {
       }}
     </Section>
     <Section
-      title=j`Symptomy`
+      title=`Symptomy`
       icon={<Icons.Thermometer />}
       button={callMode
         ? React.null
         : <Button.CTA onClick={_ => setModalVisible(_ => true)}>
-            <Text> j`Dodaj symptom` </Text>
+            <Text> `Dodaj symptom` </Text>
           </Button.CTA>}>
       <Symptom_Add
         visible=modalVisible onClose={_ => setModalVisible(_ => false)} patientId=id callMode
@@ -275,7 +275,7 @@ let make = (~id, ~callMode=false) => {
       {switch patientQuery {
       | {loading: true} => <Spinner />
       | {data: Some({symptoms})} if symptoms->Array.size == 0 =>
-        <NoData title=j`Brak objawów` text=j`Pacjent zdrowy` />
+        <NoData title=`Brak objawów` text=`Pacjent zdrowy` />
       | {data: Some({symptoms})} => <> <Symptoms_Table symptoms /> </>
       | _ => React.null
       }}

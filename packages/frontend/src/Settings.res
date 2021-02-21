@@ -1,2 +1,2 @@
 @react.component
-let make = () => <Page title="Ustawienia"> {j`Some content`->React.string} </Page>
+let make = () => <Page title="Ustawienia"> {`Some content`->React.string} </Page>

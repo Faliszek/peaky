@@ -49,7 +49,7 @@ let make = (~loading=false) => {
   ReactDOM.createPortal(
     <div className="fixed top-0 left-0 h-1 w-full z-20 scale">
       <div
-        style={ReactDOM.Style.make(~transform=j`scaleX($scaleX)`, ())}
+        style={ReactDOM.Style.make(~transform=`scaleX($scaleX)`, ())}
         className="bg-green-500 h-full w-full transform transition-transform origin-left "
       />
     </div>,

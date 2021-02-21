@@ -80,7 +80,7 @@ module Visit = {
         style={ReactDOM.Style.make(
           ~top=top->Js.Int.toString ++ "px",
           ~left=left->Js.Float.toString ++ "px",
-          ~width=j`calc( (100% - $leftCellWidth) / 5)`,
+          ~width=`calc( (100% - $leftCellWidth) / 5)`,
           ~height=durationAsHeight->Js.Int.toString ++ "px",
           ~borderColor=color,
           (),
@@ -90,7 +90,7 @@ module Visit = {
           style={ReactDOM.Style.make(~backgroundColor=color, ())}>
           <span className="text-white font-bold">
             {fromDate->Time.format("HH:mm")->React.string}
-            {j` - `->React.string}
+            {` - `->React.string}
             {toDate->Time.format("HH:mm")->React.string}
           </span>
         </div>

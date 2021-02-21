@@ -79,14 +79,14 @@ module AddEvent = {
       className="w-64 bg-white shadow-xl rounded-xl fixed top-12 right-12 py-8 px-6 border border-gray-200"
       style={ReactDOM.Style.make(~width="450px", ())}>
       <div className="text-2xl text-gray-600 mb-4 flex justify-between">
-        <Text> j`Zaktualizuj przebieg choroby` </Text>
+        <Text> `Zaktualizuj przebieg choroby` </Text>
         <Button.Nav onClick={_ => onClose()}>
           <Icons.Plus className="transform rotate-45" size="18" />
         </Button.Nav>
       </div>
       <Input.Wrap>
         <Select
-          placeholder=j`Wybierz symptom`
+          placeholder=`Wybierz symptom`
           value=symptom.value
           search=symptom.search
           visible=symptom.visible
@@ -105,12 +105,12 @@ module AddEvent = {
         <Input
           value=values.strength
           onChange={strength => setValues(values => {...values, strength: strength})}
-          placeholder=j`Siła objawu`
+          placeholder=`Siła objawu`
         />
       </Input.Wrap>
       <Input.Wrap>
         <Input.Textarea
-          placeholder=j`Dodatkowe informacje`
+          placeholder=`Dodatkowe informacje`
           value=values.notes
           onChange={notes => setValues(values => {...values, notes: notes})}
         />
@@ -137,12 +137,12 @@ module AddEvent = {
               )->ignore
             | _ => ()
             }}>
-          <Text> j`Dodaj informację` </Text>
+          <Text> `Dodaj informację` </Text>
         </Button.CTA>
       </div>
-      <div className="text-2xl text-gray-600 mb-4 mt-8"> <Text> j`Samopoczucie` </Text> </div>
+      <div className="text-2xl text-gray-600 mb-4 mt-8"> <Text> `Samopoczucie` </Text> </div>
       <Input.Wrap>
-        <Input value=feeling onChange={v => setFeeling(_ => v)} placeholder=j`Samopoczucie` />
+        <Input value=feeling onChange={v => setFeeling(_ => v)} placeholder=`Samopoczucie` />
       </Input.Wrap>
       <div className="flex justify-end">
         <Button.CTA
@@ -161,7 +161,7 @@ module AddEvent = {
               )->ignore
             | _ => ()
             }}>
-          <Text> j`Zapisz` </Text>
+          <Text> `Zapisz` </Text>
         </Button.CTA>
       </div>
     </div>

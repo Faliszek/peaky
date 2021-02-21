@@ -12,7 +12,10 @@ module Th = {
 
 module Td = {
   @react.component
-  let make = (~width, ~children) =>
+  let make = (~width, ~children) => {
+    let a = 5
+    let b = 3
+    let c = a + b
     <div
       className={
         open Cn
@@ -20,4 +23,5 @@ module Td = {
       }>
       children
     </div>
+  }
 }

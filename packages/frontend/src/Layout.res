@@ -35,20 +35,20 @@ module Menu = {
               <Icons.Activity size="18" color="white" />
             </span>
             <span className="text-green-500 uppercase font-bold text-md">
-              <Text> j`Peaky` </Text>
+              <Text> `Peaky` </Text>
             </span>
           </div>
         </div>
         <ul className="bg-white">
           <Item
             icon={<Icons.Calendar className="mr-3" size="14" />}
-            text=j`Kalendarz`
+            text=`Kalendarz`
             view=Router.Calendar
             active={Router.Calendar == url.path->Router.toView}
           />
           <Item
             icon={<Icons.User className="mr-3" size="14" />}
-            text=j`Pacjenci`
+            text=`Pacjenci`
             view=Router.Patients
             active={switch url.path {
             | list{"patients", _, _} => true
@@ -59,13 +59,13 @@ module Menu = {
           />
           <Item
             icon={<Icons.List className="mr-3" size="14" />}
-            text=j`Historia`
+            text=`Historia`
             view=Router.Visits
             active={Router.Visits == url.path->Router.toView}
           />
           <Item
             icon={<Icons.Share className="mr-3" size="14" />}
-            text=j`Konsultacje`
+            text=`Konsultacje`
             view=Router.Consultations
             active={switch url.path {
             | list{"consultations", _, _} => true
@@ -86,7 +86,7 @@ module Menu = {
         <Avatar ?firstName ?lastName />
         <div className="h-4" />
         <Button icon={<Icons.ArrowRight size="18" />} onClick={_ => Auth.signOut()}>
-          <Text> j`Wyloguj się` </Text>
+          <Text> `Wyloguj się` </Text>
         </Button>
       </div>
     </nav>
@@ -155,7 +155,7 @@ let make = (~children) => {
         <div
           className="fixed bottom-12 right-12 flex p-8 shadow-lg border border-gray flex-col bg-white rounded-xl">
           <span className="text-3xl text-gray-500 mb-8">
-            <Text> j`Przychodzące połączenie` </Text>
+            <Text> `Przychodzące połączenie` </Text>
           </span>
           <div className="flex justify-around gap-8">
             <div
@@ -164,12 +164,12 @@ let make = (~children) => {
                 open Router
                 push(ConsultationRoom(call.id))
               }}>
-              <Icons.Phone size="24" /> <Text> j`Odbierz` </Text>
+              <Icons.Phone size="24" /> <Text> `Odbierz` </Text>
             </div>
             <div
               className="flex justify-center flex-col items-center w-24 h-24 rounded-full bg-red-500 hover:bg-red-400 cursor-pointer text-white "
               onClick={_ => setOpen(_ => false)}>
-              <Icons.PhoneOff /> <Text> j`Odrzuć` </Text>
+              <Icons.PhoneOff /> <Text> `Odrzuć` </Text>
             </div>
           </div>
         </div>

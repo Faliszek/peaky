@@ -7,18 +7,18 @@ let make = (~visible, ~onClose, ~onCreate, ~loading) => {
   let (disease, setDisease) = React.useState(_ => "")
   let (color, setColor) = React.useState(_ => "")
 
-  <SideNav title=j`Dodawanie pacjenta` visible onClose>
+  <SideNav title=`Dodawanie pacjenta` visible onClose>
     <Input.Wrap>
-      <Input value=firstName onChange={v => setFirstName(_ => v)} placeholder=j`Imię` />
+      <Input value=firstName onChange={v => setFirstName(_ => v)} placeholder=`Imię` />
     </Input.Wrap>
     <Input.Wrap>
-      <Input value=lastName onChange={v => setLastName(_ => v)} placeholder=j`Nazwisko` />
+      <Input value=lastName onChange={v => setLastName(_ => v)} placeholder=`Nazwisko` />
     </Input.Wrap>
     <Input.Wrap>
       <Input
         value=phoneNumber
         onChange={v => setPhoneNumber(_ => v)}
-        placeholder=j`Numer telefonu`
+        placeholder=`Numer telefonu`
         icon={<Icons.Phone />}
       />
     </Input.Wrap>
@@ -26,7 +26,7 @@ let make = (~visible, ~onClose, ~onCreate, ~loading) => {
       <Input
         value=disease
         onChange={v => setDisease(_ => v)}
-        placeholder=j`Przypadłość`
+        placeholder=`Przypadłość`
         icon={<Icons.Thermometer />}
       />
     </Input.Wrap>
@@ -36,7 +36,7 @@ let make = (~visible, ~onClose, ~onCreate, ~loading) => {
         loading
         onClick={_ => onCreate(~firstName, ~lastName, ~phoneNumber, ~disease, ~color)->ignore}
         icon={<Icons.Plus className="mr-4" />}>
-        <Text> j`Dodaj pacjenta` </Text>
+        <Text> `Dodaj pacjenta` </Text>
       </Button.CTA>
     </div>
   </SideNav>

@@ -29,18 +29,18 @@ let make = (~callMode as _=false) => {
     title="Pacjenci"
     actions={<Button.CTA
       onClick={_ => setCreatorVisible(_ => true)} icon={<Icons.Plus className="mr-4" />}>
-      <Text> j`Dodaj pacjenta` </Text>
+      <Text> `Dodaj pacjenta` </Text>
     </Button.CTA>}>
     <div>
       {switch queryUsers {
       | {loading: true} => <Spinner />
       | {data: Some(data)} if data.patients->Array.size == 0 =>
         <NoData
-          buttonText=j`Dodaj pacjenta`
+          buttonText=`Dodaj pacjenta`
           buttonIcon={<Icons.Plus />}
           onButtonClick={_ => setCreatorVisible(_ => true)}
-          title=j`Brak danych`
-          text=j`Kliknij przycisk poniżej aby otworzyć kreator pacjenta`
+          title=`Brak danych`
+          text=`Kliknij przycisk poniżej aby otworzyć kreator pacjenta`
         />
       | {data: Some(data)} =>
         <div className="flex flex-wrap justify-between items-stretch">

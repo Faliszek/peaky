@@ -77,7 +77,7 @@ let make = (~media, ~setMedia, ~callId, ~patientId, ~doctorId, ~localStream, ~is
   switch (isPatient, ended) {
   | (true, true) =>
     <div className="bg-black w-screen h-screen flex items-center justify-center">
-      <div className="text-3xl text-white"> <Text> j`Spotkanie zostało zakończone` </Text> </div>
+      <div className="text-3xl text-white"> <Text> `Spotkanie zostało zakończone` </Text> </div>
     </div>
 
   | _ =>
@@ -105,7 +105,7 @@ let make = (~media, ~setMedia, ~callId, ~patientId, ~doctorId, ~localStream, ~is
       {remote->Option.isNone
         ? <div
             className="bg-black opacity-50 text-3xl text-white w-full h-full flex items-center justify-center absolute top-0 left-0">
-            <Text> j`Twój rozmówca jeszcze nie dołączył do rozmowy` </Text>
+            <Text> `Twój rozmówca jeszcze nie dołączył do rozmowy` </Text>
           </div>
         : React.null}
       <div className="fixed bottom-24 flex  gap-4">
@@ -128,7 +128,7 @@ let make = (~media, ~setMedia, ~callId, ~patientId, ~doctorId, ~localStream, ~is
       {!isPatient
         ? <>
             <Patient_Add_Event patientId={isPatient ? None : Some(patientId)} />
-            <CopyLink link=j`http://localhost:8080/calls/$callId/$doctorId/$patientId` />
+            <CopyLink link=`http://localhost:8080/calls/$callId/$doctorId/$patientId` />
           </>
         : React.null}
     </div>

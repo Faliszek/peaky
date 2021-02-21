@@ -1,12 +1,12 @@
 open Patient
 let patient = {
   id: 1,
-  firstName: j`Adam`,
-  lastName: j`Smith`,
-  disease: j`Depresja`,
-  condition: j`Dobry`,
-  avatar: Some(j`https://www.thispersondoesnotexist.com/image`),
-  phoneNumber: j`+48 674 300 232`,
+  firstName: `Adam`,
+  lastName: `Smith`,
+  disease: `Depresja`,
+  condition: `Dobry`,
+  avatar: Some(`https://www.thispersondoesnotexist.com/image`),
+  phoneNumber: `+48 674 300 232`,
   lastVisit: None,
 }
 
@@ -34,7 +34,7 @@ module Status = {
   }
 }
 
-@bs.send external focus: Dom.element => unit = "focus"
+@send external focus: Dom.element => unit = "focus"
 
 module Message = {
   @react.component
@@ -68,7 +68,7 @@ let make = (~_id) => {
       </div>
       <div>
         <Button.CTA icon={<Icons.Plus className="mr-4" />}>
-          <Text> j`Dodaj wizytę` </Text>
+          <Text> `Dodaj wizytę` </Text>
         </Button.CTA>
       </div>
     </div>
@@ -78,7 +78,7 @@ let make = (~_id) => {
         | (false, []) =>
           <div className="text-gray-300 h-full flex items-center flex-col justify-center">
             <Icons.Inbox size="64" />
-            <span className="mt-4 text-4xl"> <Text> j`Brak wiadomości` </Text> </span>
+            <span className="mt-4 text-4xl"> <Text> `Brak wiadomości` </Text> </span>
           </div>
         | (false, messages) => messages->Array.map(m => <Message text=m.text />)->React.array
         | (true, _) => <Icons.Spinner />
@@ -90,7 +90,7 @@ let make = (~_id) => {
           value=message
           onChange={v => setMessage(_ => v)}
           ref_={ReactDOM.Ref.domRef(textarea)}
-          placeholder=j`Napisz wiadomość`
+          placeholder=`Napisz wiadomość`
         />
         <Button.SmallRound icon={<Icons.Send />} onClick={_ => ()} />
       </div>

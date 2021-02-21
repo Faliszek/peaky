@@ -120,20 +120,20 @@ let make = (~callerId, ~myId, ~userIds: array<string>, ~peer) => {
                   onChange=patient.setValue
                   onSearchChange=patient.setSearch
                   onVisibleChange=patient.setVisible
-                  placeholder=j`Wybierz pacjenta`
+                  placeholder=`Wybierz pacjenta`
                   icon={<Icons.User size="20" />}
                   options={patients->toSelectOptions}
                 />
                 <Button.CTA
                   onClick={_ => setPatientId(_ => patient.value->Option.map(x => x.value))}>
-                  <Text> j`Wybierz` </Text>
+                  <Text> `Wybierz` </Text>
                 </Button.CTA>
               </div>
             : React.null}
           <div className="flex items-center">
             {[]->Array.size != 0
               ? <Button.CTA icon={<Icons.ArrowLeft className="mr-2" />}>
-                  <Text> j`Cofnij` </Text>
+                  <Text> `Cofnij` </Text>
                 </Button.CTA>
               : React.null}
             <Button.Nav onClick={_ => setVisible(v => !v)} className="relative">

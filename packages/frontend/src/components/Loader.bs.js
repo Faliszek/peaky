@@ -81,13 +81,13 @@ function useAnimate(loading) {
 function Loader(Props) {
   var loadingOpt = Props.loading;
   var loading = loadingOpt !== undefined ? loadingOpt : false;
-  var scaleX = useAnimate(loading);
+  useAnimate(loading);
   return ReactDom.createPortal(React.createElement("div", {
                   className: "fixed top-0 left-0 h-1 w-full z-20 scale"
                 }, React.createElement("div", {
                       className: "bg-green-500 h-full w-full transform transition-transform origin-left ",
                       style: {
-                        transform: "scaleX(" + scaleX + ")"
+                        transform: "scaleX($scaleX)"
                       }
                     })), document.body);
 }

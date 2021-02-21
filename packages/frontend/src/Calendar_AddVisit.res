@@ -67,7 +67,7 @@ let make = (
     None
   }, (patientId, patients))
 
-  <SideNav title=j`Dodaj wizytę` visible onClose>
+  <SideNav title=`Dodaj wizytę` visible onClose>
     <Input.Wrap>
       <Select
         value=patient.value
@@ -76,7 +76,7 @@ let make = (
         onChange=patient.setValue
         onSearchChange=patient.setSearch
         onVisibleChange=patient.setVisible
-        placeholder=j`Wybierz pacjenta`
+        placeholder=`Wybierz pacjenta`
         icon={<Icons.User size="20" />}
         options={patients->toSelectOptions}
       />
@@ -85,20 +85,17 @@ let make = (
       <Input
         value=from_
         onChange={v => setFrom(_ => v)}
-        placeholder=j`00:00`
+        placeholder=`00:00`
         icon={<Icons.Clock size="20" />}
       />
     </Input.Wrap>
     <Input.Wrap label="Do">
       <Input
-        value=to_
-        onChange={v => setTo(_ => v)}
-        placeholder=j`00:00`
-        icon={<Icons.Clock size="20" />}
+        value=to_ onChange={v => setTo(_ => v)} placeholder=`00:00` icon={<Icons.Clock size="20" />}
       />
     </Input.Wrap>
     <Input.Wrap>
-      <Input.Textarea placeholder=j`Notatki` value=notes onChange={v => setNotes(_ => v)} />
+      <Input.Textarea placeholder=`Notatki` value=notes onChange={v => setNotes(_ => v)} />
     </Input.Wrap>
     <Button.Row>
       <Button.CTA
@@ -118,7 +115,7 @@ let make = (
           | None => ()
           }
         }}>
-        <Text> j`Dodaj wizytę` </Text>
+        <Text> `Dodaj wizytę` </Text>
       </Button.CTA>
     </Button.Row>
   </SideNav>

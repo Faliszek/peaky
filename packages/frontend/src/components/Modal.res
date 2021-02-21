@@ -2,7 +2,7 @@
 let make = (
   ~visible,
   ~onVisibleChange,
-  ~title=j`Dodaj symptom`,
+  ~title=`Dodaj symptom`,
   ~children=React.null,
   ~onOk=_ => (),
   ~loading=false,
@@ -18,9 +18,9 @@ let make = (
           <div> children </div>
           <div className="flex justify-end gap-3">
             <Button.CTA type_=#ghost onClick={_ => onVisibleChange(false)}>
-              <Text> j`Anuluj` </Text>
+              <Text> `Anuluj` </Text>
             </Button.CTA>
-            <Button.CTA onClick={_ => onOk()} loading> <Text> j`Dodaj` </Text> </Button.CTA>
+            <Button.CTA onClick={_ => onOk()} loading> <Text> `Dodaj` </Text> </Button.CTA>
           </div>
         </div>
       </div>

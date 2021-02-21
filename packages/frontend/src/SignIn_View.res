@@ -47,7 +47,7 @@ let make = () => {
     <div className="bg-green-50 absolute bottom-0 left-0 h-screen flex items-center w-full">
       <div className="fixed flex flex-col w-1/4 bottom-0 left-0 ml-24 mb-24">
         <h1 className="text-4xl text-center mb-4 text-green-400 ">
-          <Text> j`Autentykacja` </Text>
+          <Text> `Autentykacja` </Text>
         </h1>
         <form
           onSubmit={e => {
@@ -59,7 +59,7 @@ let make = () => {
               className="rounded-xl px-8 py-16 border border-gray-100 bg-white  flex flex-col justify-center shadow-lg">
               <div className="pb-8">
                 <Input
-                  placeholder=j`E-mail`
+                  placeholder=`E-mail`
                   value=email
                   onChange={email =>
                     form.updateEmail((input, value) => {...input, email: value}, email)}
@@ -67,7 +67,7 @@ let make = () => {
               </div>
               <div className="pb-8">
                 <Input
-                  placeholder=j`Hasło`
+                  placeholder=`Hasło`
                   value=password
                   onChange={password =>
                     form.updatePassword((input, value) => {...input, password: value}, password)}
@@ -76,11 +76,11 @@ let make = () => {
               </div>
               <div className="flex justify-center">
                 <Button.CTA htmlType="submit" loading=result.loading>
-                  <span className="pl-1"> <Text> j`Zaloguj się` </Text> </span>
+                  <span className="pl-1"> <Text> `Zaloguj się` </Text> </span>
                 </Button.CTA>
               </div>
               <div className="text-md text-gray-600 text-center mt-8">
-                <Text> j`Zapomniałeś hasła?` </Text>
+                <Text> `Zapomniałeś hasła?` </Text>
               </div>
             </div>
           </div>

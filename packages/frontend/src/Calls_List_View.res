@@ -23,7 +23,7 @@ let make = (~callMode=false) => {
   <Page
     title="Wizyty"
     actions={<Button.CTA icon={<Icons.RefreshCcw className="mr-4" />} onClick={_ => executeQuery()}>
-      <Text> j`Odśwież listę` </Text>
+      <Text> `Odśwież listę` </Text>
     </Button.CTA>}>
     {switch queryCalls {
     | Executed({loading: true}) => <Spinner />

@@ -9,7 +9,7 @@ let make = (~stream, ~media, ~setMedia, ~onJoin, ~loading) =>
           {!media.video
             ? <div className="bg-black w-full h-full flex items-center justify-center">
                 <div className="text-3xl text-white">
-                  <Text> j`Twoja kamera jest wyłączona` </Text>
+                  <Text> `Twoja kamera jest wyłączona` </Text>
                 </div>
               </div>
             : <video
@@ -31,7 +31,7 @@ let make = (~stream, ~media, ~setMedia, ~onJoin, ~loading) =>
       </div>
       <div className="w-full  flex justify-center">
         <Button.CTA onClick={_ => onJoin()} loading>
-          <Text> j`Dołącz do spotkania` </Text>
+          <Text> `Dołącz do spotkania` </Text>
         </Button.CTA>
       </div>
     </div>

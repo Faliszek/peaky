@@ -22,15 +22,15 @@ function toUrl(view) {
   } else {
     switch (view.TAG | 0) {
       case /* PatientVideoChat */0 :
-          return "/patients/" + view._0 + "/video";
+          return "/patients/$id/video";
       case /* PatientChat */1 :
-          return "/patients/" + view._0 + "/chat";
+          return "/patients/$id/chat";
       case /* Patient */2 :
-          return "/patients/" + view._0;
+          return "/patients/$id";
       case /* ConsultationRoom */3 :
-          return "/consultations/" + view._0;
+          return "/consultations/$id";
       case /* Visit */4 :
-          return "/calls/" + view._0 + "/" + view._1 + "/" + view._2;
+          return "/calls/$id/$doctorId/$patientId";
       
     }
   }

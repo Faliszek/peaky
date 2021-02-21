@@ -6,8 +6,8 @@ let onFinish = (req, ~onOk: 'a => unit, ~onError) =>
   ->Promise.Js.fromBsPromise
   ->Promise.Js.toResult
   ->Promise.Js.get(res => {
-    let generalError = j`Coś poszło nie tak`
-    let networkError = j`Nie mogliśmy nawiązać połączenia z serwerem, sprawdzamy co się dzieje`
+    let generalError = `Coś poszło nie tak`
+    let networkError = `Nie mogliśmy nawiązać połączenia z serwerem, sprawdzamy co się dzieje`
     Js.log(res)
     switch res {
     | Ok(res) =>
